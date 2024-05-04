@@ -1,0 +1,11 @@
+extra/
+.vscode
+.pytest_cache
+__pycache__
+
+# Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
+# Essa configuração permite arquivos numerados, mas ignora arquivos com
+# sufixo maiores que podem ser utilizados para testes com arquivos privados
+exemplos/*
+!exemplos/efd_pis_cofins_?.txt
+!exemplos/efd_icms_ipi_?.txt
