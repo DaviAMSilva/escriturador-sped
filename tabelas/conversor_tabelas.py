@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+from typing import *
 
 
 
@@ -87,7 +88,7 @@ def main(diretorio=""):
 
 
 
-        ultimos_registros: list[dict] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
+        ultimos_registros: List[dict] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
         ultimos_registros[0] = "0000"
         nivel_anterior = -1
 
