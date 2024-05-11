@@ -1,35 +1,31 @@
-import unittest
 import glob
-from editor_sped import EscrituracaoICMSIPI, EscrituracaoPISCOFINS, abrir_escrituracao, EFD_ENCODING
+import os
+
+import pytest
+
+from editor_sped import (EscrituracaoICMSIPI, EscrituracaoPISCOFINS, abrir_escrituracao)
 
 
 
-class TestImportarExportar(unittest.TestCase):
-    def test_importar_exportar_icms_ipi(self):
-        for escrituracao_exemplo in glob.glob("exemplos/efd_icms_ipi_*.txt"):
-            escrituracao_texto = abrir_escrituracao(escrituracao_exemplo)
+class TestImportarExportar:
+    @pytest.mark.parametrize("arquivo", glob.glob("efd_icms_ipi_*.txt", root_dir="exemplos/"))
+    def test_icms_ipi(self, arquivo):
+        escrituracao_texto = abrir_escrituracao(os.path.join("exemplos", arquivo))
 
-            escrituracao = EscrituracaoICMSIPI(escrituracao_texto)
+        escrituracao = EscrituracaoICMSIPI(escrituracao_texto)
 
-            resultado = escrituracao.converter_para_texto()
+        resultado = escrituracao.converter_para_texto()
 
-            with self.subTest(arquivo=escrituracao_exemplo):
-                self.assertEqual(escrituracao_texto, resultado)
-
-
-
-    def test_importar_exportar_pis_cofins(self):
-        for escrituracao_exemplo in glob.glob("exemplos/efd_pis_cofins_*.txt"):
-            escrituracao_texto = abrir_escrituracao(escrituracao_exemplo)
-
-            escrituracao = EscrituracaoPISCOFINS(escrituracao_texto)
-
-            resultado = escrituracao.converter_para_texto()
-
-            with self.subTest(arquivo=escrituracao_exemplo):
-                self.assertEqual(escrituracao_texto, resultado)
+        assert escrituracao_texto == resultado
 
 
 
-if __name__ == "__main__":
-    unittest.main()
+    @pytest.mark.parametrize("arquivo", glob.glob("efd_pis_cofins_*.txt", root_dir="exemplos/"))
+    def test_pis_cofins(self, arquivo):
+        escrituracao_texto = abrir_escrituracao(os.path.join("exemplos", arquivo))
+
+        escrituracao = EscrituracaoPISCOFINS(escrituracao_texto)
+
+        resultado = escrituracao.converter_para_texto()
+
+        assert escrituracao_texto == resultado
