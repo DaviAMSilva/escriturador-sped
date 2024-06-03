@@ -1,6 +1,6 @@
 import json
 
-from ..utilidades import limpar_escrituracao
+from ..utilidades import remover_assinatura_escrituracao
 from .bloco import Bloco
 from .campo import Campo
 from .registro import Registro
@@ -17,7 +17,7 @@ from .registro import Registro
 class Escrituracao:
     def __init__(self, escrituracao_texto, nome, tipo_efd) -> None:
         self.__nome = nome
-        self.tipo_efd = tipo_efd
+        self.__tipo_efd = tipo_efd
         self.blocos = {}
 
         self.registro_inicial = None
@@ -44,6 +44,10 @@ class Escrituracao:
     def nome(self) -> str:
         return self.__nome
 
+    @property
+    def tipo_efd(self) -> str:
+        return self.__tipo_efd
+
 
 
     def importar_escrituracao(self, escrituracao_texto):
@@ -64,7 +68,7 @@ class Escrituracao:
 
     def ler_blocos(self, escrituracao_texto):
         if type(escrituracao_texto) == str:
-            escrituracao_texto = limpar_escrituracao(escrituracao_texto).splitlines()
+            escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto).splitlines()
 
 
 
@@ -78,8 +82,8 @@ class Escrituracao:
 
 
 
-        self.registro_inicial = Registro(escrituracao_texto.pop(0), 0, "0", self.tipo_efd)
-        self.registro_final = Registro(escrituracao_texto.pop(-1), 0, "9", self.tipo_efd)
+        self.registro_inicial = Registro(escrituracao_texto.pop(0), "0", self.__tipo_efd)
+        self.registro_final = Registro(escrituracao_texto.pop(-1), "9", self.__tipo_efd)
 
         self.filhos = [self.registro_inicial, self.registro_final]
 
@@ -102,7 +106,7 @@ class Escrituracao:
             blocos_temp[nome_bloco].append(linha)
 
         for k_nome_bloco, v_registros_texto in blocos_temp.items():
-            self.blocos[k_nome_bloco] = Bloco(k_nome_bloco, v_registros_texto, self.tipo_efd)
+            self.blocos[k_nome_bloco] = Bloco(k_nome_bloco, v_registros_texto, self.__tipo_efd)
             self.registro_inicial.filhos.append(self.blocos[k_nome_bloco].registro_inicial)
             self.registro_inicial.filhos.append(self.blocos[k_nome_bloco].registro_final)
 

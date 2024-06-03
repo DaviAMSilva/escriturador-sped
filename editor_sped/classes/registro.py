@@ -11,12 +11,10 @@ from .campo import Campo
 
 
 class Registro:
-    def __init__(self, campos_texto, nivel, nome_bloco, tipo_efd) -> None:
+    def __init__(self, campos_texto, nome_bloco, tipo_efd) -> None:
         self.campos = []
         self.filhos = []
         self.pai = None
-
-        self.nivel = nivel
 
         if type(campos_texto) == str:
             campos_texto = campos_texto.split("|")[1:-1]
@@ -24,8 +22,8 @@ class Registro:
         self.bloco = nome_bloco
 
         self.__nome = campos_texto[0]
-        self.tipo_efd = tipo_efd
-        self.campos.extend([Campo(campo, self.__nome, i + 1, self.tipo_efd) for i, campo in enumerate(campos_texto)])
+        self.__tipo_efd = tipo_efd
+        self.campos.extend([Campo(campo, self.__nome, i + 1, self.__tipo_efd) for i, campo in enumerate(campos_texto)])
 
 
 
@@ -55,6 +53,10 @@ class Registro:
     @property
     def nome(self) -> str:
         return self.__nome
+
+    @property
+    def tipo_efd(self) -> str:
+        return self.__tipo_efd
 
     @property
     def contem_filhos(self):

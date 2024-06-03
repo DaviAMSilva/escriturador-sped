@@ -14,8 +14,8 @@ class Campo:
         self.numero = numero
         self.valor = valor
 
-        self.tipo_efd = tipo_efd
-        self.__nome = EFD_INFO[self.tipo_efd][registro]["campos"][self.numero - 1]["nome"]
+        self.__tipo_efd = tipo_efd
+        self.__nome = EFD_INFO[self.__tipo_efd][registro]["campos"][self.numero - 1]["nome"]
 
 
 
@@ -36,3 +36,7 @@ class Campo:
     @property
     def nome(self) -> str:
         return self.__nome
+
+    @property
+    def tipo_efd(self) -> str:
+        return self.__tipo_efd
