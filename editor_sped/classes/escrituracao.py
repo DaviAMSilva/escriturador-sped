@@ -20,12 +20,32 @@ class Escrituracao:
         self.__tipo_efd = tipo_efd
         self.blocos = {}
 
-        self.registro_inicial = None
-        self.registro_final = None
+        self.abertura = None
+        self.fechamento = None
 
-        self.filhos = []
 
-        self.importar_escrituracao(escrituracao_texto)
+
+        # Removendo a assinatura ou informações extra se existirem
+        escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto).splitlines()
+
+
+
+        if (not escrituracao_texto[0].startswith("|0000|")):
+            raise ValueError("Escrituração não começa com registro |0000|")
+
+        if (not escrituracao_texto[-1].startswith("|9999|")):
+            raise ValueError("Escrituração não termina com registro |9999|")
+
+
+
+        self.abertura = Registro(escrituracao_texto.pop(0), "0", self.__tipo_efd)
+        self.fechamento = Registro(escrituracao_texto.pop(-1), "9", self.__tipo_efd)
+
+        self.filhos = [self.abertura, self.fechamento]
+
+
+
+        self.ler_blocos(escrituracao_texto)
 
 
 
@@ -48,11 +68,10 @@ class Escrituracao:
     def tipo_efd(self) -> str:
         return self.__tipo_efd
 
+    @property
+    def tamanho(self) -> str:
+        return sum(f.tamanho for f in self.filhos)
 
-
-    def importar_escrituracao(self, escrituracao_texto):
-        if escrituracao_texto and escrituracao_texto != "":
-            self.ler_blocos(escrituracao_texto)
 
 
     def converter_para_json(self, indent=4, ensure_ascii=False, *args, **kwargs):
@@ -61,32 +80,12 @@ class Escrituracao:
 
     def converter_para_texto(self):
         return \
-            self.registro_inicial.converter_para_texto() + \
-            self.registro_final.converter_para_texto()
+            self.abertura.converter_para_texto() + \
+            self.fechamento.converter_para_texto()
 
 
 
     def ler_blocos(self, escrituracao_texto):
-        if type(escrituracao_texto) == str:
-            escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto).splitlines()
-
-
-
-        # Removendo a assinatura ou informações extra se existirem
-
-        if (not escrituracao_texto[0].startswith("|0000|")):
-            raise ValueError("Escrituração não começa com registro |0000|")
-
-        if (not escrituracao_texto[-1].startswith("|9999|")):
-            raise ValueError("Escrituração não termina com registro |9999|")
-
-
-
-        self.registro_inicial = Registro(escrituracao_texto.pop(0), "0", self.__tipo_efd)
-        self.registro_final = Registro(escrituracao_texto.pop(-1), "9", self.__tipo_efd)
-
-        self.filhos = [self.registro_inicial, self.registro_final]
-
         blocos_temp = {}
 
 
@@ -107,10 +106,10 @@ class Escrituracao:
 
         for k_nome_bloco, v_registros_texto in blocos_temp.items():
             self.blocos[k_nome_bloco] = Bloco(k_nome_bloco, v_registros_texto, self.__tipo_efd)
-            self.registro_inicial.filhos.append(self.blocos[k_nome_bloco].registro_inicial)
-            self.registro_inicial.filhos.append(self.blocos[k_nome_bloco].registro_final)
+            self.abertura.filhos.append(self.blocos[k_nome_bloco].abertura)
+            self.abertura.filhos.append(self.blocos[k_nome_bloco].fechamento)
 
-            self.blocos[k_nome_bloco].registro_inicial.pai = self.registro_inicial
+            self.blocos[k_nome_bloco].abertura.pai = self.abertura
 
 
 

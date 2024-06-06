@@ -13,9 +13,6 @@ from .registro import Registro
 
 class Bloco:
     def __init__(self, nome_bloco, registros_texto, tipo_efd) -> None:
-        self.registro_inicial = None
-        self.registro_final = None
-
         self.__nome = nome_bloco
         self.__tipo_efd = tipo_efd
 
@@ -25,10 +22,10 @@ class Bloco:
         if (not registros_texto[0].startswith(f"|{self.__nome}001|")) or (not registros_texto[-1].startswith(f"|{self.__nome}990|")):
             raise ValueError("Bloco não começa e termina com |_001| e |_990|")
 
-        self.registro_inicial = Registro(registros_texto.pop(0), self.__nome, self.__tipo_efd)
-        self.registro_final = Registro(registros_texto.pop(-1), self.__nome, self.__tipo_efd)
+        self.abertura = Registro(registros_texto.pop(0), self.__nome, self.__tipo_efd)
+        self.fechamento = Registro(registros_texto.pop(-1), self.__nome, self.__tipo_efd)
 
-        self.filhos = [self.registro_inicial, self.registro_final]
+        self.filhos = [self.abertura, self.fechamento]
 
         self.ler_registros(registros_texto)
 
@@ -53,12 +50,19 @@ class Bloco:
     def tipo_efd(self) -> str:
         return self.__tipo_efd
 
+    @property
+    def tamanho(self) -> str:
+        # De acordo com o manual SPED ICMS IPI:
+        # REGISTRO 0990, CAMPO QTD_LIN_0: "Para este cálculo, o registro 0000, mesmo não pertencendo ao bloco 0, deve ser somado."
+        # REGISTRO 9990, CAMPO QTD_LIN_9: "Para este cálculo, o registro 9999, mesmo não pertencendo ao bloco 9, deve ser somado."
+        return sum(f.tamanho for f in self.filhos) + (1 if self.__nome in ("0", "9") else 0)
+
 
 
     def ler_registros(self, registros_texto):
         # Lista do último registro visitado em cada nível
         ultimos_registros = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
-        ultimos_registros[1] = self.registro_inicial
+        ultimos_registros[1] = self.abertura
         nivel_anterior = 1
 
         # Para cada registro informado

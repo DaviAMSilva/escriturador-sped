@@ -12,7 +12,6 @@ from .campo import Campo
 
 class Registro:
     def __init__(self, campos_texto, nome_bloco, tipo_efd) -> None:
-        self.campos = []
         self.filhos = []
         self.pai = None
 
@@ -23,7 +22,7 @@ class Registro:
 
         self.__nome = campos_texto[0]
         self.__tipo_efd = tipo_efd
-        self.campos.extend([Campo(campo, self.__nome, i + 1, self.__tipo_efd) for i, campo in enumerate(campos_texto)])
+        self.campos = [Campo(campo, self.__nome, i + 1, self.__tipo_efd) for i, campo in enumerate(campos_texto)]
 
 
 
@@ -57,6 +56,10 @@ class Registro:
     @property
     def tipo_efd(self) -> str:
         return self.__tipo_efd
+
+    @property
+    def tamanho(self) -> str:
+        return 1 + sum(f.tamanho for f in self.filhos)
 
     @property
     def contem_filhos(self):
