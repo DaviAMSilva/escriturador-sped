@@ -5,10 +5,18 @@ from typing import *
 
 
 
-# FIXME: Determinar uma maneira de importar as constantes do módulo sem executar a leitura do arquivo efd_info.json
-# Porque esse arquivo conversor não é suposto a ser um arquivo do módulo, mas sim um arquivo que ajuda a gerar o módulo
+
+
+
+
+
+
+
 EFD_NOMES = "efd_icms_ipi", "efd_pis_cofins"
 EFD_MAIOR_NIVEL = 6
+
+EFD_INFO_PASTA = "src/editor_sped/data/"
+EFD_INFO_ARQUIVO = "efd_info.json"
 
 # Constantes específicas do conversor de tabelas
 EFD_JSON_INDENTACAO = None
@@ -48,8 +56,8 @@ def main(diretorio=""):
 
 
     for efd_nome in EFD_NOMES:
-        arquivo_registros = os.path.join(diretorio, f"{efd_nome}_registers.csv")
-        arquivo_campos = os.path.join(diretorio, f"{efd_nome}_accurate_fields.csv")
+        arquivo_registros = os.path.join(os.path.dirname(__file__), f"{efd_nome}_registers.csv")
+        arquivo_campos = os.path.join(os.path.dirname(__file__), f"{efd_nome}_accurate_fields.csv")
 
 
 
@@ -84,7 +92,7 @@ def main(diretorio=""):
 
 
         # Ordena os registros conforme a ordem definida pelos manuais, independentemente da ordem de inserção original
-        objeto_registros = dict(sorted(objeto_registros.items(), key=lambda a: EFD_ORDEM_BLOCOS[efd_nome][a[0][0]] * 1000 + int(a[0][1:4])))
+        objeto_registros = dict(sorted(objeto_registros.items(), key=lambda t: EFD_ORDEM_BLOCOS[efd_nome][t[0][0]] * 1000 + int(t[0][1:4])))
 
 
 
@@ -168,9 +176,16 @@ def main(diretorio=""):
 
 
 
+
+
+
+
 if __name__ == "__main__":
-    efd_info = main()
+    efd_info = main("tabelas")
+
+    if not os.path.exists(EFD_INFO_PASTA):
+        os.mkdir(EFD_INFO_PASTA)
 
     # TODO: Adicionar condição para minimizar o arquivo json somente quando for gerado para produção usando variáveis de ambiente
-    with open(f"efd_info.json", "w", encoding="utf-8") as arquivo_convertido:
+    with open(os.path.join(EFD_INFO_PASTA, EFD_INFO_ARQUIVO), "w", encoding="utf-8") as arquivo_convertido:
         arquivo_convertido.write(json.dumps(efd_info, indent=EFD_JSON_INDENTACAO, ensure_ascii=False))
