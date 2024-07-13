@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from editor_sped import (EscrituracaoICMSIPI, EscrituracaoPISCOFINS, abrir_escrituracao)
+from editor_sped import EscrituracaoICMSIPI, EscrituracaoPISCOFINS, abrir_escrituracao
 
 
 

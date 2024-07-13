@@ -1,3 +1,4 @@
+import argparse
 import csv
 import json
 import os
@@ -12,39 +13,24 @@ from typing import *
 
 
 
-EFD_NOMES = "efd_icms_ipi", "efd_pis_cofins"
+EFD_TIPOS = "efd_icms_ipi", "efd_pis_cofins"
 EFD_MAIOR_NIVEL = 6
 
+# Constantes específicas do conversor de tabelas
 EFD_INFO_PASTA = "src/editor_sped/data/"
 EFD_INFO_ARQUIVO = "efd_info.json"
 
-# Constantes específicas do conversor de tabelas
-EFD_JSON_INDENTACAO = None
+EFD_JSON_INDENTACAO = 4
+
 EFD_ORDEM_BLOCOS = {
     "efd_icms_ipi": {
-        "0": 0, "A": 1,
-        "B": 2, "C": 3,
-        "D": 4, "E": 5,
-        "G": 6, "H": 7,
-        "I": 8, "K": 9,
-        "M": 10, "P": 11,
-        "1": 12, "9": 13,
+        "0": 0, "A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "G": 6, "H": 7, "I": 8, "K": 9, "M": 10, "P": 11, "1": 12, "9": 13
     },
     "efd_pis_cofins": {
-        "0": 0, "A": 1,
-        "C": 2, "D": 3,
-        "F": 4, "I": 5,
-        "M": 6, "P": 7,
-        "1": 8, "9": 9,
+        "0": 0, "A": 1, "C": 2, "D": 3, "F": 4, "I": 5, "M": 6, "P": 7, "1": 8, "9": 9
     },
     "geral": {
-        "0": 0, "A": 1,
-        "B": 2, "C": 3,
-        "D": 4, "E": 5,
-        "G": 6, "H": 7,
-        "I": 8, "K": 9,
-        "M": 10, "P": 11,
-        "1": 12, "9": 13,
+        "0": 0, "A": 1, "B": 2, "C": 3, "D": 4, "E": 6, "F": 6, "G": 7, "H": 8, "I": 9, "K": 10, "M": 11, "P": 12, "1": 13, "9": 14
     }
 }
 
@@ -55,7 +41,7 @@ def main(diretorio=""):
 
 
 
-    for efd_nome in EFD_NOMES:
+    for efd_nome in EFD_TIPOS:
         arquivo_registros = os.path.join(os.path.dirname(__file__), f"{efd_nome}_registers.csv")
         arquivo_campos = os.path.join(os.path.dirname(__file__), f"{efd_nome}_accurate_fields.csv")
 
@@ -80,7 +66,9 @@ def main(diretorio=""):
 
 
                 objeto_registros[linha_registros["code"]] = {
-                    "descricao": linha_registros["desc"],
+                    # Substituindo “ (0x201C) e ” (0x201D) pelas aspas duplas padrão
+                    "descricao": linha_registros["desc"].replace("“", "\"").replace("”", "\""),
+
                     "nivel": int(linha_registros["level"]),
                     "obrigatorio": registro_obrigatorio,
 
@@ -108,9 +96,9 @@ def main(diretorio=""):
             nivel_atual = registro["nivel"]
 
             if nivel_atual > nivel_anterior + 1:
-                raise ValueError(f"Registros foram da ordem válida. De {nivel_anterior} ({ultimos_registros[nivel_anterior]}) para {nivel_atual} ({ultimos_registros[nivel_atual]})")
-            elif nivel_atual == nivel_anterior + 1 or nivel_atual <= nivel_anterior:
-                ultimos_registros[nivel_atual] = nome
+                raise ValueError(f"Registros fora da ordem válida. De {nivel_anterior} para {nivel_atual}")
+
+            ultimos_registros[nivel_atual] = nome
 
             if (nivel_atual > 0):
                 objeto_registros[ultimos_registros[nivel_atual]]["pai"] = ultimos_registros[nivel_atual - 1]
@@ -149,8 +137,13 @@ def main(diretorio=""):
 
                 objeto_registros[registro_nome]["campos"].append({
                     "numero": int(linha_campos["Nº"]),
-                    "nome": linha_campos["Campo"],
-                    "descricao": linha_campos["Descrição"],
+
+                    # Removendo espaços devido ao um erro do programa que lê os PDFs dos manuais
+                    "nome": linha_campos["Campo"].replace(" ", ""),
+
+                    # Substituindo “ (0x201C) e ” (0x201D) pelas aspas duplas padrão
+                    "descricao": linha_campos["Descrição"].replace("“", "\"").replace("”", "\""),
+
                     "obrigatorio": campo_obrigatorio,
                     "tamanho": tamanho,
                     "tamanho_exato": len(linha_campos["Tam"]) > 0 and linha_campos["Tam"][-1] == "*",
@@ -181,11 +174,14 @@ def main(diretorio=""):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Converte as tabelas EFD para um formato mais prático")
+    parser.add_argument("--formatado", action="store_true", help="Gera o arquivo com uma formatação ao invés de ser minimizado")
+    args = parser.parse_args()
+
     efd_info = main("tabelas")
 
     if not os.path.exists(EFD_INFO_PASTA):
         os.mkdir(EFD_INFO_PASTA)
 
-    # TODO: Adicionar condição para minimizar o arquivo json somente quando for gerado para produção usando variáveis de ambiente
     with open(os.path.join(EFD_INFO_PASTA, EFD_INFO_ARQUIVO), "w", encoding="utf-8") as arquivo_convertido:
-        arquivo_convertido.write(json.dumps(efd_info, indent=EFD_JSON_INDENTACAO, ensure_ascii=False))
+        arquivo_convertido.write(json.dumps(efd_info, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))

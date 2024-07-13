@@ -1,3 +1,4 @@
+import re
 import pytest
 from tabelas.conversor_tabelas import main as conversor_tabelas, EFD_MAIOR_NIVEL
 
@@ -13,76 +14,77 @@ REGISTROS_EFD_PIS_COFINS = ['0000', '0001', '0035', '0100', '0110', '0111', '012
 
 
 
-class TestConversorTabelas:
-    def test_conversor_tabelas(self):
-        efd_info = conversor_tabelas("tabelas")
+def test_conversor_tabelas():
+    efd_info = conversor_tabelas("tabelas")
 
 
 
-        # Convertido para dicionário
-        assert type(efd_info) == dict
+    # Convertido para dicionário
+    assert type(efd_info) == dict
 
 
 
-        # Os SPEDs existem
-        assert "efd_icms_ipi" in efd_info
-        assert "efd_pis_cofins" in efd_info
+    # Os SPEDs existem
+    assert "efd_icms_ipi" in efd_info
+    assert "efd_pis_cofins" in efd_info
 
 
-        # As listas de registros tem os tamanhos corretos
-        assert len(efd_info["efd_icms_ipi"]) == TAMANHO_EFD_ICMS_IPI
-        assert len(efd_info["efd_pis_cofins"]) == TAMANHO_EFD_PIS_COFINS
+    # As listas de registros tem os tamanhos corretos
+    assert len(efd_info["efd_icms_ipi"]) == TAMANHO_EFD_ICMS_IPI
+    assert len(efd_info["efd_pis_cofins"]) == TAMANHO_EFD_PIS_COFINS
 
 
-        # Os registros corretos existem nas listas
-        for nome in REGISTROS_EFD_ICMS_IPI:
-            self.verificar_registro(efd_info["efd_icms_ipi"], nome, efd_info["efd_icms_ipi"][nome])
+    # Os registros corretos existem nas listas
+    for nome in REGISTROS_EFD_ICMS_IPI:
+        verificar_registro(efd_info["efd_icms_ipi"], nome, efd_info["efd_icms_ipi"][nome])
 
-        for nome in REGISTROS_EFD_PIS_COFINS:
-            self.verificar_registro(efd_info["efd_pis_cofins"], nome, efd_info["efd_pis_cofins"][nome])
+    for nome in REGISTROS_EFD_PIS_COFINS:
+        verificar_registro(efd_info["efd_pis_cofins"], nome, efd_info["efd_pis_cofins"][nome])
 
 
 
-    def verificar_registro(self, efd, nome, registro):
+def verificar_registro(efd, nome, registro):
+    # Nome e descrição
+    assert nome in efd
+    assert len(nome) == 4
+    assert re.match(r"^[0ABCDEFGHIKMP19][0-9]{3}$", nome), nome
+    assert len(registro["descricao"]) > 0
+
+    # Nível
+    assert registro["nivel"] >= 0
+    assert registro["nivel"] <= EFD_MAIOR_NIVEL
+
+    # Booleanos
+    assert type(registro["obrigatorio"]) == bool
+    assert type(registro["unico"]) == bool
+
+    # Campos
+    assert type(registro["campos"]) == list
+    assert len(registro["campos"]) >= 2
+
+    # Pai e filhos
+    assert type(registro["filhos"]) == list
+    assert (registro["pai"] == None and nome in ("0000", "9999")) or (type(registro["pai"]) == str and len(registro["pai"]) == 4) and registro["pai"] in efd
+
+
+
+    # Campos
+    for campo in registro["campos"]:
         # Nome e descrição
-        assert nome in efd
-        assert len(nome) == 4
-        assert len(registro["descricao"]) > 0
+        assert len(campo["nome"]) > 0
+        assert campo["nome"].find(" ") == -1, campo["nome"]
+        assert len(campo["descricao"]) > 0
 
-        # Nível
-        assert registro["nivel"] >= 0
-        assert registro["nivel"] <= EFD_MAIOR_NIVEL
+        # Tamanho e número
+        assert campo["numero"] >= 1
+        assert campo["tamanho"] > 0
 
         # Booleanos
-        assert type(registro["obrigatorio"]) == bool
-        assert type(registro["unico"]) == bool
+        assert type(campo["obrigatorio"]) == bool
+        assert type(campo["tamanho_exato"]) == bool
 
-        # Campos
-        assert type(registro["campos"]) == list
-        assert len(registro["campos"]) >= 2
+        # Decimal
+        assert campo["decimal"] == None or (type(campo["decimal"]) == int and int(campo["decimal"]) > 0)
 
-        # Pai e filhos
-        assert type(registro["filhos"]) == list
-        assert (registro["pai"] == None and nome in ("0000", "9999")) or (type(registro["pai"]) == str and len(registro["pai"]) == 4) and registro["pai"] in efd
-
-
-
-        # Campos
-        for campo in registro["campos"]:
-            # Nome e descrição
-            assert len(campo["nome"]) > 0
-            assert len(campo["descricao"]) > 0
-
-            # Tamanho e número
-            assert campo["numero"] >= 1
-            assert campo["tamanho"] > 0
-
-            # Booleanos
-            assert type(campo["obrigatorio"]) == bool
-            assert type(campo["tamanho_exato"]) == bool
-
-            # Decimal
-            assert campo["decimal"] == None or (type(campo["decimal"]) == int and int(campo["decimal"]) > 0)
-
-            # Tipo
-            assert campo["tipo"] in ("C", "N")
+        # Tipo
+        assert campo["tipo"] in ("C", "N")
