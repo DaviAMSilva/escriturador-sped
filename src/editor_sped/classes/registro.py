@@ -1,4 +1,3 @@
-from ..tabelas import EFD_INFO
 from .campo import Campo
 
 
@@ -11,18 +10,15 @@ from .campo import Campo
 
 
 class Registro:
-    def __init__(self, campos_texto, nome_bloco, tipo_efd) -> None:
+    def __init__(self, campos_texto, tipo_efd) -> None:
         self.filhos = []
         self.pai = None
 
-        if type(campos_texto) == str:
-            campos_texto = campos_texto.split("|")[1:-1]
+        campos_lista = campos_texto.split("|")[1:-1]
 
-        self.bloco = nome_bloco
-
-        self.__nome = campos_texto[0]
+        self.__nome = campos_lista[0]
         self.__tipo_efd = tipo_efd
-        self.campos = [Campo(campo, self.__nome, i + 1, self.__tipo_efd) for i, campo in enumerate(campos_texto)]
+        self.campos = [Campo(campo, self.__nome, i + 1, self.__tipo_efd) for i, campo in enumerate(campos_lista)]
 
 
 

@@ -1,9 +1,7 @@
 import json
 
 from ..utilidades import remover_assinatura_escrituracao
-from .bloco import Bloco
-from .campo import Campo
-from .registro import Registro
+from ..ler_registros import ler_registros
 
 
 
@@ -15,6 +13,8 @@ from .registro import Registro
 
 
 class Escrituracao:
+    LISTA_BLOCOS = None
+
     def __init__(self, escrituracao_texto, nome, tipo_efd) -> None:
         self.__nome = nome
         self.__tipo_efd = tipo_efd
@@ -23,29 +23,10 @@ class Escrituracao:
         self.abertura = None
         self.fechamento = None
 
-
-
         # Removendo a assinatura ou informações extra se existirem
-        escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto).splitlines()
+        escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto)
 
-
-
-        if (not escrituracao_texto[0].startswith("|0000|")):
-            raise ValueError("Escrituração não começa com registro |0000|")
-
-        if (not escrituracao_texto[-1].startswith("|9999|")):
-            raise ValueError("Escrituração não termina com registro |9999|")
-
-
-
-        self.abertura = Registro(escrituracao_texto.pop(0), "0", self.__tipo_efd)
-        self.fechamento = Registro(escrituracao_texto.pop(-1), "9", self.__tipo_efd)
-
-        self.filhos = [self.abertura, self.fechamento]
-
-
-
-        self.ler_blocos(escrituracao_texto)
+        self.__ler_escrituracao(escrituracao_texto)
 
 
 
@@ -85,31 +66,18 @@ class Escrituracao:
 
 
 
-    def ler_blocos(self, escrituracao_texto):
-        blocos_temp = {}
+    def __ler_escrituracao(self, escrituracao_texto):
+        registros_raizes = ler_registros(escrituracao_texto, self.__tipo_efd)
+
+        if len(registros_raizes) != 2 or registros_raizes[0].nome != "0000" or registros_raizes[1].nome != "9999":
+            raise ValueError(f"Escrituração mal formatada ({registros_raizes})")
+
+        self.abertura = registros_raizes[0]
+        self.fechamento = registros_raizes[1]
+
+        self.filhos = [self.abertura, self.fechamento]
 
 
-        for linha in escrituracao_texto:
-            if linha == "" or linha == "\n":
-                continue
-
-            nome_bloco = linha[1]
-
-            # Chegamos no final do arquivo
-            if linha.split("|")[1] == "9999":
-                break
-
-            if not nome_bloco in blocos_temp:
-                blocos_temp[nome_bloco] = []
-
-            blocos_temp[nome_bloco].append(linha)
-
-        for k_nome_bloco, v_registros_texto in blocos_temp.items():
-            self.blocos[k_nome_bloco] = Bloco(k_nome_bloco, v_registros_texto, self.__tipo_efd)
-            self.abertura.filhos.append(self.blocos[k_nome_bloco].abertura)
-            self.abertura.filhos.append(self.blocos[k_nome_bloco].fechamento)
-
-            self.blocos[k_nome_bloco].abertura.pai = self.abertura
 
 
 
@@ -121,11 +89,15 @@ class Escrituracao:
 
 
 class EscrituracaoPISCOFINS(Escrituracao):
+    LISTA_BLOCOS = None # FIXME
+
     def __init__(self, escrituracao_texto) -> None:
         super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
 
 
 
 class EscrituracaoICMSIPI(Escrituracao):
+    LISTA_BLOCOS = None # FIXME
+
     def __init__(self, escrituracao_texto) -> None:
         super().__init__(escrituracao_texto, "EFD_ICMS_IPI", "efd_icms_ipi")
