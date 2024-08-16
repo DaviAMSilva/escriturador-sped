@@ -11,7 +11,10 @@ from .tabelas import EFD_INFO
 
 
 
-def ler_registros(registros_texto: str | list[str], tipo_efd: str):
+def ler_registros(registros_texto: str, tipo_efd: str):
+    if registros_texto == "" or not registros_texto:
+        return []
+
     nivel_anterior = -1
 
     # Lista do último registro visitado em cada nível

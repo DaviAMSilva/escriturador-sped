@@ -13,7 +13,7 @@ def test_icms_ipi(arquivo):
 
     escrituracao = EscrituracaoICMSIPI(escrituracao_texto)
 
-    resultado = escrituracao.converter_para_texto()
+    resultado = escrituracao.texto()
 
     assert escrituracao_texto == resultado
 
@@ -25,6 +25,6 @@ def test_pis_cofins(arquivo):
 
     escrituracao = EscrituracaoPISCOFINS(escrituracao_texto)
 
-    resultado = escrituracao.converter_para_texto()
+    resultado = escrituracao.texto()
 
     assert escrituracao_texto == resultado
