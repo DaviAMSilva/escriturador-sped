@@ -63,10 +63,10 @@ class Escrituracao:
         if len(registros_raizes) != 2 or registros_raizes[0].nome != "0000" or registros_raizes[1].nome != "9999":
             raise ValueError(f"Escrituração mal formatada ({registros_raizes})")
 
-        self.abertura = registros_raizes[0]
-        self.fechamento = registros_raizes[1]
+        [self.abertura, self.fechamento] = self.filhos = registros_raizes
 
-        self.filhos = [self.abertura, self.fechamento]
+        # falta: popular blocos
+        # usar CampoCalculado em |_990| e |9999|
 
 
 
