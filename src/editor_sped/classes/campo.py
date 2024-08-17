@@ -1,4 +1,7 @@
+from typing import Callable
+
 from ..tabelas import EFD_INFO
+from ..types import EfdTipo
 
 
 
@@ -10,45 +13,43 @@ from ..tabelas import EFD_INFO
 
 
 class Campo:
-    def __init__(self, valor, registro, numero, tipo_efd) -> str:
-        self.numero = numero
-        self.__valor = valor
+    def __init__(self, valor: str, registro_nome: str, numero: int, efd_tipo: EfdTipo) -> None:
+        self.__valor: str = valor
 
-        self.tipo_efd = tipo_efd
-        self.nome = EFD_INFO[self.tipo_efd][registro]["campos"][self.numero - 1]["nome"]
+        self.__retorna_valor: Callable[[], str] = None
 
+        self.efd_tipo: EfdTipo = efd_tipo
+        self.nome = EFD_INFO[efd_tipo]["registros"][registro_nome]["campos"][numero - 1]["nome"]
+        self.descricao = EFD_INFO[efd_tipo]["registros"][registro_nome]["campos"][numero - 1]["descricao"]
 
 
 
     def __str__(self) -> str:
-        return self.__valor
+        return self.valor
 
     def __repr__(self) -> str:
         return f"Campo({self.nome})"
 
 
 
-    def _json(self):
-        return self.__valor
+    def serialize(self) -> str:
+        return self.valor
+
+
+
+    def texto(self) -> str:
+        return self.valor
 
 
 
     @property
-    def valor(self):
-        return self.__valor
+    def valor(self) -> str:
+        return self.__retorna_valor() if self.__retorna_valor else self.__valor
 
 
 
-    def texto(self):
-        return self.__valor
+    def configurar_valor(self, retorna_valor: Callable[[], str]) -> None:
+        if not isinstance(retorna_valor, Callable):
+            raise ValueError(f"O parâmetro '{retorna_valor}' não é uma função")
 
-
-
-class CampoCalculado(Campo):
-    def __init__(self, valor, registro, numero, tipo_efd, retorna_valor):
-        super.__init__()
         self.__retorna_valor = retorna_valor
-
-    @property
-    def valor(self):
-        return self.__retorna_valor()

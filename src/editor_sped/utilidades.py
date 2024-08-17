@@ -1,5 +1,3 @@
-from typing import *
-
 from .constantes import EFD_ENCODING, EFD_NEWLINE
 
 
@@ -11,7 +9,7 @@ from .constantes import EFD_ENCODING, EFD_NEWLINE
 
 
 
-def remover_assinatura_escrituracao(escrituracao_texto: str) -> None:
+def remover_assinatura_escrituracao(escrituracao_texto: str):
     escrituracao_texto = escrituracao_texto.splitlines()
     for i, linha in enumerate(escrituracao_texto):
         campos = linha.split("|")
@@ -21,21 +19,23 @@ def remover_assinatura_escrituracao(escrituracao_texto: str) -> None:
             # texto após o registro seja considerado válido apesar de não estar correto.
             return ("\n".join(escrituracao_texto[:i + 1])) + "\n"
 
+    raise ValueError("Registro |9999| de fechamento não encontrado")
 
 
-def abrir_escrituracao(nome_arquivo: str, remover_assinatura: bool = True) -> str:
-    with open(nome_arquivo, "r", encoding=EFD_ENCODING) as arquivo:
+
+def abrir_escrituracao(arquivo_nome: str, remover_assinatura: bool = True) -> str:
+    with open(arquivo_nome, "r", encoding=EFD_ENCODING) as arquivo:
         escrituracao_texto = arquivo.read()
 
     # Decide se a assinatura deve ser removida. Como o propósito principal é validação
     # de estrutura a assinatura é removida por padrão na abertura do arquivo
     if remover_assinatura:
         return remover_assinatura_escrituracao(escrituracao_texto)
-    else:
-        return escrituracao_texto
+
+    return escrituracao_texto
 
 
 
-def salvar_escrituracao(nome_arquivo: str, escrituracao_texto: str) -> None:
-    with open(nome_arquivo, "w", encoding=EFD_ENCODING, newline=EFD_NEWLINE) as output:
+def salvar_escrituracao(arquivo_nome: str, escrituracao_texto: str) -> None:
+    with open(arquivo_nome, "w", encoding=EFD_ENCODING, newline=EFD_NEWLINE) as output:
         output.write(escrituracao_texto)

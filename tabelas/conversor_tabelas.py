@@ -2,7 +2,7 @@ import argparse
 import csv
 import json
 import os
-from typing import *
+from typing import Literal
 
 
 
@@ -22,28 +22,21 @@ EFD_INFO_ARQUIVO = "efd_info.json"
 
 EFD_JSON_INDENTACAO = 4
 
-EFD_ORDEM_BLOCOS = {
-    "efd_icms_ipi": {
-        "0": 0, "A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "G": 6, "H": 7, "I": 8, "K": 9, "M": 10, "P": 11, "1": 12, "9": 13
-    },
-    "efd_pis_cofins": {
-        "0": 0, "A": 1, "C": 2, "D": 3, "F": 4, "I": 5, "M": 6, "P": 7, "1": 8, "9": 9
-    },
-    "geral": {
-        "0": 0, "A": 1, "B": 2, "C": 3, "D": 4, "E": 6, "F": 6, "G": 7, "H": 8, "I": 9, "K": 10, "M": 11, "P": 12, "1": 13, "9": 14
-    }
+EFD_ORDEM_BLOCOS:dict[Literal["efd_icms_ipi", "efd_pis_cofins"], str] = {
+    "efd_icms_ipi": ["0", "B", "C", "D", "E", "G", "H", "K", "1", "9"],
+    "efd_pis_cofins": ["0", "A", "C", "D", "F", "I", "M", "P", "1", "9"]
 }
 
 
 
-def main(diretorio=""):
+def main():
     efd_info = {}
 
 
 
-    for efd_nome in EFD_TIPOS:
-        arquivo_registros = os.path.join(os.path.dirname(__file__), f"{efd_nome}_registers.csv")
-        arquivo_campos = os.path.join(os.path.dirname(__file__), f"{efd_nome}_accurate_fields.csv")
+    for efd_tipo in EFD_TIPOS:
+        arquivo_registros = os.path.join(os.path.dirname(__file__), f"{efd_tipo}_registers.csv")
+        arquivo_campos = os.path.join(os.path.dirname(__file__), f"{efd_tipo}_accurate_fields.csv")
 
 
 
@@ -55,7 +48,8 @@ def main(diretorio=""):
         with open(arquivo_registros, encoding="utf-8", newline="") as ar:
             for linha_registros in csv.DictReader(ar):
                 registro_obrigatorio = linha_registros["spec_required"] == "O"
-                # NOTE: os campos "spec_in" e "spec_out" não devem ser usados para identificar a obrigatoriedade geral de um registro devido a vários falsos positivos
+                # NOTE: os campos "spec_in" e "spec_out" não devem ser usados para identificar
+                # a obrigatoriedade geral de um registro devido a vários falsos positivos
                 # or (
                 #     "spec_in" in linha_registros and
                 #     "spec_out" in linha_registros and
@@ -80,11 +74,11 @@ def main(diretorio=""):
 
 
         # Ordena os registros conforme a ordem definida pelos manuais, independentemente da ordem de inserção original
-        objeto_registros = dict(sorted(objeto_registros.items(), key=lambda t: EFD_ORDEM_BLOCOS[efd_nome][t[0][0]] * 1000 + int(t[0][1:4])))
+        objeto_registros = dict(sorted(objeto_registros.items(), key=lambda r: EFD_ORDEM_BLOCOS[efd_tipo].index(r[0][0]) * 1000 + int(r[0][1:4])))
 
 
 
-        ultimos_registros: List[dict] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
+        ultimos_registros: list[dict] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
         ultimos_registros[0] = "0000"
         nivel_anterior = -1
 
@@ -158,7 +152,24 @@ def main(diretorio=""):
 
 
 
-        efd_info[efd_nome] = objeto_registros
+        efd_info[efd_tipo] = {}
+
+
+
+        # Adicionando informações sobre blocos
+        efd_info[efd_tipo]["blocos"] = []
+        for i, bloco_nome in enumerate(EFD_ORDEM_BLOCOS[efd_tipo]):
+            efd_info[efd_tipo]["blocos"].append({
+                "numero": i + 1,
+                "nome": bloco_nome,
+                "descricao": f"Bloco {bloco_nome}",
+                "abertura": f"{bloco_nome}001",
+                "fechamento": f"{bloco_nome}990"
+            })
+
+
+
+        efd_info[efd_tipo]["registros"] = objeto_registros
 
 
 
@@ -178,10 +189,10 @@ if __name__ == "__main__":
     parser.add_argument("--formatado", action="store_true", help="Gera o arquivo com uma formatação ao invés de ser minimizado")
     args = parser.parse_args()
 
-    efd_info = main("tabelas")
+    efd_info_main = main()
 
     if not os.path.exists(EFD_INFO_PASTA):
         os.mkdir(EFD_INFO_PASTA)
 
     with open(os.path.join(EFD_INFO_PASTA, EFD_INFO_ARQUIVO), "w", encoding="utf-8") as arquivo_convertido:
-        arquivo_convertido.write(json.dumps(efd_info, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))
+        arquivo_convertido.write(json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))

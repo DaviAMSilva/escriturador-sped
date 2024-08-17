@@ -8,5 +8,21 @@ version = "0.0.1"
 dependencies = []
 requires-python = ">=3.7"
 
+[project.optional-dependencies]
+TEST = [
+    "autopep8",
+    "pylint",
+    "pytest",
+    "pytest-pylint",
+    "pytest-pep8"
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.autopep8]
+max_line_length = 160
+
+[tool.pylint]
+max-line-length = 160
+disable = "C0114"

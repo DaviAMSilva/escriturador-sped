@@ -1,4 +1,6 @@
-from .campo import Campo
+from ..classes.campo import Campo
+from ..tabelas import EFD_INFO
+from ..types import EfdTipo
 
 
 
@@ -10,15 +12,16 @@ from .campo import Campo
 
 
 class Registro:
-    def __init__(self, campos_texto, tipo_efd) -> None:
-        self.filhos = []
-        self.pai = None
+    def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
+        self.filhos: list[Registro] = []
+        self.pai: Registro = None
 
         campos_lista = campos_texto.split("|")[1:-1]
 
         self.nome = campos_lista[0]
-        self.tipo_efd = tipo_efd
-        self.campos = [Campo(campo, self.nome, i + 1, self.tipo_efd) for i, campo in enumerate(campos_lista)]
+        self.efd_tipo = efd_tipo
+        self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
+        self.campos = [Campo(campo, self.nome, i + 1, self.efd_tipo) for i, campo in enumerate(campos_lista)]
 
 
 
@@ -30,18 +33,15 @@ class Registro:
 
 
 
-    def _json(self):
-        if self.contem_filhos:
-            return {"campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": self.filhos}
-        else:
-            return f"|{'|'.join([str(c) for c in self.campos])}|"
+    def serialize(self) -> dict[str, list["Registro"]]:
+        return {"campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": self.filhos}
 
 
 
-    def linha(self):
+    def linha(self) -> str:
         return f"|{'|'.join([str(c) for c in self.campos])}|\n"
 
-    def texto(self):
+    def texto(self) -> str:
         return \
             f"|{'|'.join([str(c) for c in self.campos])}|\n" + \
             f"{"".join([f.texto() for f in self.filhos])}"
@@ -49,9 +49,9 @@ class Registro:
 
 
     @property
-    def tamanho(self) -> str:
+    def tamanho(self) -> int:
         return 1 + sum(f.tamanho for f in self.filhos)
 
     @property
-    def contem_filhos(self):
+    def contem_filhos(self) -> bool:
         return len(self.filhos) >= 1

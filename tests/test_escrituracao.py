@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from editor_sped import EscrituracaoPISCOFINS, abrir_escrituracao
+from editor_sped import Registro, EscrituracaoPISCOFINS, abrir_escrituracao
 
 
 @pytest.mark.parametrize("arquivo,tamanho_total,tamanho_blocos", [
@@ -11,12 +11,19 @@ from editor_sped import EscrituracaoPISCOFINS, abrir_escrituracao
     ("efd_pis_cofins_3.txt", 45, {"0": 5, "A": 2, "C": 2, "D": 2, "F": 2, "M": 4, "1": 2, "9": 26}),
     ("efd_pis_cofins_4.txt", 308, {"0": 112, "A": 11, "C": 31, "D": 13, "F": 10, "M": 66, "1": 2, "9": 63})
 ])
-def test_tamanho_blocos(arquivo, tamanho_total, tamanho_blocos):
+def test_blocos(arquivo:str, tamanho_total:int, tamanho_blocos:dict[str, int]):
     escrituracao_texto = abrir_escrituracao(os.path.join("exemplos", arquivo))
 
     escrituracao = EscrituracaoPISCOFINS(escrituracao_texto)
 
     assert escrituracao.tamanho == tamanho_total
 
-    for nome_bloco, bloco in escrituracao.blocos.items():
-        assert bloco.tamanho == tamanho_blocos[nome_bloco]
+    assert len(escrituracao.blocos) == 8
+
+    for bloco_nome, bloco in escrituracao.blocos.items():
+        assert isinstance(bloco.abertura, Registro)
+        assert isinstance(bloco.fechamento, Registro)
+
+        assert len(bloco.filhos) == 2
+
+        assert bloco.tamanho == tamanho_blocos[bloco_nome]

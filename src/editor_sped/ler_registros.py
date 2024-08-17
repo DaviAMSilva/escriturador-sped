@@ -1,5 +1,5 @@
-from .constantes import EFD_MAIOR_NIVEL
 from .classes.registro import Registro
+from .constantes import EFD_MAIOR_NIVEL
 from .tabelas import EFD_INFO
 
 
@@ -11,7 +11,7 @@ from .tabelas import EFD_INFO
 
 
 
-def ler_registros(registros_texto: str, tipo_efd: str):
+def ler_registros(registros_texto: str, efd_tipo: str) -> list[Registro]:
     if registros_texto == "" or not registros_texto:
         return []
 
@@ -21,22 +21,22 @@ def ler_registros(registros_texto: str, tipo_efd: str):
     ultimos_registros = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
 
     # Para a lista atual de registros é usado para os registros que estão na raiz e não têm pais
-    registros_raiz = []
+    registros_raiz: list[Registro] = []
 
     # Para cada registro informado
     for registro_atual in registros_texto.splitlines():
         # Pega o nome do registro e encontra o seu nível dentro da tabela
-        nivel_atual = EFD_INFO[tipo_efd][registro_atual.split("|")[1]]["nivel"]
+        nivel_atual = EFD_INFO[efd_tipo]["registros"][registro_atual.split("|")[1]]["nivel"]
 
         # Compara o nível do registro anterior com o nível do registro atual
         if nivel_atual > nivel_anterior + 1:
             # Se a diferença entre o nível anterior e o atual for maior que 1 positivo há um erro de estrutura
-            raise ValueError(f"Registros fora da ordem válida. De {nivel_anterior} para {nivel_atual}.")
+            raise ValueError(f"Registros fora da ordem válida. De {nivel_anterior} para {nivel_atual}")
 
-        ultimos_registros[nivel_atual] = Registro(registro_atual, tipo_efd)
+        ultimos_registros[nivel_atual] = Registro(registro_atual, efd_tipo)
 
         # Verificar se existe um registro pai válido
-        if nivel_atual - 1 >= 0 and not ultimos_registros[nivel_atual - 1] == None:
+        if nivel_atual - 1 >= 0 and not ultimos_registros[nivel_atual - 1] is None:
             # Se existir:
             # Adicionamos o registro atual como filho do registro acima dele (nível - 1)
             # De maneira inversa criamos a ligação do registro filho com o registro pai
