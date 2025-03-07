@@ -19,8 +19,20 @@ class Campo:
         self.__retorna_valor: Callable[[], str] = None
 
         self.efd_tipo: EfdTipo = efd_tipo
-        self.nome = EFD_INFO[efd_tipo]["registros"][registro_nome]["campos"][numero - 1]["nome"]
-        self.descricao = EFD_INFO[efd_tipo]["registros"][registro_nome]["campos"][numero - 1]["descricao"]
+
+        info_campos = EFD_INFO[efd_tipo]["registros"][registro_nome]["campos"][numero - 1]
+
+        # fmt: off
+        self.nome          = info_campos["nome"]
+        self.descricao     = info_campos["descricao"]
+
+        self.decimal       = info_campos["decimal"]
+        self.numero        = info_campos["numero"]
+        self.obrigatorio   = info_campos["obrigatorio"]
+        self.tamanho       = info_campos["tamanho"]
+        self.tamanho_exato = info_campos["tamanho_exato"]
+        self.tipo          = info_campos["tipo"]
+        # fmt: on
 
 
 
@@ -45,6 +57,10 @@ class Campo:
     @property
     def valor(self) -> str:
         return self.__retorna_valor() if self.__retorna_valor else self.__valor
+
+    @valor.setter
+    def valor(self, valor) -> str:
+        self.__valor = valor
 
 
 
