@@ -1,6 +1,7 @@
 from .classes.registro import Registro
 from .constantes import EFD_MAIOR_NIVEL
 from .tabelas import EFD_INFO
+from .types import EfdTipo
 
 
 
@@ -11,14 +12,14 @@ from .tabelas import EFD_INFO
 
 
 
-def ler_registros(registros_texto: str, efd_tipo: str) -> list[Registro]:
+def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> list[Registro]:
     if registros_texto == "" or not registros_texto:
         return []
 
     nivel_anterior = -1
 
     # Lista do último registro visitado em cada nível
-    ultimos_registros = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
+    ultimos_registros: list[Registro | None] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
 
     # Para a lista atual de registros é usado para os registros que estão na raiz e não têm pais
     registros_raiz: list[Registro] = []
@@ -35,17 +36,20 @@ def ler_registros(registros_texto: str, efd_tipo: str) -> list[Registro]:
 
         ultimos_registros[nivel_atual] = Registro(registro_atual, efd_tipo)
 
-        # Verificar se existe um registro pai válido
-        if nivel_atual - 1 >= 0 and not ultimos_registros[nivel_atual - 1] is None:
-            # Se existir:
-            # Adicionamos o registro atual como filho do registro acima dele (nível - 1)
-            # De maneira inversa criamos a ligação do registro filho com o registro pai
-            ultimos_registros[nivel_atual - 1].filhos.append(ultimos_registros[nivel_atual])
-            ultimos_registros[nivel_atual].pai = ultimos_registros[nivel_atual - 1]
-        else:
-            # Se não existir:
-            # Adicionamos o registro na lista de registros raízes da lista de registros atuais
-            registros_raiz.append(ultimos_registros[nivel_atual])
+        ultimos_registros_registro_atual = ultimos_registros[nivel_atual]
+        ultimos_registros_registro_anterior = ultimos_registros[nivel_atual - 1]
+        if ultimos_registros_registro_atual:
+            # Verificamos se existe um registro pai válido
+            if nivel_atual - 1 >= 0 and ultimos_registros_registro_anterior:
+                # Se existir:
+                # Adicionamos o registro atual como filho do registro acima dele (nível - 1)
+                # De maneira inversa criamos a ligação do registro filho com o registro pai
+                ultimos_registros_registro_anterior.filhos.append(ultimos_registros_registro_atual)
+                ultimos_registros_registro_atual.pai = ultimos_registros_registro_anterior
+            else:
+                # Se não existir:
+                # Adicionamos o registro na lista de registros raízes da lista de registros atuais
+                registros_raiz.append(ultimos_registros_registro_atual)
 
         # O nível anterior foi alterado
         nivel_anterior = nivel_atual

@@ -10,14 +10,14 @@ from .constantes import EFD_ENCODING, EFD_NEWLINE
 
 
 def remover_assinatura_escrituracao(escrituracao_texto: str):
-    escrituracao_texto = escrituracao_texto.splitlines()
-    for i, linha in enumerate(escrituracao_texto):
+    escrituracao_linhas = escrituracao_texto.splitlines()
+    for i, linha in enumerate(escrituracao_linhas):
         campos = linha.split("|")
         if len(campos) > 1 and campos[1] == "9999":
             # A escrituração contém o número de linhas e as linhas restantes são descartadas
             # AVISO: Isso pode gerar um situação em que um arquivo que venha a conter qualquer
             # texto após o registro seja considerado válido apesar de não estar correto.
-            return ("\n".join(escrituracao_texto[:i + 1])) + "\n"
+            return ("\n".join(escrituracao_linhas[:i + 1])) + "\n"
 
     raise ValueError("Registro |9999| de fechamento não encontrado")
 

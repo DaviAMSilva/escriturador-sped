@@ -71,7 +71,7 @@ def main():
                     # Não é preciso armazenar informação adicional sobre ocorrências pois todo registro com nível > 2 é automaticamente um registro "filho"
                     "unico": linha_registros["card"].split(":")[-1] == "1",
                     "campos": [],
-                    "filhos": [],
+                    "filhos": {},
                     "pai": None
                 }
 
@@ -101,10 +101,11 @@ def main():
             ultimos_registros[nivel_atual] = nome
 
             ultimos_registros_nivel_atual = ultimos_registros[nivel_atual]
-            ultimos_registros_nivel_acima = ultimos_registros[nivel_atual - 1]
-            if nivel_atual > 0 and ultimos_registros_nivel_atual and ultimos_registros_nivel_acima:
-                objeto_registros[ultimos_registros_nivel_atual]["pai"] = ultimos_registros[nivel_atual - 1]
-                objeto_registros[ultimos_registros_nivel_acima]["filhos"].append(objeto_registros[ultimos_registros_nivel_atual])
+            ultimos_registros_nivel_anterior = ultimos_registros[nivel_atual - 1]
+            if ultimos_registros_nivel_atual and ultimos_registros_nivel_anterior:
+                if nivel_atual > 0:
+                    objeto_registros[ultimos_registros_nivel_atual]["pai"] = ultimos_registros[nivel_atual - 1]
+                    objeto_registros[ultimos_registros_nivel_anterior]["filhos"][ultimos_registros_nivel_atual] = objeto_registros[ultimos_registros_nivel_atual]
 
             nivel_anterior = nivel_atual
 
