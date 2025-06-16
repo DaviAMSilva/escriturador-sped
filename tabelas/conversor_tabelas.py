@@ -4,6 +4,8 @@ import json
 import os
 from typing import Literal
 
+from src.editor_sped.constantes import EFD_TIPOS, EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS
+from src.editor_sped.types import EfdInfo, EfdInfoRegistro
 
 
 
@@ -13,8 +15,6 @@ from typing import Literal
 
 
 
-EFD_TIPOS = "efd_icms_ipi", "efd_pis_cofins"
-EFD_MAIOR_NIVEL = 6
 
 # Constantes específicas do conversor de tabelas
 EFD_INFO_PASTA = "src/editor_sped/data/"
@@ -22,16 +22,18 @@ EFD_INFO_ARQUIVO = "efd_info.json"
 
 EFD_JSON_INDENTACAO = 4
 
-EFD_ORDEM_BLOCOS:dict[Literal["efd_icms_ipi", "efd_pis_cofins"], str] = {
-    "efd_icms_ipi": ["0", "B", "C", "D", "E", "G", "H", "K", "1", "9"],
-    "efd_pis_cofins": ["0", "A", "C", "D", "F", "I", "M", "P", "1", "9"]
-}
+
+
+
+
+
+
 
 
 
 def main():
-    efd_info = {}
-
+    efd_info: EfdInfo = {}
+    efd_tipo: Literal["efd_icms_ipi", "efd_pis_cofins"]
 
 
     for efd_tipo in EFD_TIPOS:
@@ -41,13 +43,13 @@ def main():
 
 
         # Guarda as informações dos registros para cada arquivo
-        objeto_registros: dict[str, dict] = {}
+        objeto_registros: dict[str, "EfdInfoRegistro"] = {}
 
 
 
         with open(arquivo_registros, encoding="utf-8", newline="") as ar:
             for linha_registros in csv.DictReader(ar):
-                registro_obrigatorio = linha_registros["spec_required"] == "O"
+                registro_obrigatorio: bool = linha_registros["spec_required"] == "O"
                 # NOTE: os campos "spec_in" e "spec_out" não devem ser usados para identificar
                 # a obrigatoriedade geral de um registro devido a vários falsos positivos
                 # or (
@@ -69,24 +71,28 @@ def main():
                     # Não é preciso armazenar informação adicional sobre ocorrências pois todo registro com nível > 2 é automaticamente um registro "filho"
                     "unico": linha_registros["card"].split(":")[-1] == "1",
                     "campos": [],
+                    "filhos": [],
+                    "pai": None
                 }
 
 
 
         # Ordena os registros conforme a ordem definida pelos manuais, independentemente da ordem de inserção original
-        objeto_registros = dict(sorted(objeto_registros.items(), key=lambda r: EFD_ORDEM_BLOCOS[efd_tipo].index(r[0][0]) * 1000 + int(r[0][1:4])))
+        objeto_registros: dict[str, "EfdInfoRegistro"] = dict(sorted(
+            objeto_registros.items(),
+            key=lambda registro, efd_tipo=efd_tipo:
+                EFD_ORDEM_BLOCOS[efd_tipo].index(registro[0][0]) * 1000 +
+                int(registro[0][1:4])
+        ))
 
 
 
-        ultimos_registros: list[dict] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
+        ultimos_registros: list[str | None] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
         ultimos_registros[0] = "0000"
         nivel_anterior = -1
 
         # Isso pode ser feito pois em Python 3.7+ a ordenação das chaves de dicionários é garantida de ser idêntica à ordem de inserção
         for nome, registro in objeto_registros.items():
-            registro["filhos"] = []
-            registro["pai"] = None
-
             nivel_atual = registro["nivel"]
 
             if nivel_atual > nivel_anterior + 1:
@@ -94,9 +100,11 @@ def main():
 
             ultimos_registros[nivel_atual] = nome
 
-            if (nivel_atual > 0):
-                objeto_registros[ultimos_registros[nivel_atual]]["pai"] = ultimos_registros[nivel_atual - 1]
-                objeto_registros[ultimos_registros[nivel_atual - 1]]["filhos"].append(ultimos_registros[nivel_atual])
+            ultimos_registros_nivel_atual = ultimos_registros[nivel_atual]
+            ultimos_registros_nivel_acima = ultimos_registros[nivel_atual - 1]
+            if nivel_atual > 0 and ultimos_registros_nivel_atual and ultimos_registros_nivel_acima:
+                objeto_registros[ultimos_registros_nivel_atual]["pai"] = ultimos_registros[nivel_atual - 1]
+                objeto_registros[ultimos_registros_nivel_acima]["filhos"].append(objeto_registros[ultimos_registros_nivel_atual])
 
             nivel_anterior = nivel_atual
 
@@ -118,31 +126,31 @@ def main():
 
 
 
+                # Testa se o tipo de campo é um dos valores válidos
+                assert linha_campos["Tipo"] in ("C", "N"), f"Tipo inesperado: {linha_campos['Tipo']}"
+                tipo_campo: Literal["C", "N"] = linha_campos["Tipo"]
+                tamanho_campo: int
+
                 # Calculando o tamanho baseado nas regras
                 if linha_campos["Tam"] in ("", "-"):
-                    if linha_campos["Tipo"] == "N":  # Numérico, limite de 255 no caso geral
-                        tamanho = 255
-                    elif linha_campos["Tipo"] == "C":  # Alfanumérico, sem limite no caso geral (assumindo 65535 como limite prático)
-                        tamanho = 65535
+                    if tipo_campo == "N":  # Numérico, limite de 255 no caso geral
+                        tamanho_campo = 255
+                    elif tipo_campo == "C":  # Alfanumérico, sem limite no caso geral (assumindo 65535 como limite prático)
+                        tamanho_campo = 65535
                 else:
-                    tamanho = int(linha_campos["Tam"].replace("*", "").replace("-", ""))
+                    tamanho_campo = int(linha_campos["Tam"].replace("*", "").replace("-", ""))
 
 
 
                 objeto_registros[registro_nome]["campos"].append({
                     "numero": int(linha_campos["Nº"]),
-
-                    # Removendo espaços devido ao um erro do programa que lê os PDFs dos manuais
                     "nome": linha_campos["Campo"].replace(" ", ""),
-
-                    # Substituindo “ (0x201C) e ” (0x201D) pelas aspas duplas padrão
                     "descricao": linha_campos["Descrição"].replace("“", "\"").replace("”", "\""),
-
                     "obrigatorio": campo_obrigatorio,
-                    "tamanho": tamanho,
+                    "tamanho": tamanho_campo,
                     "tamanho_exato": len(linha_campos["Tam"]) > 0 and linha_campos["Tam"][-1] == "*",
                     "decimal": None if linha_campos["Dec"] in ("", "-") else int(linha_campos["Dec"]),
-                    "tipo": linha_campos["Tipo"],
+                    "tipo": tipo_campo,
                 })
 
 
@@ -152,12 +160,12 @@ def main():
 
 
 
-        efd_info[efd_tipo] = {}
-
-
+        efd_info[efd_tipo] = {
+            "blocos": [],
+            "registros": {}
+        }
 
         # Adicionando informações sobre blocos
-        efd_info[efd_tipo]["blocos"] = []
         for i, bloco_nome in enumerate(EFD_ORDEM_BLOCOS[efd_tipo]):
             efd_info[efd_tipo]["blocos"].append({
                 "numero": i + 1,
@@ -166,8 +174,6 @@ def main():
                 "abertura": f"{bloco_nome}001",
                 "fechamento": f"{bloco_nome}990"
             })
-
-
 
         efd_info[efd_tipo]["registros"] = objeto_registros
 
