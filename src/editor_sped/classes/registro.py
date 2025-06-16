@@ -14,7 +14,7 @@ from ..types import EfdTipo
 class Registro:
     def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
         self.filhos: list[Registro] = []
-        self.pai: Registro = None
+        self.pai: Registro
 
         campos_lista = campos_texto.split("|")[1:-1]
 
@@ -33,7 +33,7 @@ class Registro:
 
 
 
-    def serialize(self) -> dict[str, list["Registro"]]:
+    def serialize(self) -> dict:
         return {"campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": self.filhos}
 
 

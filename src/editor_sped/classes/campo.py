@@ -14,9 +14,9 @@ from ..types import EfdTipo
 
 class Campo:
     def __init__(self, valor: str, registro_nome: str, numero: int, efd_tipo: EfdTipo) -> None:
-        self.__valor: str = valor
+        self._valor: str = valor
 
-        self.__retorna_valor: Callable[[], str] = None
+        self.__retorna_valor: Callable[[], str] | None = None
 
         self.efd_tipo: EfdTipo = efd_tipo
 
@@ -56,11 +56,12 @@ class Campo:
 
     @property
     def valor(self) -> str:
-        return self.__retorna_valor() if self.__retorna_valor else self.__valor
+        return self.__retorna_valor() if self.__retorna_valor else self._valor
 
     @valor.setter
     def valor(self, valor) -> str:
-        self.__valor = valor
+        self._valor = valor
+        return valor
 
 
 

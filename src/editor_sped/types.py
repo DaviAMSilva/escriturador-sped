@@ -23,7 +23,7 @@ class EfdInfoRegistro(TypedDict):
     obrigatorio: bool
     unico: bool
     campos: list["EfdInfoCampo"]
-    filhos: dict[str, "EfdInfoRegistro"]
+    filhos: list[str]
     pai: str | None
 
 

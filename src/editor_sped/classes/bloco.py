@@ -27,7 +27,7 @@ class Bloco:
     def __repr__(self) -> str:
         return f"Bloco({self.nome})"
 
-    def serialize(self) -> dict[str, list[Registro]]:
+    def serialize(self) -> dict:
         return {"nome": self.nome, "filhos": self.filhos}
 
 
