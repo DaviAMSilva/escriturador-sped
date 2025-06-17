@@ -1,4 +1,5 @@
 import json
+from abc import ABC, abstractmethod
 from functools import partial
 
 from ..classes.bloco import Bloco
@@ -17,7 +18,8 @@ from ..utilidades import remover_assinatura_escrituracao
 
 
 
-class Escrituracao:
+class Escrituracao(ABC):
+    @abstractmethod
     def __init__(self, escrituracao_texto, nome: str, efd_tipo: EfdTipo) -> None:
         self.nome = nome
         self.efd_tipo: EfdTipo = efd_tipo
@@ -122,11 +124,11 @@ class Escrituracao:
 
 
 class EscrituracaoPISCOFINS(Escrituracao):
-    def __init__(self, escrituracao_texto) -> None:
+    def __init__(self, escrituracao_texto):
         super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
 
 
 
 class EscrituracaoICMSIPI(Escrituracao):
-    def __init__(self, escrituracao_texto) -> None:
+    def __init__(self, escrituracao_texto):
         super().__init__(escrituracao_texto, "EFD_ICMS_IPI", "efd_icms_ipi")

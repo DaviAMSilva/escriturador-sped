@@ -1,8 +1,11 @@
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
 
+# Útil para evitar importações circulares
+if TYPE_CHECKING:
+    from ..classes.registro import Registro
 
 
 
@@ -13,14 +16,15 @@ from ..types import EfdTipo
 
 
 class Campo:
-    def __init__(self, valor: str, registro_nome: str, numero: int, efd_tipo: EfdTipo) -> None:
+    def __init__(self, valor: str, registro_pai: "Registro", numero: int, efd_tipo: EfdTipo) -> None:
         self._valor: str = valor
 
         self.__retorna_valor: Callable[[], str] | None = None
 
         self.efd_tipo: EfdTipo = efd_tipo
+        self.registro_pai = registro_pai
 
-        info_campos = EFD_INFO[efd_tipo]["registros"][registro_nome]["campos"][numero - 1]
+        info_campos = EFD_INFO[efd_tipo]["registros"][self.registro_pai.nome]["campos"][numero - 1]
 
         # fmt: off
         self.nome          = info_campos["nome"]
