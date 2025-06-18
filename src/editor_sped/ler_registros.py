@@ -13,7 +13,7 @@ from .types import EfdTipo
 
 
 def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> list[Registro]:
-    if registros_texto == "" or not registros_texto:
+    if registros_texto == "" or not isinstance(registros_texto, str):
         return []
 
     nivel_anterior = -1
@@ -38,9 +38,9 @@ def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> list[Registro]:
 
         ultimos_registros_registro_atual = ultimos_registros[nivel_atual]
         ultimos_registros_registro_anterior = ultimos_registros[nivel_atual - 1]
-        if ultimos_registros_registro_atual:
+        if ultimos_registros_registro_atual is not None:
             # Verificamos se existe um registro pai válido
-            if nivel_atual - 1 >= 0 and ultimos_registros_registro_anterior:
+            if nivel_atual - 1 >= 0 and ultimos_registros_registro_anterior is not None:
                 # Se existir:
                 # Adicionamos o registro atual como filho do registro acima dele (nível - 1)
                 # De maneira inversa criamos a ligação do registro filho com o registro pai

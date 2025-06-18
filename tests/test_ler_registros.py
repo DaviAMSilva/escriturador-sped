@@ -24,7 +24,7 @@ def test_ler_registros(arquivo):
 
 def test_ler_registros_vazio():
     registros_vazio1 = ler_registros("", "efd_icms_ipi")
-    registros_vazio2 = ler_registros(None, "efd_icms_ipi")
+    registros_vazio2 = ler_registros("", "efd_pis_cofins")
 
     assert isinstance(registros_vazio1, list)
     assert isinstance(registros_vazio1, list)

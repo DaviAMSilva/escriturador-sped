@@ -8,6 +8,7 @@ from ..ler_registros import ler_registros
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
 from ..utilidades import remover_assinatura_escrituracao
+from .contem_registros import ContemRegistros
 
 
 
@@ -18,11 +19,11 @@ from ..utilidades import remover_assinatura_escrituracao
 
 
 
-class Escrituracao(ABC):
+class Escrituracao(ContemRegistros, ABC):
     @abstractmethod
-    def __init__(self, escrituracao_texto, nome: str, efd_tipo: EfdTipo) -> None:
-        self.nome = nome
-        self.efd_tipo: EfdTipo = efd_tipo
+    def __init__(self, escrituracao_texto:str, nome: str, efd_tipo: EfdTipo) -> None:
+        super().__init__(nome, efd_tipo, [])
+
         self.blocos: dict[str, Bloco] = {}
 
         self.abertura: Registro
@@ -32,23 +33,6 @@ class Escrituracao(ABC):
         escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto)
 
         self.__ler_escrituracao(escrituracao_texto)
-
-
-
-    def __str__(self) -> str:
-        return self.nome
-
-    def __repr__(self) -> str:
-        return f"Escrituracao({self.nome})"
-
-    def serialize(self) -> dict:
-        return {"nome": self.nome, "filhos": self.filhos}
-
-
-
-    @property
-    def tamanho(self) -> int:
-        return sum(f.tamanho for f in self.filhos)
 
 
 
@@ -74,7 +58,7 @@ class Escrituracao(ABC):
 
         # Informação da escrituração em si
         self.filhos = registros_raizes
-        [self.abertura, self.fechamento] = registros_raizes  # pylint: disable=unbalanced-tuple-unpacking
+        [self.abertura, self.fechamento] = registros_raizes
 
 
 

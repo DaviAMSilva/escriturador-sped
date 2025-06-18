@@ -1,6 +1,7 @@
 from ..classes.campo import Campo
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
+from .contem_registros import ContemRegistros
 
 
 
@@ -11,32 +12,21 @@ from ..types import EfdTipo
 
 
 
-class Registro:
+class Registro(ContemRegistros):
     def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
-        self.filhos: list[Registro] = []
-        self.pai: Registro
-
         campos_lista = campos_texto.split("|")[1:-1]
 
-        self.nome = campos_lista[0]
-        self.efd_tipo = efd_tipo
+        super().__init__(campos_lista[0], efd_tipo, [])
+
+        self.pai: Registro
         self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
         self.campos = [Campo(campo, self, i + 1, self.efd_tipo) for i, campo in enumerate(campos_lista)]
 
 
 
-    def __str__(self) -> str:
-        return self.nome
-
-    def __repr__(self) -> str:
-        return f"Registro({self.nome})"
-
-
-
     def serialize(self) -> dict:
-        return {"campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": self.filhos}
-
-
+        s = super().serialize()
+        return {"nome": s["nome"], "campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": s["filhos"]}
 
     def linha(self) -> str:
         return f"|{'|'.join([str(c) for c in self.campos])}|\n"
@@ -50,8 +40,4 @@ class Registro:
 
     @property
     def tamanho(self) -> int:
-        return 1 + sum(f.tamanho for f in self.filhos)
-
-    @property
-    def contem_filhos(self) -> bool:
-        return len(self.filhos) >= 1
+        return super().tamanho + 1

@@ -4,8 +4,8 @@ import json
 import os
 from typing import Literal
 
-from src.editor_sped.constantes import EFD_TIPOS, EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS
-from src.editor_sped.types import EfdInfo, EfdInfoRegistro
+from editor_sped.constantes import EFD_TIPOS, EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS
+from editor_sped.types import EfdInfo, EfdInfoRegistro
 
 
 
