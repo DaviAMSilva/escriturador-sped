@@ -16,13 +16,35 @@ def test_blocos(arquivo:str, tamanho_total:int, tamanho_blocos:dict[str, int]):
 
     escrituracao = EscrituracaoPISCOFINS(escrituracao_texto)
 
+    assert isinstance(escrituracao.abertura, Registro)
+    assert isinstance(escrituracao.fechamento, Registro)
+
+    assert isinstance(escrituracao.abertura.campos, tuple)
+    assert isinstance(escrituracao.fechamento.campos, tuple)
+
+    assert escrituracao.abertura.pai == None
+    assert escrituracao.fechamento.pai == None
+
+    assert escrituracao.abertura.nome == "0000"
+    assert escrituracao.fechamento.nome == "9999"
+
     assert escrituracao.tamanho == tamanho_total
 
+    assert len(escrituracao.filhos) == 2
     assert len(escrituracao.blocos) == 8
 
     for bloco_nome, bloco in escrituracao.blocos.items():
         assert isinstance(bloco.abertura, Registro)
         assert isinstance(bloco.fechamento, Registro)
+
+        assert isinstance(bloco.abertura.campos, tuple)
+        assert isinstance(bloco.fechamento.campos, tuple)
+
+        assert bloco.abertura.pai is escrituracao.abertura
+        assert bloco.fechamento.pai is escrituracao.abertura
+
+        assert bloco.abertura.nome == f"{bloco.nome}001"
+        assert bloco.fechamento.nome == f"{bloco.nome}990"
 
         assert len(bloco.filhos) == 2
 

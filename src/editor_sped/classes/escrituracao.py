@@ -59,6 +59,8 @@ class Escrituracao(ContemRegistros, ABC):
         # Informação da escrituração em si
         self.filhos = registros_raizes
         [self.abertura, self.fechamento] = registros_raizes
+        self.abertura.pai = None
+        self.fechamento.pai = None
 
 
 
