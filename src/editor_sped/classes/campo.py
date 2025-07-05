@@ -1,4 +1,5 @@
-from typing import Callable, TYPE_CHECKING
+from inspect import signature
+from typing import TYPE_CHECKING, Callable
 
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
@@ -6,6 +7,7 @@ from ..types import EfdTipo
 # Útil para evitar importações circulares
 if TYPE_CHECKING:
     from ..classes.registro import Registro
+
 
 
 
@@ -70,7 +72,14 @@ class Campo:
 
 
     def configurar_valor(self, retorna_valor: Callable[[], str]) -> None:
-        if not isinstance(retorna_valor, Callable):
+        # Verifica se retorna_valor é uma função sem argumentos e retorna str
+        if not callable(retorna_valor):
             raise ValueError(f"O parâmetro '{retorna_valor}' não é uma função")
+
+        sig = signature(retorna_valor)
+        if len(sig.parameters) != 0:
+            raise TypeError("A função fornecida deve ser sem argumentos")
+        if sig.return_annotation not in (str, sig.empty):
+            raise TypeError("A função fornecida deve retornar uma string (str)")
 
         self.__retorna_valor = retorna_valor

@@ -108,11 +108,11 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 class EscrituracaoPISCOFINS(Escrituracao):
-    def __init__(self, escrituracao_texto) -> None:
+    def __init__(self, escrituracao_texto: str) -> None:
         super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
 
 
 
 class EscrituracaoICMSIPI(Escrituracao):
-    def __init__(self, escrituracao_texto) -> None:
+    def __init__(self, escrituracao_texto: str) -> None:
         super().__init__(escrituracao_texto, "EFD_ICMS_IPI", "efd_icms_ipi")
