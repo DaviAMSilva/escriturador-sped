@@ -25,6 +25,8 @@ class ContemRegistros(ABC):
     def serialize(self) -> dict:
         return {"nome": self.nome, "filhos": self.filhos}
 
+
+
     @property
     def tamanho(self) -> int:
         return sum(f.tamanho for f in self.filhos)

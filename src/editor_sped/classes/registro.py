@@ -18,7 +18,7 @@ class Registro(ContemRegistros):
 
         super().__init__(campos_lista[0], efd_tipo, [])
 
-        self.pai: Registro | None
+        self.pai: Registro | None = None
         self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
         self.campos = tuple(Campo(campo, self, i + 1, self.efd_tipo) for i, campo in enumerate(campos_lista))
 
@@ -28,8 +28,7 @@ class Registro(ContemRegistros):
         s = super().serialize()
         return {"nome": s["nome"], "campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": s["filhos"]}
 
-    def linha(self) -> str:
-        return f"|{'|'.join([str(c) for c in self.campos])}|\n"
+
 
     def texto(self) -> str:
         return \
@@ -37,6 +36,10 @@ class Registro(ContemRegistros):
             f"{"".join([f.texto() for f in self.filhos])}"
 
 
+
+    @property
+    def linha(self) -> str:
+        return f"|{'|'.join([str(c) for c in self.campos])}|\n"
 
     @property
     def tamanho(self) -> int:

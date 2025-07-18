@@ -22,8 +22,8 @@ def test_blocos(arquivo:str, tamanho_total:int, tamanho_blocos:dict[str, int]):
     assert isinstance(escrituracao.abertura.campos, tuple)
     assert isinstance(escrituracao.fechamento.campos, tuple)
 
-    assert escrituracao.abertura.pai == None
-    assert escrituracao.fechamento.pai == None
+    assert escrituracao.abertura.pai is None
+    assert escrituracao.fechamento.pai is None
 
     assert escrituracao.abertura.nome == "0000"
     assert escrituracao.fechamento.nome == "9999"
@@ -32,6 +32,9 @@ def test_blocos(arquivo:str, tamanho_total:int, tamanho_blocos:dict[str, int]):
 
     assert len(escrituracao.filhos) == 2
     assert len(escrituracao.blocos) == 8
+
+    assert isinstance(escrituracao.texto(), str)
+    assert isinstance(escrituracao.json(), str)
 
     for bloco_nome, bloco in escrituracao.blocos.items():
         assert isinstance(bloco.abertura, Registro)
