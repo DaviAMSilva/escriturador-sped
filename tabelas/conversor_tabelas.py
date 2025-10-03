@@ -134,10 +134,10 @@ def main():
 
                 # Calculando o tamanho baseado nas regras
                 if linha_campos["Tam"] in ("", "-"):
-                    if tipo_campo == "N":  # Numérico, limite de 255 no caso geral
+                    if tipo_campo == "N":  # Numérico, sem limite no caso geral (assumindo 255 como limite prático)
                         tamanho_campo = 255
-                    elif tipo_campo == "C":  # Alfanumérico, sem limite no caso geral (assumindo 65535 como limite prático)
-                        tamanho_campo = 65535
+                    elif tipo_campo == "C":  # Alfanumérico, limite de 255 no caso geral
+                        tamanho_campo = 255
                 else:
                     tamanho_campo = int(linha_campos["Tam"].replace("*", "").replace("-", ""))
 
