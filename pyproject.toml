@@ -14,7 +14,8 @@ TEST = [
     "pylint",
     "pytest",
     "pytest-pylint",
-    "pytest-pep8"
+    "pytest-pep8",
+    "pytest-cov"
 ]
 
 [tool.setuptools.packages.find]
