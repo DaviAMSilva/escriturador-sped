@@ -1,16 +1,21 @@
 import glob
-import os
 
 import pytest
 
-from editor_sped import EFD_TIPOS, Registro, abrir_escrituracao, ler_registros
+from editor_sped import EFD_TIPOS, Registro, ler_registros
 
 
-@pytest.mark.parametrize("arquivo", glob.glob("efd_pis_cofins_*.txt", root_dir="exemplos/"))
-def test_ler_registros(arquivo):
-    registros_texto = abrir_escrituracao(os.path.join("exemplos", arquivo))
+@pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
+def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
+    registros_texto = textos_todos[arquivo]
 
-    registros = ler_registros(registros_texto, "efd_pis_cofins")
+    if "efd_icms_ipi" in arquivo:
+        registros = ler_registros(registros_texto, "efd_icms_ipi")
+    elif "efd_pis_cofins" in arquivo:
+        registros = ler_registros(registros_texto, "efd_pis_cofins")
+    else:
+        raise FileExistsError(f"Arquivo inválido: {arquivo}")
+
 
     assert isinstance(registros, list)
     assert len(registros) > 0
@@ -31,10 +36,10 @@ def test_ler_registros(arquivo):
     assert isinstance(primeiro_registro.filhos, list)
     assert isinstance(primeiro_registro.campos, tuple)
 
-    assert\
-        (    primeiro_registro.contem_filhos and primeiro_registro.tamanho >  1 and len(primeiro_registro.filhos) >  0)\
-        or\
-        (not primeiro_registro.contem_filhos and primeiro_registro.tamanho == 1 and len(primeiro_registro.filhos) == 0)
+    if primeiro_registro.contem_filhos:
+        assert primeiro_registro.tamanho > 1 and len(primeiro_registro.filhos) > 0
+    else:
+        assert primeiro_registro.tamanho == 1 and len(primeiro_registro.filhos) == 0
 
 
 

@@ -1,10 +1,9 @@
 from decimal import Decimal, InvalidOperation
 import glob
-import os
 
 import pytest
 
-from editor_sped import EscrituracaoICMSIPI, EscrituracaoPISCOFINS, abrir_escrituracao
+from editor_sped.classes.escrituracao import Escrituracao
 from editor_sped.tabelas import EFD_INFO
 from editor_sped.types import EfdTipo
 
@@ -52,24 +51,16 @@ def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
                 raise ValueError(f"Tipo de campo desconhecido: {tipo1}")
 
 
-@pytest.mark.parametrize("arquivo", glob.glob("efd_icms_ipi_*.txt", root_dir="exemplos/"))
-def test_icms_ipi(arquivo):
-    escrituracao_texto = abrir_escrituracao(os.path.join("exemplos", arquivo))
-
-    escrituracao = EscrituracaoICMSIPI(escrituracao_texto)
-
-    resultado = escrituracao.texto()
-
-    comparar_escrituracoes(escrituracao_texto, resultado, "efd_icms_ipi")
-
-
-
-@pytest.mark.parametrize("arquivo", glob.glob("efd_pis_cofins_*.txt", root_dir="exemplos/"))
-def test_pis_cofins(arquivo):
-    escrituracao_texto = abrir_escrituracao(os.path.join("exemplos", arquivo))
-
-    escrituracao = EscrituracaoPISCOFINS(escrituracao_texto)
+@pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
+def test_icms_ipi(textos_todos: dict[str, str], escrituracoes_todas: dict[str, Escrituracao], arquivo: str):
+    escrituracao_texto = textos_todos[arquivo]
+    escrituracao = escrituracoes_todas[arquivo]
 
     resultado = escrituracao.texto()
 
-    comparar_escrituracoes(escrituracao_texto, resultado, "efd_pis_cofins")
+    if "efd_icms_ipi" in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, "efd_icms_ipi")
+    elif "efd_pis_cofins" in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, "efd_pis_cofins")
+    else:
+        raise FileExistsError(f"Arquivo inválido: {arquivo}")
