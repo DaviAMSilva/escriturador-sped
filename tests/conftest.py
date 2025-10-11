@@ -38,10 +38,6 @@ def textos_pis_cofins():
 
 
 
-
-
-
-
 @pytest.fixture(scope="session")
 def escrituracoes_todas(escrituracoes_icms_ipi: dict[str, tuple[str, Escrituracao]], escrituracoes_pis_cofins: dict[str, tuple[str, Escrituracao]]):
     return {**escrituracoes_icms_ipi, **escrituracoes_pis_cofins}

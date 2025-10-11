@@ -1,5 +1,5 @@
-from decimal import Decimal, InvalidOperation
 import glob
+from decimal import Decimal, InvalidOperation
 
 import pytest
 

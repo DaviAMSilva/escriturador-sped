@@ -21,7 +21,7 @@ from .contem_registros import ContemRegistros
 
 class Escrituracao(ContemRegistros, ABC):
     @abstractmethod
-    def __init__(self, escrituracao_texto:str, nome: str, efd_tipo: EfdTipo) -> None:
+    def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
         super().__init__(nome, efd_tipo, [])
 
         self.blocos: dict[str, Bloco] = {}
@@ -109,12 +109,12 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
-class EscrituracaoPISCOFINS(Escrituracao):
-    def __init__(self, escrituracao_texto: str) -> None:
-        super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
-
-
-
 class EscrituracaoICMSIPI(Escrituracao):
     def __init__(self, escrituracao_texto: str) -> None:
         super().__init__(escrituracao_texto, "EFD_ICMS_IPI", "efd_icms_ipi")
+
+
+
+class EscrituracaoPISCOFINS(Escrituracao):
+    def __init__(self, escrituracao_texto: str) -> None:
+        super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
