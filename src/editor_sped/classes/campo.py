@@ -100,45 +100,65 @@ class Campo:
 
     @property
     def valor(self) -> str | int | float | None:
-        if self._retorna_valor:
-            return self._retorna_valor()
-
         if self.tipo == Campo.ALFANUMERICO:
-            return self._valor_alfanumerico
+            return self.valor_c
 
         if self.tipo == Campo.NUMERICO:
-            if self._valor_numerico is None:
-                return None
-
-            if self.decimal:
-                return float(self._valor_numerico)
-
-            return int(self._valor_numerico)
+            return self.valor_n
 
         raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
 
     @valor.setter
     def valor(self, valor: str | int | float) -> None:
+        if self.tipo == Campo.ALFANUMERICO and isinstance(valor, str):
+            self.valor_c = valor
+        elif self.tipo == Campo.NUMERICO and isinstance(valor, (str, int, float)):
+            self.valor_n = valor
+        elif not isinstance(valor, (str, int, float)):
+            raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int ou float")
+        elif self.tipo not in (Campo.ALFANUMERICO, Campo.NUMERICO):
+            raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
+        else:
+            raise ValueError(f"Erro desconhecido de valor no campo '{self.nome}'")
+
+
+
+    @property
+    def valor_n(self) -> int | float | None:
+        if self._valor_numerico is None:
+            return None
+
+        if self.decimal:
+            return float(self._valor_numerico)
+
+        return int(self._valor_numerico)
+
+    @valor_n.setter
+    def valor_n(self, valor: str | int | float) -> None:
         if self._retorna_valor:
             raise ValueError("Não é possível definir o valor de um campo configurado")
 
-        if self.tipo == Campo.ALFANUMERICO:
-            if not isinstance(valor, str):
-                raise TypeError(f"O valor do campo '{self.nome}' deve ser uma string (str)")
+        if not isinstance(valor, (str, int, float)):
+            raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int ou float")
 
-            self._valor_alfanumerico = valor[:self.tamanho]
-            self._valor_numerico = None
+        self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor else None
+        self._valor_alfanumerico = Campo.valor_para_texto(
+            float(self._valor_numerico) if self.decimal else int(self._valor_numerico),
+            self.decimal,
+            self.tamanho,
+            self.tamanho_exato
+        ) if self._valor_numerico is not None else ""
 
-        elif self.tipo == Campo.NUMERICO:
-            if not isinstance(valor, (str, int, float, Decimal)) and valor is not None:
-                raise TypeError(f"O valor do campo '{self.nome}' deve ser str, int, float ou Decimal")
+    @property
+    def valor_c(self) -> str:
+        return self._valor_alfanumerico
 
-            self._valor_alfanumerico = Campo.valor_para_texto(valor, self.decimal, self.tamanho, self.tamanho_exato)
-            self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor != "" else None
+    @valor_c.setter
+    def valor_c(self, valor: str | int | float) -> None:
+        if self._retorna_valor:
+            raise ValueError("Não é possível definir o valor de um campo configurado")
 
-        else:
-            raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
-
+        self._valor_alfanumerico = str(valor)[:self.tamanho]
 
 
 
