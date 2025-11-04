@@ -39,7 +39,7 @@ class Campo:
         return valor_str
 
     @staticmethod
-    def texto_para_valor(valor: str, decimal: int | None) -> str | int | float | None:
+    def texto_para_valor(valor: str, decimal: int | None) -> int | float | None:
         if valor in ("", None):
             return None
 
@@ -110,16 +110,15 @@ class Campo:
 
     @valor.setter
     def valor(self, valor: str | int | float) -> None:
-        if self.tipo == Campo.ALFANUMERICO and isinstance(valor, str):
-            self.valor_c = valor
-        elif self.tipo == Campo.NUMERICO and isinstance(valor, (str, int, float)):
-            self.valor_n = valor
-        elif not isinstance(valor, (str, int, float)):
-            raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int ou float")
-        elif self.tipo not in (Campo.ALFANUMERICO, Campo.NUMERICO):
-            raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
+        if isinstance(valor, (str, int, float)):
+            if self.tipo == Campo.ALFANUMERICO:
+                self.valor_c = valor
+            elif self.tipo == Campo.NUMERICO:
+                self.valor_n = valor
+            else:
+                raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
         else:
-            raise ValueError(f"Erro desconhecido de valor no campo '{self.nome}'")
+            raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int ou float")
 
 
 
@@ -159,6 +158,13 @@ class Campo:
             raise ValueError("Não é possível definir o valor de um campo configurado")
 
         self._valor_alfanumerico = str(valor)[:self.tamanho]
+
+        if self.tipo == Campo.ALFANUMERICO:
+            self._valor_numerico = None
+        else:
+            novo_valor_n = Campo.texto_para_valor(self._valor_alfanumerico, self.decimal)
+
+            self._valor_numerico = Decimal(str(novo_valor_n)) if novo_valor_n is not None else None
 
 
 
