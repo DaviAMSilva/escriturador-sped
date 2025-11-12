@@ -51,3 +51,26 @@ def test_ler_registros_vazio():
     assert isinstance(registros_vazio2, list)
     assert len(registros_vazio1) == 0
     assert len(registros_vazio2) == 0
+
+
+
+def test_ler_registros_erro():
+    # fmt: off
+    casos_de_teste = [
+        ("|",          SyntaxError),
+        ("||",         SyntaxError),
+        ("|||",        KeyError),
+        ("C100",       SyntaxError),
+        ("C100|0|",    SyntaxError),
+        ("|C100",      SyntaxError),
+        ("C100|0",     SyntaxError),
+        ("|ERRO|1|",   KeyError),
+        ("|C100|0|",   SyntaxError),
+        ("|0990|ABC|", ValueError),
+    ]
+    # fmt: on
+
+    for tipo in EFD_TIPOS:
+        for registros_texto, erro_esperado in casos_de_teste:
+            with pytest.raises(erro_esperado):
+                ler_registros(registros_texto, tipo)

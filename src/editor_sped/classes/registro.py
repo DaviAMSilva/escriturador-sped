@@ -18,6 +18,11 @@ class Registro(ContemRegistros):
 
         super().__init__(campos_lista[0], efd_tipo, [])
 
+        campos_esperados = len(EFD_INFO[self.efd_tipo]["registros"][self.nome]["campos"])
+
+        if len(campos_lista) != campos_esperados:
+            raise SyntaxError(f"A quantidade de campos é diferente da quantidade esperada ({len(campos_lista)} ao invés de {campos_esperados})")
+
         self.pai: Registro | None = None
         self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
         self.campos = tuple(Campo(campo, self, i + 1, self.efd_tipo) for i, campo in enumerate(campos_lista))

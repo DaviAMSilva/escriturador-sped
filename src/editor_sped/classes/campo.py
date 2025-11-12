@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from inspect import signature
 from typing import TYPE_CHECKING, Callable
 
@@ -140,13 +140,16 @@ class Campo:
         if not isinstance(valor, (str, int, float)):
             raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int ou float")
 
-        self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor else None
-        self._valor_alfanumerico = Campo.valor_para_texto(
-            float(self._valor_numerico) if self.decimal else int(self._valor_numerico),
-            self.decimal,
-            self.tamanho,
-            self.tamanho_exato
-        ) if self._valor_numerico is not None else ""
+        try:
+            self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor else None
+            self._valor_alfanumerico = Campo.valor_para_texto(
+                float(self._valor_numerico) if self.decimal else int(self._valor_numerico),
+                self.decimal,
+                self.tamanho,
+                self.tamanho_exato
+            ) if self._valor_numerico is not None else ""
+        except InvalidOperation as e:
+            raise ValueError(f"Não foi possível converter valor para Decimal ({valor})") from e
 
     @property
     def valor_c(self) -> str:
