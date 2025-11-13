@@ -25,7 +25,7 @@ class Registro(ContemRegistros):
 
         self.pai: Registro | None = None
         self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
-        self.campos = tuple(Campo(campo, self, i + 1, self.efd_tipo) for i, campo in enumerate(campos_lista))
+        self.campos = tuple(Campo(campo, i + 1, self, self.efd_tipo) for i, campo in enumerate(campos_lista))
 
 
 
