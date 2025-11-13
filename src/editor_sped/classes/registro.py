@@ -38,7 +38,7 @@ class Registro(ContemRegistros):
     def texto(self) -> str:
         return \
             f"|{'|'.join([str(c) for c in self.campos])}|\n" + \
-            f"{"".join([f.texto() for f in self.filhos])}"
+            f"{''.join([f.texto() for f in self.filhos])}"
 
 
 
