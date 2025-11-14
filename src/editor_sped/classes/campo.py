@@ -46,7 +46,7 @@ class Campo:
         if decimal:
             return float((valor or "").replace(",", "."))
 
-        return int(valor)
+        return int(float((valor or "").replace(",", ".")))
 
 
 
@@ -142,6 +142,12 @@ class Campo:
 
         try:
             self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor not in ("", None) else None
+
+            # Arrendondado para a quantidade exata de casas decimais
+            if self._valor_numerico:
+                self._valor_numerico = Decimal(round(self._valor_numerico, self.decimal))
+
+            # Convertendo o campo também para a versão alfanumérica
             self._valor_alfanumerico = Campo.valor_para_texto(
                 float(self._valor_numerico) if self.decimal else int(self._valor_numerico),
                 self.decimal,
@@ -163,14 +169,26 @@ class Campo:
         if not (isinstance(valor, (str, int, float)) or valor is None):
             raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int, float ou None")
 
-        self._valor_alfanumerico = str(valor)[:self.tamanho] if valor not in ("", None) else ""
-
         if self.tipo == Campo.ALFANUMERICO:
             self._valor_numerico = None
+            self._valor_alfanumerico = str(valor)[:self.tamanho] if valor not in ("", None) else ""
         elif self.tipo == Campo.NUMERICO:
-            novo_valor_n = Campo.texto_para_valor(self._valor_alfanumerico, self.decimal)
+            try:
+                self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor not in ("", None) else None
 
-            self._valor_numerico = Decimal(str(novo_valor_n)) if novo_valor_n not in ("", None) else None
+                # Arrendondado para a quantidade exata de casas decimais
+                if self._valor_numerico:
+                    self._valor_numerico = Decimal(round(self._valor_numerico, self.decimal))
+
+                # Convertendo o campo também para a versão alfanumérica
+                self._valor_alfanumerico = Campo.valor_para_texto(
+                    float(self._valor_numerico) if self.decimal else int(self._valor_numerico),
+                    self.decimal,
+                    self.tamanho,
+                    self.tamanho_exato
+                ) if self._valor_numerico is not None else ""
+            except InvalidOperation as e:
+                raise ValueError(f"Não foi possível converter valor para Decimal ({valor})") from e
         else:
             raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
 
