@@ -99,7 +99,7 @@ class Campo:
 
 
     @property
-    def valor(self) -> str | int | float | None:
+    def valor(self) -> str | int | float:
         if self.tipo == Campo.ALFANUMERICO:
             return self.valor_c
 
@@ -123,9 +123,12 @@ class Campo:
 
 
     @property
-    def valor_n(self) -> int | float | None:
+    def valor_n(self) -> int | float:
         if self._valor_numerico is None:
-            return None
+            # Infelizmente não é prático informar corretamente o tipo de retorno, pois ferramentas
+            # como Pylance irão reclamar que o seguinte código, por exemplo, pode gerar erros:
+            # campo.valor_n += 10 (None + 10 geraria erro)
+            return None # type: ignore
 
         if self.decimal:
             return float(self._valor_numerico)
