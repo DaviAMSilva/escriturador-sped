@@ -110,62 +110,6 @@ class Campo:
 
     @valor.setter
     def valor(self, valor: str | int | float | None) -> None:
-        if isinstance(valor, (str, int, float)) or valor is None:
-            if self.tipo == Campo.ALFANUMERICO:
-                self.valor_c = valor
-            elif self.tipo == Campo.NUMERICO:
-                self.valor_n = valor
-            else:
-                raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
-        else:
-            raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int, float ou None")
-
-
-
-    @property
-    def valor_n(self) -> int | float:
-        if self._valor_numerico is None:
-            # Infelizmente não é prático informar corretamente o tipo de retorno, pois ferramentas
-            # como Pylance irão reclamar que o seguinte código, por exemplo, pode gerar erros:
-            # campo.valor_n += 10 (None + 10 geraria erro)
-            return None # type: ignore
-
-        if self.decimal:
-            return float(self._valor_numerico)
-
-        return int(self._valor_numerico)
-
-    @valor_n.setter
-    def valor_n(self, valor: str | int | float | None) -> None:
-        if self._retorna_valor:
-            raise ValueError("Não é possível definir o valor de um campo configurado")
-
-        if not (isinstance(valor, (str, int, float)) or valor is None):
-            raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int, float ou None")
-
-        try:
-            self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor not in ("", None) else None
-
-            # Arrendondado para a quantidade exata de casas decimais
-            if self._valor_numerico:
-                self._valor_numerico = Decimal(round(self._valor_numerico, self.decimal))
-
-            # Convertendo o campo também para a versão alfanumérica
-            self._valor_alfanumerico = Campo.valor_para_texto(
-                float(self._valor_numerico) if self.decimal else int(self._valor_numerico),
-                self.decimal,
-                self.tamanho,
-                self.tamanho_exato
-            ) if self._valor_numerico is not None else ""
-        except InvalidOperation as e:
-            raise ValueError(f"Não foi possível converter valor para Decimal ({valor})") from e
-
-    @property
-    def valor_c(self) -> str:
-        return self._valor_alfanumerico
-
-    @valor_c.setter
-    def valor_c(self, valor: str | int | float | None) -> None:
         if self._retorna_valor:
             raise ValueError("Não é possível definir o valor de um campo configurado")
 
@@ -194,6 +138,25 @@ class Campo:
                 raise ValueError(f"Não foi possível converter valor para Decimal ({valor})") from e
         else:
             raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
+
+
+
+    @property
+    def valor_c(self) -> str:
+        return self._valor_alfanumerico
+
+    @property
+    def valor_n(self) -> int | float:
+        if self._valor_numerico is None:
+            # Infelizmente não é prático informar corretamente o tipo de retorno, pois ferramentas
+            # como Pylance irão reclamar que o seguinte código, por exemplo, pode gerar erros:
+            # campo.valor_n += 10 (None + 10 geraria erro)
+            return None  # type: ignore
+
+        if self.decimal:
+            return float(self._valor_numerico)
+
+        return int(self._valor_numerico)
 
 
 
