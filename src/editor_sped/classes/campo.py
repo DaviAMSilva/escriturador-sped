@@ -32,9 +32,11 @@ class Campo:
         elif tamanho_exato:
             tamanho_esquerda = tamanho - (decimal + 1 if decimal else 0)
             tamanho_direita = decimal if decimal else 0
-            valor_str = f"{valor:0{tamanho_esquerda}.{tamanho_direita}f}" if decimal else f"{int(valor):0{tamanho_esquerda}d}".replace(".", ",")
+            valor_str = f"{valor:0{tamanho_esquerda}.{tamanho_direita}f}".replace(".", ",") if decimal \
+                else f"{int(valor):0{tamanho_esquerda}d}".replace(".", ",")
         else:
-            valor_str = f"{valor:.{decimal or 0}f}" if decimal else str(int(valor)).replace(".", ",")
+            valor_str = f"{valor:.{decimal or 0}f}".replace(".", ",") if decimal\
+                else str(int(valor)).replace(".", ",")
 
         return valor_str
 
