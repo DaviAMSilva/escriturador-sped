@@ -10,14 +10,6 @@ if TYPE_CHECKING:
     from ..classes.registro import Registro
 
 
-
-
-
-
-
-
-
-
 class Campo:
     # Tipos de campo
     ALFANUMERICO = "C"
@@ -26,19 +18,19 @@ class Campo:
     @staticmethod
     def valor_para_texto(valor: str | int | float | None, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> str:
         if isinstance(valor, str):
-            valor_str = str(valor)[:tamanho]
-        elif valor is None:
-            valor_str = ""
-        elif tamanho_exato:
+            return str(valor)[:tamanho]
+
+        if valor is None:
+            return ""
+
+        if tamanho_exato:
             tamanho_esquerda = tamanho - (decimal + 1 if decimal else 0)
             tamanho_direita = decimal if decimal else 0
-            valor_str = f"{valor:0{tamanho_esquerda}.{tamanho_direita}f}".replace(".", ",") if decimal \
+            return f"{valor:0{tamanho_esquerda}.{tamanho_direita}f}".replace(".", ",") if decimal \
                 else f"{int(valor):0{tamanho_esquerda}d}".replace(".", ",")
-        else:
-            valor_str = f"{valor:.{decimal or 0}f}".replace(".", ",") if decimal\
-                else str(int(valor)).replace(".", ",")
 
-        return valor_str
+        return f"{valor:.{decimal or 0}f}".replace(".", ",") if decimal\
+            else str(int(valor)).replace(".", ",")
 
     @staticmethod
     def texto_para_valor(valor: str, decimal: int | None) -> int | float | None:
@@ -49,8 +41,6 @@ class Campo:
             return float((valor or "").replace(",", "."))
 
         return int(float((valor or "").replace(",", ".")))
-
-
 
     def __init__(self, valor: str | int | float | None, numero: int, registro_pai: "Registro", efd_tipo: EfdTipo) -> None:
         self.efd_tipo: EfdTipo = efd_tipo
@@ -77,28 +67,20 @@ class Campo:
         # Converte o valor inicial se necessário
         self.valor = valor
 
-
-
     def __str__(self) -> str:
         return self.texto()
 
     def __repr__(self) -> str:
         return f"Campo({self.nome})"
 
-
-
     def serialize(self) -> str:
         return self.texto()
-
-
 
     def texto(self) -> str:
         if self._retorna_valor:
             return Campo.valor_para_texto(self._retorna_valor(), self.decimal, self.tamanho, self.tamanho_exato)
 
         return self._valor_alfanumerico
-
-
 
     @property
     def valor(self) -> str | int | float:
@@ -141,8 +123,6 @@ class Campo:
         else:
             raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
 
-
-
     @property
     def valor_c(self) -> str:
         return self._valor_alfanumerico
@@ -159,8 +139,6 @@ class Campo:
             return float(self._valor_numerico)
 
         return int(self._valor_numerico)
-
-
 
     def configurar_valor(self, retorna_valor: Callable[[], str | int | float]) -> None:
         # Verifica se retorna_valor é uma função sem argumentos e retorna str
