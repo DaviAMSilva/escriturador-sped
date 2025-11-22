@@ -41,20 +41,45 @@ def test_campo_atribuicao():
         assert c.valor_c == externo_c
         assert c.valor_n == externo_n
 
-
-
     r = Registro("|9999||", "efd_icms_ipi")
     c1 = Campo(None, 2, r, "efd_icms_ipi")
     c2 = Campo(None, 2, r, "efd_icms_ipi")
 
     with pytest.raises(ValueError):
-        c1.valor = True # type: ignore
+        c1.valor = True  # type: ignore
 
     with pytest.raises(TypeError):
-        c1.valor = [0] # type: ignore
+        c1.valor = [0]  # type: ignore
 
     with pytest.raises(ValueError):
-        c2.valor = True # type: ignore
+        c2.valor = True  # type: ignore
 
     with pytest.raises(TypeError):
-        c2.valor = [0] # type: ignore
+        c2.valor = [0]  # type: ignore
+
+
+def test_campo_erro():
+    r = Registro("|9999||", "efd_icms_ipi")
+    c = Campo(None, 2, r, "efd_icms_ipi")
+
+
+    with pytest.raises(TypeError, match="não é uma função"):
+        c.configurar_valor(10)
+
+    with pytest.raises(TypeError, match="não deve conter argumentos"):
+        def f1(a: int):
+            return a
+        c.configurar_valor(f1)
+
+    with pytest.raises(TypeError, match="deve retornar str, int, float ou None"):
+        def f2() -> list:
+            return [10]
+        c.configurar_valor(f2)
+
+
+    def f3() -> int:
+        return 10
+
+    c.configurar_valor(f3)
+
+    assert c.valor_n == 10

@@ -52,7 +52,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         if len(registros_raizes) != 2 or registros_raizes[0].nome != "0000" or registros_raizes[1].nome != "9999":
-            raise ValueError(f"Escrituração mal formatada ({registros_raizes})")
+            raise SyntaxError(f"Escrituração mal formatada ({registros_raizes})")
 
 
 
@@ -92,7 +92,7 @@ class Escrituracao(ContemRegistros, ABC):
                 registro_bloco_fechamento.campos[1].configurar_valor(partial(lambda b: str(b.tamanho), self.blocos[bloco_info["nome"]]))
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
-                raise ValueError(f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|" +
+                raise TypeError(f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|" +
                                  f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe")
 
         # Adicionando o cálculo dinâmico do tamanho da escrituração para o registro de fechamento

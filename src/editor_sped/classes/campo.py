@@ -94,9 +94,6 @@ class Campo:
 
     @valor.setter
     def valor(self, valor: str | int | float | None) -> None:
-        if self._retorna_valor:
-            raise ValueError("Não é possível definir o valor de um campo configurado")
-
         if not (isinstance(valor, (str, int, float)) or valor is None):
             raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int, float ou None")
 
@@ -125,10 +122,21 @@ class Campo:
 
     @property
     def valor_c(self) -> str:
+        if self._retorna_valor:
+            self.valor = self._retorna_valor()
+
         return self._valor_alfanumerico
+
+    @valor_c.setter
+    def valor_c(self, valor: str | int | float | None) -> None:
+        self.valor = valor
+
 
     @property
     def valor_n(self) -> int | float:
+        if self._retorna_valor:
+            self.valor = self._retorna_valor()
+
         if self._valor_numerico is None:
             # Infelizmente não é prático informar corretamente o tipo de retorno, pois ferramentas
             # como Pylance irão reclamar que o seguinte código, por exemplo, pode gerar erros:
@@ -140,10 +148,14 @@ class Campo:
 
         return int(self._valor_numerico)
 
+    @valor_n.setter
+    def valor_n(self, valor: str | int | float | None) -> None:
+        self.valor = valor
+
     def configurar_valor(self, retorna_valor: Callable[[], str | int | float]) -> None:
         # Verifica se retorna_valor é uma função sem argumentos e retorna str
         if not callable(retorna_valor):
-            raise ValueError(f"O parâmetro '{retorna_valor}' não é uma função")
+            raise TypeError(f"O parâmetro '{retorna_valor}' não é uma função")
 
         sig = signature(retorna_valor)
         if len(sig.parameters) != 0:
@@ -155,5 +167,3 @@ class Campo:
 
     def desconfigurar_valor(self) -> None:
         self._retorna_valor = None
-        self._valor_alfanumerico = ""
-        self._valor_numerico = None
