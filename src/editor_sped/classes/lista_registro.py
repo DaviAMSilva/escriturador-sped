@@ -1,24 +1,47 @@
-from typing import Any, Iterable, SupportsIndex, overload
+import re
+from typing import TYPE_CHECKING, Iterable, SupportsIndex, overload
 
-from editor_sped.classes.registro import Registro
+if TYPE_CHECKING:
+    from editor_sped.classes.registro import Registro
 
 
-class ListaRegistro(list[Registro]):
-    def __init__(self, iterable: Iterable[Registro], /) -> None:
-        super().__init__(iterable)
+
+class ListaRegistro(list["Registro"]):
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, iteravel: Iterable["Registro"], /) -> None: ...
+
+    def __init__(self, iteravel=None) -> None:
+        if iteravel:
+            super().__init__(iteravel)
+        else:
+            super().__init__()
+
 
 
     @overload
-    def __getitem__(self, key: SupportsIndex) -> Any: ...
+    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
 
     @overload
-    def __getitem__(self, key: slice) -> list[Any]: ...
+    def __getitem__(self, chave: slice) -> list["Registro"]: ...
 
     @overload
-    def __getitem__(self, key: str) -> "ListaRegistro": ...
+    def __getitem__(self, chave: str | re.Pattern | tuple[str | None, bool] | None) -> "ListaRegistro": ...
 
-    def __getitem__(self, key):
-        if isinstance(key, str):
-            return ListaRegistro(r for r in self if r.nome == key)
+    def __getitem__(self, chave):
+        if isinstance(chave, (SupportsIndex, slice)):
+            return super().__getitem__(chave)
 
-        return super().__getitem__(key)
+        resultados = ListaRegistro()
+
+        if isinstance(chave, tuple) and len(chave) == 2:
+            for registro in self:
+                resultados.extend(registro.pesquisar(chave[0], chave[1]))
+
+        if isinstance(chave, str) or chave is None:
+            for registro in self:
+                resultados.extend(registro.pesquisar(chave))
+
+        return resultados
