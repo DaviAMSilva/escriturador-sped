@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from functools import partial
 
 from ..classes.bloco import Bloco
+from ..classes.lista_registro import ListaRegistro
 from ..classes.registro import Registro
 from ..ler_registros import ler_registros
 from ..tabelas import EFD_INFO
@@ -22,7 +23,7 @@ from .contem_registros import ContemRegistros
 class Escrituracao(ContemRegistros, ABC):
     @abstractmethod
     def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
-        super().__init__(nome, efd_tipo, [])
+        super().__init__(nome, efd_tipo, ListaRegistro())
 
         self.blocos: dict[str, Bloco] = {}
 

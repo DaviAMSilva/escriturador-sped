@@ -1,20 +1,19 @@
 import re
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, SupportsIndex, overload
 
-from editor_sped.classes.lista_registro import ListaRegistro
-from editor_sped.types import EfdTipo
+from ..classes.lista_registro import ListaRegistro
+from ..types import EfdTipo
 
 if TYPE_CHECKING:
-    from editor_sped.classes.registro import Registro
-
+    from ..classes.registro import Registro
 
 
 class ContemRegistros(ABC):
-    def __init__(self, nome: str, efd_tipo: "EfdTipo", filhos: list["Registro"]) -> None:
+    def __init__(self, nome: str, efd_tipo: "EfdTipo", filhos: ListaRegistro) -> None:
         self.nome: str = nome
         self.efd_tipo: EfdTipo = efd_tipo
-        self.filhos = ListaRegistro(filhos)
+        self.filhos: ListaRegistro = ListaRegistro(filhos)
 
     def __str__(self) -> str:
         return self.nome
@@ -25,11 +24,22 @@ class ContemRegistros(ABC):
     def __len__(self) -> int:
         return self.tamanho
 
-    def __getitem__(self, chave: str | tuple[str | None, bool] | None):
-        if isinstance(chave, tuple) and len(chave) == 2:
-            return self.pesquisar(chave[0], chave[1])
 
-        if isinstance(chave, str) or chave is None:
+
+    @overload
+    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
+
+    @overload
+    def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
+
+    def __getitem__(self, chave):
+        if isinstance(chave, slice):
+            return ListaRegistro(self.pesquisar()[chave])
+        
+        if isinstance(chave, (SupportsIndex, int)):
+            return self.pesquisar()[chave]
+
+        if isinstance(chave, (str, re.Pattern)) or chave is None:
             return self.pesquisar(chave)
 
         raise ValueError(f"Valor de pesquisa inválido ({chave})")
@@ -49,15 +59,20 @@ class ContemRegistros(ABC):
     def contem_filhos(self) -> bool:
         return len(self.filhos) >= 1
 
-    def pesquisar(self, chave: str | re.Pattern | None = None, recursivo: bool = False):
+
+
+    def pesquisar(self, chave: str | re.Pattern | None = None) -> "ListaRegistro":
+        # Se for apenas um caractere o caso especial é pesquisar todos desse bloco
+        if isinstance(chave, str) and len(chave) == 1:
+            chave += "..."
+
         regex = re.compile(chave) if isinstance(chave, str) else chave
 
-        if recursivo:
-            resultados = ListaRegistro()
-            for filho in self.filhos:
-                if regex is None or regex.fullmatch(filho.nome):
-                    resultados.append(filho)
-                resultados.extend(filho.pesquisar(chave, recursivo=True))
-            return resultados
+        resultados = ListaRegistro()
 
-        return ListaRegistro(r for r in self.filhos if regex is None or regex.fullmatch(r.nome))
+        for filho in self.filhos:
+            if regex is None or regex.fullmatch(filho.nome):
+                resultados.append(filho)
+            resultados.extend(filho.pesquisar(chave))
+
+        return resultados

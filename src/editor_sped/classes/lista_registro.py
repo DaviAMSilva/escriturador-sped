@@ -2,7 +2,7 @@ import re
 from typing import TYPE_CHECKING, Iterable, SupportsIndex, overload
 
 if TYPE_CHECKING:
-    from editor_sped.classes.registro import Registro
+    from ..classes.registro import Registro
 
 
 
@@ -25,23 +25,21 @@ class ListaRegistro(list["Registro"]):
     def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
 
     @overload
-    def __getitem__(self, chave: slice) -> list["Registro"]: ...
-
-    @overload
-    def __getitem__(self, chave: str | re.Pattern | tuple[str | None, bool] | None) -> "ListaRegistro": ...
+    def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
 
     def __getitem__(self, chave):
-        if isinstance(chave, (SupportsIndex, slice)):
+        if isinstance(chave, (SupportsIndex, int)):
             return super().__getitem__(chave)
 
-        resultados = ListaRegistro()
+        if isinstance(chave, slice):
+            return ListaRegistro(super().__getitem__(chave))
 
-        if isinstance(chave, tuple) and len(chave) == 2:
-            for registro in self:
-                resultados.extend(registro.pesquisar(chave[0], chave[1]))
+        if isinstance(chave, (str, re.Pattern)) or chave is None:
+            resultados = ListaRegistro()
 
-        if isinstance(chave, str) or chave is None:
             for registro in self:
                 resultados.extend(registro.pesquisar(chave))
 
-        return resultados
+            return resultados
+
+        raise ValueError(f"Valor de pesquisa inválido ({chave})")

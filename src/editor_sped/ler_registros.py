@@ -1,3 +1,4 @@
+from .classes.lista_registro import ListaRegistro
 from .classes.registro import Registro
 from .constantes import EFD_MAIOR_NIVEL
 from .tabelas import EFD_INFO
@@ -12,9 +13,9 @@ from .types import EfdTipo
 
 
 
-def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> list[Registro]:
+def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> ListaRegistro:
     if registros_texto == "" or not isinstance(registros_texto, str):
-        return []
+        return ListaRegistro()
 
     nivel_anterior = -1
 
@@ -22,7 +23,7 @@ def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> list[Registro]:
     ultimos_registros: list[Registro | None] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
 
     # Para a lista atual de registros é usado para os registros que estão na raiz e não têm pais
-    registros_raiz: list[Registro] = []
+    registros_raiz: ListaRegistro = ListaRegistro()
 
     # Para cada registro informado
     for registro_atual in registros_texto.splitlines():
