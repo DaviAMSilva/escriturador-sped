@@ -1,5 +1,5 @@
 import re
-from typing import TYPE_CHECKING, Iterable, SupportsIndex, overload
+from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
 
 if TYPE_CHECKING:
     from ..classes.registro import Registro
@@ -43,3 +43,26 @@ class ListaRegistro(list["Registro"]):
             return resultados
 
         raise ValueError(f"Valor de pesquisa inválido ({chave})")
+
+
+
+    def filtrar(self, filtro: str | re.Pattern | Callable[["Registro"], bool]):
+        resultados = ListaRegistro()
+
+        if isinstance(filtro, (str, re.Pattern)):
+            regex = re.compile(filtro) if isinstance(filtro, str) else filtro
+
+            for registro in self:
+                if regex.fullmatch(registro.nome):
+                    resultados.append(registro)
+
+            return resultados
+
+        if callable(filtro):
+            for registro in self:
+                if filtro(registro):
+                    resultados.append(registro)
+
+            return resultados
+
+        raise ValueError(f"Valor de filtro inválido ({filtro})")
