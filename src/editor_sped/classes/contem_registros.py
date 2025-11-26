@@ -1,12 +1,16 @@
 import re
 from abc import ABC
-from typing import TYPE_CHECKING, SupportsIndex, overload
 
 from ..classes.lista_registro import ListaRegistro
 from ..types import EfdTipo
 
-if TYPE_CHECKING:
-    from ..classes.registro import Registro
+
+
+
+
+
+
+
 
 
 class ContemRegistros(ABC):
@@ -26,26 +30,6 @@ class ContemRegistros(ABC):
 
 
 
-    @overload
-    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
-
-    @overload
-    def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
-
-    def __getitem__(self, chave):
-        if isinstance(chave, slice):
-            return ListaRegistro(self.pesquisar()[chave])
-        
-        if isinstance(chave, (SupportsIndex, int)):
-            return self.pesquisar()[chave]
-
-        if isinstance(chave, (str, re.Pattern)) or chave is None:
-            return self.pesquisar(chave)
-
-        raise ValueError(f"Valor de pesquisa inválido ({chave})")
-
-
-
     def serialize(self) -> dict:
         return {"nome": self.nome, "filhos": self.filhos}
 
@@ -58,6 +42,16 @@ class ContemRegistros(ABC):
     @property
     def contem_filhos(self) -> bool:
         return len(self.filhos) >= 1
+
+    @property
+    def registros(self) -> ListaRegistro:
+        resultados = ListaRegistro()
+
+        for f in self.filhos:
+            resultados.append(f)
+            resultados.extend(f.pesquisar())
+
+        return resultados
 
 
 

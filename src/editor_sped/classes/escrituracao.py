@@ -1,6 +1,8 @@
 import json
+import re
 from abc import ABC, abstractmethod
 from functools import partial
+from typing import SupportsIndex, overload
 
 from ..classes.bloco import Bloco
 from ..classes.lista_registro import ListaRegistro
@@ -34,6 +36,23 @@ class Escrituracao(ContemRegistros, ABC):
         escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto)
 
         self.__ler_escrituracao(escrituracao_texto)
+
+
+
+    @overload
+    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
+
+    @overload
+    def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
+
+    def __getitem__(self, chave):
+        if isinstance(chave, (SupportsIndex, int, slice)):
+            return self.pesquisar()[chave]
+
+        if isinstance(chave, (str, re.Pattern)) or chave is None:
+            return self.pesquisar(chave)
+
+        raise ValueError(f"Valor de pesquisa inválido ({chave})")
 
 
 

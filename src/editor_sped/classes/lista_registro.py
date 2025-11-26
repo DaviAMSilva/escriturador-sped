@@ -6,6 +6,13 @@ if TYPE_CHECKING:
 
 
 
+
+
+
+
+
+
+
 class ListaRegistro(list["Registro"]):
     @overload
     def __init__(self) -> None: ...
@@ -28,11 +35,8 @@ class ListaRegistro(list["Registro"]):
     def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
 
     def __getitem__(self, chave):
-        if isinstance(chave, (SupportsIndex, int)):
+        if isinstance(chave, (SupportsIndex, int, slice)):
             return super().__getitem__(chave)
-
-        if isinstance(chave, slice):
-            return ListaRegistro(super().__getitem__(chave))
 
         if isinstance(chave, (str, re.Pattern)) or chave is None:
             resultados = ListaRegistro()

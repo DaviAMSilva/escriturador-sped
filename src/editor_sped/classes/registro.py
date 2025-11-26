@@ -1,3 +1,4 @@
+from .lista_registro import ListaRegistro
 from ..classes.campo import Campo
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
@@ -16,7 +17,7 @@ class Registro(ContemRegistros):
     def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
         campos_lista = campos_texto.split("|")[1:-1]
 
-        super().__init__(campos_lista[0], efd_tipo, [])
+        super().__init__(campos_lista[0], efd_tipo, ListaRegistro())
 
         campos_esperados = len(EFD_INFO[self.efd_tipo]["registros"][self.nome]["campos"])
 

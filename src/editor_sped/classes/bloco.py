@@ -1,6 +1,10 @@
+import re
+from typing import SupportsIndex, overload
+
 from ..classes.registro import Registro
 from ..types import EfdTipo
 from .contem_registros import ContemRegistros
+from .lista_registro import ListaRegistro
 
 
 
@@ -16,7 +20,24 @@ class Bloco(ContemRegistros):
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
 
-        super().__init__(nome, efd_tipo, [self.abertura, self.fechamento])
+        super().__init__(nome, efd_tipo, ListaRegistro([self.abertura, self.fechamento]))
+
+
+
+    @overload
+    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
+
+    @overload
+    def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
+
+    def __getitem__(self, chave):
+        if isinstance(chave, (SupportsIndex, int, slice)):
+            return self.pesquisar()[chave]
+
+        if isinstance(chave, (str, re.Pattern)) or chave is None:
+            return self.pesquisar(chave)
+
+        raise ValueError(f"Valor de pesquisa inválido ({chave})")
 
 
 
