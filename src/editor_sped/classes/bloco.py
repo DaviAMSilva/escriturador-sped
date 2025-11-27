@@ -1,10 +1,10 @@
 import re
-from typing import SupportsIndex, overload
+from typing import overload
 
 from ..classes.registro import Registro
 from ..types import EfdTipo
-from .contem_registros import ContemRegistros
-from .lista_registro import ListaRegistro
+from .registro_contem import ContemRegistros
+from .registro_lista import ListaRegistro
 
 
 
@@ -25,13 +25,13 @@ class Bloco(ContemRegistros):
 
 
     @overload
-    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
+    def __getitem__(self, chave: int) -> "Registro": ...
 
     @overload
     def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
 
     def __getitem__(self, chave):
-        if isinstance(chave, (SupportsIndex, int, slice)):
+        if isinstance(chave, (int, slice)):
             return self.pesquisar()[chave]
 
         if isinstance(chave, (str, re.Pattern)) or chave is None:

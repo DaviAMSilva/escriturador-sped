@@ -2,7 +2,7 @@ import re
 from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
 
 if TYPE_CHECKING:
-    from ..classes.registro import Registro
+    from .registro import Registro
 
 
 
@@ -18,13 +18,10 @@ class ListaRegistro(list["Registro"]):
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, iteravel: Iterable["Registro"], /) -> None: ...
+    def __init__(self, iteravel: Iterable["Registro"]) -> None: ...
 
-    def __init__(self, iteravel=None) -> None:
-        if iteravel:
-            super().__init__(iteravel)
-        else:
-            super().__init__()
+    def __init__(self, iteravel=()) -> None:
+        super().__init__(iteravel)
 
 
 
@@ -46,7 +43,7 @@ class ListaRegistro(list["Registro"]):
 
             return resultados
 
-        raise ValueError(f"Valor de pesquisa inválido ({chave})")
+        raise TypeError(f"Valor inválido ({chave})")
 
 
 
@@ -69,4 +66,10 @@ class ListaRegistro(list["Registro"]):
 
             return resultados
 
-        raise ValueError(f"Valor de filtro inválido ({filtro})")
+        raise TypeError(f"Valor de filtro inválido ({filtro})")
+
+
+
+    @property
+    def nomes(self) -> set[str]:
+        return {r.nome for r in self}

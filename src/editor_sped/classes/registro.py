@@ -1,8 +1,11 @@
-from .lista_registro import ListaRegistro
+from typing import overload
+
 from ..classes.campo import Campo
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
-from .contem_registros import ContemRegistros
+from .campo_tupla import TuplaCampo
+from .registro_contem import ContemRegistros
+from .registro_lista import ListaRegistro
 
 
 
@@ -15,18 +18,33 @@ from .contem_registros import ContemRegistros
 
 class Registro(ContemRegistros):
     def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
-        campos_lista = campos_texto.split("|")[1:-1]
+        campos_textos = campos_texto.split("|")[1:-1]
 
-        super().__init__(campos_lista[0], efd_tipo, ListaRegistro())
+        super().__init__(campos_textos[0], efd_tipo, ListaRegistro())
 
         campos_esperados = len(EFD_INFO[self.efd_tipo]["registros"][self.nome]["campos"])
 
-        if len(campos_lista) != campos_esperados:
-            raise SyntaxError(f"A quantidade de campos é diferente da quantidade esperada ({len(campos_lista)} ao invés de {campos_esperados})")
+        if len(campos_textos) != campos_esperados:
+            raise SyntaxError(f"A quantidade de campos é diferente da quantidade esperada ({len(campos_textos)} ao invés de {campos_esperados})")
 
         self.pai: Registro | None = None
         self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
-        self.campos = tuple(Campo(campo, i + 1, self, self.efd_tipo) for i, campo in enumerate(campos_lista))
+
+        self.campos = TuplaCampo(Campo(campo, i + 1, self, self.efd_tipo) for i, campo in enumerate(campos_textos))
+
+
+
+    @overload
+    def __getitem__(self, chave: int | str) -> Campo: ...
+
+    @overload
+    def __getitem__(self, chave: slice) -> TuplaCampo: ...
+
+    def __getitem__(self, chave):
+        return self.campos[chave]
+
+    def __setitem__(self, chave: int | str, valor: str | int | float | None):
+        self.campos[chave].valor = valor
 
 
 

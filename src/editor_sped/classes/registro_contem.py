@@ -1,8 +1,8 @@
 import re
 from abc import ABC
 
-from ..classes.lista_registro import ListaRegistro
 from ..types import EfdTipo
+from .registro_lista import ListaRegistro
 
 
 

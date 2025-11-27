@@ -2,16 +2,16 @@ import json
 import re
 from abc import ABC, abstractmethod
 from functools import partial
-from typing import SupportsIndex, overload
+from typing import overload
 
 from ..classes.bloco import Bloco
-from ..classes.lista_registro import ListaRegistro
 from ..classes.registro import Registro
 from ..ler_registros import ler_registros
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
 from ..utilidades import remover_assinatura_escrituracao
-from .contem_registros import ContemRegistros
+from .registro_contem import ContemRegistros
+from .registro_lista import ListaRegistro
 
 
 
@@ -40,13 +40,13 @@ class Escrituracao(ContemRegistros, ABC):
 
 
     @overload
-    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
+    def __getitem__(self, chave: int) -> "Registro": ...
 
     @overload
     def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
 
     def __getitem__(self, chave):
-        if isinstance(chave, (SupportsIndex, int, slice)):
+        if isinstance(chave, (int, slice)):
             return self.pesquisar()[chave]
 
         if isinstance(chave, (str, re.Pattern)) or chave is None:
@@ -109,14 +109,14 @@ class Escrituracao(ContemRegistros, ABC):
                 self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
 
                 # Adicionando o cálculo dinâmico dos tamanhos dos blocos para os registros de fechamento
-                registro_bloco_fechamento.campos[1].configurar_valor(partial(lambda b: str(b.tamanho), self.blocos[bloco_info["nome"]]))
+                registro_bloco_fechamento.campos[2].configurar_valor(partial(lambda b: str(b.tamanho), self.blocos[bloco_info["nome"]]))
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
                 raise TypeError(f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|" +
                                  f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe")
 
         # Adicionando o cálculo dinâmico do tamanho da escrituração para o registro de fechamento
-        self.fechamento.campos[1].configurar_valor(partial(lambda e: str(e.tamanho), self))
+        self.fechamento.campos[2].configurar_valor(partial(lambda e: str(e.tamanho), self))
 
 
 

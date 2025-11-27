@@ -1,5 +1,5 @@
-from .classes.lista_registro import ListaRegistro
 from .classes.registro import Registro
+from .classes.registro_lista import ListaRegistro
 from .constantes import EFD_MAIOR_NIVEL
 from .tabelas import EFD_INFO
 from .types import EfdTipo

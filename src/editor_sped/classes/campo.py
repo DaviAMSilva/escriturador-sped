@@ -10,6 +10,14 @@ if TYPE_CHECKING:
     from ..classes.registro import Registro
 
 
+
+
+
+
+
+
+
+
 class Campo:
     # Tipos de campo
     ALFANUMERICO = "C"
