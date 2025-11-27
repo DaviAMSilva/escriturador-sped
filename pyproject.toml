@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "editor_sped"
 version = "0.0.1"
 dependencies = []
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 
 [project.optional-dependencies]
 TEST = [
