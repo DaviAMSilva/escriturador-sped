@@ -44,8 +44,11 @@ class TuplaCampo(tuple["Campo", ...]):
 
                 return super().__getitem__(chave - 1) if chave >= 1 else super().__getitem__(chave)
 
-            if isinstance(chave, (SupportsIndex | slice)):
+            if isinstance(chave, SupportsIndex):
                 return super().__getitem__(chave)
+
+            if isinstance(chave, slice):
+                return TuplaCampo(super().__getitem__(chave))
 
             if isinstance(chave, str):
                 return self.dicionario[chave]
@@ -57,5 +60,5 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
     @property
-    def nomes(self) -> set[str]:
-        return set(self.dicionario.keys())
+    def nomes(self) -> tuple[str, ...]:
+        return tuple(self.dicionario.keys())

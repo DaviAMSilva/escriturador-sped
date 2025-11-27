@@ -32,8 +32,11 @@ class ListaRegistro(list["Registro"]):
     def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
 
     def __getitem__(self, chave):
-        if isinstance(chave, (SupportsIndex, int, slice)):
+        if isinstance(chave, (SupportsIndex, int)):
             return super().__getitem__(chave)
+
+        if isinstance(chave, slice):
+            return ListaRegistro(super().__getitem__(chave))
 
         if isinstance(chave, (str, re.Pattern)) or chave is None:
             resultados = ListaRegistro()
@@ -46,6 +49,22 @@ class ListaRegistro(list["Registro"]):
         raise TypeError(f"Valor inválido ({chave})")
 
 
+
+    def pesquisar(self, chave: str | re.Pattern | None = None) -> "ListaRegistro":
+        # Se for apenas um caractere o caso especial é pesquisar todos desse bloco
+        if isinstance(chave, str) and len(chave) == 1:
+            chave += "..."
+
+        regex = re.compile(chave) if isinstance(chave, str) else chave
+
+        resultados = ListaRegistro()
+
+        for filho in self:
+            if regex is None or regex.fullmatch(filho.nome):
+                resultados.append(filho)
+            resultados.extend(filho.pesquisar(chave))
+
+        return resultados
 
     def filtrar(self, filtro: str | re.Pattern | Callable[["Registro"], bool]):
         resultados = ListaRegistro()
@@ -71,5 +90,5 @@ class ListaRegistro(list["Registro"]):
 
 
     @property
-    def nomes(self) -> set[str]:
-        return {r.nome for r in self}
+    def nomes(self) -> tuple[str, ...]:
+        return tuple(r.nome for r in self)
