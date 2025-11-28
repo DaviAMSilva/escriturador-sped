@@ -1,9 +1,12 @@
 import re
 from abc import ABC
+from typing import TYPE_CHECKING, Callable
 
 from ..types import EfdTipo
 from .registro_lista import ListaRegistro
 
+if TYPE_CHECKING:
+    from .registro import Registro
 
 
 
@@ -55,18 +58,5 @@ class ContemRegistros(ABC):
 
 
 
-    def pesquisar(self, chave: str | re.Pattern | None = None) -> "ListaRegistro":
-        # Se for apenas um caractere o caso especial é pesquisar todos desse bloco
-        if isinstance(chave, str) and len(chave) == 1:
-            chave += "..."
-
-        regex = re.compile(chave) if isinstance(chave, str) else chave
-
-        resultados = ListaRegistro()
-
-        for filho in self.filhos:
-            if regex is None or regex.fullmatch(filho.nome):
-                resultados.append(filho)
-            resultados.extend(filho.pesquisar(chave))
-
-        return resultados
+    def pesquisar(self, chave: str | re.Pattern | Callable[["Registro"], bool] | None = None) -> "ListaRegistro":
+        return self.filhos.pesquisar(chave)

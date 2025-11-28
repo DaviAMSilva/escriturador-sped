@@ -1,5 +1,5 @@
 import re
-from typing import overload
+from typing import Callable, overload
 
 from ..classes.registro import Registro
 from ..types import EfdTipo
@@ -28,13 +28,13 @@ class Bloco(ContemRegistros):
     def __getitem__(self, chave: int) -> "Registro": ...
 
     @overload
-    def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
+    def __getitem__(self, chave: str | re.Pattern | Callable[["Registro"], bool] | slice | None) -> "ListaRegistro": ...
 
     def __getitem__(self, chave):
         if isinstance(chave, (int, slice)):
             return self.pesquisar()[chave]
 
-        if isinstance(chave, (str, re.Pattern)) or chave is None:
+        if isinstance(chave, (str, re.Pattern, Callable)) or chave is None:
             return self.pesquisar(chave)
 
         raise ValueError(f"Valor de pesquisa inválido ({chave})")
