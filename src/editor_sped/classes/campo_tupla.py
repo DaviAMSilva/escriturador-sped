@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING, Iterable, Self, SupportsIndex, overload
+from typing import Iterable, Self, SupportsIndex, overload
 
-if TYPE_CHECKING:
-    from .campo import Campo
+from .campo import Campo
 
 
 
@@ -17,6 +16,9 @@ class TuplaCampo(tuple["Campo", ...]):
         self.dicionario: dict[str, "Campo"] = {}
 
         for campo in self:
+            if not isinstance(campo, Campo):
+                raise TypeError(f"Item diferente de Campo em inicialização de TuplaCampo ({campo})")
+
             self.dicionario[campo.nome] = campo
 
     @overload

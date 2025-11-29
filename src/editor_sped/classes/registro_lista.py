@@ -23,6 +23,13 @@ class ListaRegistro(list["Registro"]):
     def __init__(self, iteravel=()) -> None:
         super().__init__(iteravel)
 
+        # Isso é necessário pois se Registro for importado no topo
+        # do arquivo ocorrem erros devido a uma importação circular
+        from .registro import Registro # pylint: disable=import-outside-toplevel
+        for registro in self:
+            if not isinstance(registro, Registro):
+                raise TypeError(f"Item diferente de Registro em inicialização de ListaRegistro ({registro})")
+
 
 
     @overload
