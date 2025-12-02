@@ -111,12 +111,46 @@ class Escrituracao(ContemRegistros, ABC):
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
                 raise TypeError(f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|" +
-                                 f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe")
+                                f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe")
 
         # Adicionando o cálculo dinâmico do tamanho da escrituração para o registro de fechamento
         self.fechamento.campos[2].configurar_valor(partial(lambda e: str(e.tamanho), self))
 
 
+
+    def recalcular_9900(self):
+        registro_9001 = self.pesquisar("9001")[0]
+
+        registros_9900 = self.pesquisar("9900")
+        registros_9900_blc = [registro_9900["REG_BLC"].valor_c for registro_9900 in registros_9900]
+
+        registros_contagem = {}
+        for registro in self.pesquisar():
+            nome = registro.nome
+            registros_contagem[nome] = registros_contagem.get(nome, 0) + 1
+
+
+
+        # Atualizando os registros 9900 existentes e removendo os que não existem mais
+        registros_9900_remover = []
+
+        for registro_9900 in registros_9900:
+            registro_nome = registro_9900["REG_BLC"].valor_c
+            if registro_nome in registros_contagem:
+                registro_9900["QTD_REG_BLC"].valor = registros_contagem[registro_nome]
+            else:
+                registros_9900_remover.append(registro_9900)
+
+        for registro_9900_remover in registros_9900_remover:
+            registro_9001.filhos.remove(registro_9900_remover)
+
+
+
+        # Adicionando novos registros 9900 que não existiam antes
+        for registro_nome, registro_qtd in registros_contagem.items():
+            if registro_nome not in registros_9900_blc:
+                novo_registro_9900 = Registro(f"|9900|{registro_nome}|{registro_qtd}|", registro_9001, self, self.efd_tipo)
+                registro_9001.filhos.append(novo_registro_9900)
 
 
 

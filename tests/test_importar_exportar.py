@@ -52,10 +52,11 @@ def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
 
 
 @pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
-def test_icms_ipi(textos_todos: dict[str, str], escrituracoes_todas: dict[str, Escrituracao], arquivo: str):
+def test_importar_exportar(textos_todos: dict[str, str], escrituracoes_todas: dict[str, Escrituracao], arquivo: str):
     escrituracao_texto = textos_todos[arquivo]
     escrituracao = escrituracoes_todas[arquivo]
 
+    escrituracao.recalcular_9900()
     resultado = escrituracao.texto()
 
     if "efd_icms_ipi" in arquivo:
