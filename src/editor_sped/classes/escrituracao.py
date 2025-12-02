@@ -35,7 +35,7 @@ class Escrituracao(ContemRegistros, ABC):
         # Removendo a assinatura ou informações extra se existirem
         escrituracao_texto = remover_assinatura_escrituracao(escrituracao_texto)
 
-        self.__ler_escrituracao(escrituracao_texto)
+        self._ler_escrituracao(escrituracao_texto)
 
 
 
@@ -66,7 +66,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
-    def __ler_escrituracao(self, escrituracao_texto: str) -> None:
+    def _ler_escrituracao(self, escrituracao_texto: str) -> None:
         registros_raizes = ler_registros(escrituracao_texto, self.efd_tipo)
 
 
@@ -79,8 +79,6 @@ class Escrituracao(ContemRegistros, ABC):
         # Informação da escrituração em si
         self.filhos = registros_raizes
         [self.abertura, self.fechamento] = registros_raizes
-        self.abertura.pai = None
-        self.fechamento.pai = None
 
 
 
@@ -106,7 +104,7 @@ class Escrituracao(ContemRegistros, ABC):
 
             if registro_bloco_abertura and registro_bloco_fechamento:
                 # Criando o bloco com os blocos de abertura e fechamento
-                self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
+                self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self, self.efd_tipo)
 
                 # Adicionando o cálculo dinâmico dos tamanhos dos blocos para os registros de fechamento
                 registro_bloco_fechamento.campos[2].configurar_valor(partial(lambda b: str(b.tamanho), self.blocos[bloco_info["nome"]]))

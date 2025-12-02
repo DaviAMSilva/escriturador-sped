@@ -1,4 +1,4 @@
-from typing import overload
+from typing import TYPE_CHECKING, overload
 
 from ..classes.campo import Campo
 from ..tabelas import EFD_INFO
@@ -6,6 +6,9 @@ from ..types import EfdTipo
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
+
+if TYPE_CHECKING:
+    from .escrituracao import Escrituracao
 
 
 
@@ -17,7 +20,7 @@ from .registro_lista import ListaRegistro
 
 
 class Registro(ContemRegistros):
-    def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
+    def __init__(self, campos_texto: str, pai: "Registro | None", escrituracao: "Escrituracao | None", efd_tipo: EfdTipo) -> None:
         campos_textos = campos_texto.split("|")[1:-1]
 
         super().__init__(campos_textos[0], efd_tipo, ListaRegistro())
@@ -27,10 +30,11 @@ class Registro(ContemRegistros):
         if len(campos_textos) != campos_esperados:
             raise SyntaxError(f"A quantidade de campos é diferente da quantidade esperada ({len(campos_textos)} ao invés de {campos_esperados})")
 
-        self.pai: Registro | None = None
+        self.pai = pai
+        self.escrituracao = escrituracao
         self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
 
-        self.campos = TuplaCampo(Campo(campo, i + 1, self, self.efd_tipo) for i, campo in enumerate(campos_textos))
+        self.campos = TuplaCampo(Campo(campo, i + 1, self, self.escrituracao, self.efd_tipo) for i, campo in enumerate(campos_textos))
 
 
 

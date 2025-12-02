@@ -1,10 +1,13 @@
 import re
-from typing import Callable, overload
+from typing import TYPE_CHECKING, Callable, overload
 
 from ..classes.registro import Registro
 from ..types import EfdTipo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
+
+if TYPE_CHECKING:
+    from .escrituracao import Escrituracao
 
 
 
@@ -16,9 +19,10 @@ from .registro_lista import ListaRegistro
 
 
 class Bloco(ContemRegistros):
-    def __init__(self, nome: str, registro_abertura: Registro, registro_fechamento: Registro, efd_tipo: EfdTipo) -> None:
+    def __init__(self, nome: str, registro_abertura: Registro, registro_fechamento: Registro, escrituracao: "Escrituracao", efd_tipo: EfdTipo) -> None:
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
+        self.escrituracao = escrituracao
 
         super().__init__(nome, efd_tipo, ListaRegistro([self.abertura, self.fechamento]))
 

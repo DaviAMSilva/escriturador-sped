@@ -1,11 +1,13 @@
 from decimal import Decimal
 
 import pytest
+
 from editor_sped.classes.campo import Campo
 from editor_sped.classes.registro import Registro
 
 
 def test_campo_atribuicao():
+    # fmt: off
     casos_de_teste = [
         # Registro,         Campo, Valor,              Interno_c,    Interno_n,             Externo_c,    Externo_n
         ("|9999||",         1,     None,               "",           None,                  "",           None),
@@ -27,11 +29,12 @@ def test_campo_atribuicao():
         ("|G110||||||||||", 8,     "3,14285714285714", "3,14285714", Decimal("3.14285714"), "3,14285714", 3.14285714),
         ("|G110||||||||||", 8,     "3,14285714285714", "3,14285714", Decimal("3.14285714"), "3,14285714", 3.14285714),
     ]
+    # fmt: on
 
     for registro, campo, valor, interno_c, interno_n, externo_c, externo_n in casos_de_teste:
-        r = Registro(registro, "efd_icms_ipi")
+        r = Registro(registro, None, None, "efd_icms_ipi")
 
-        c = Campo(None, campo, r, "efd_icms_ipi")
+        c = Campo(None, campo, r, None, "efd_icms_ipi")
 
         c.valor = valor
 
@@ -41,9 +44,9 @@ def test_campo_atribuicao():
         assert c.valor_c == externo_c
         assert c.valor_n == externo_n
 
-    r = Registro("|9999||", "efd_icms_ipi")
-    c1 = Campo(None, 2, r, "efd_icms_ipi")
-    c2 = Campo(None, 2, r, "efd_icms_ipi")
+    r = Registro("|9999||", None, None, "efd_icms_ipi")
+    c1 = Campo(None, 2, r, None, "efd_icms_ipi")
+    c2 = Campo(None, 2, r, None, "efd_icms_ipi")
 
     with pytest.raises(ValueError):
         c1.valor = True  # type: ignore
@@ -59,22 +62,22 @@ def test_campo_atribuicao():
 
 
 def test_campo_erro():
-    r = Registro("|9999||", "efd_icms_ipi")
-    c = Campo(None, 2, r, "efd_icms_ipi")
+    r = Registro("|9999||", None, None, "efd_icms_ipi")
+    c = Campo(None, 2, r, None, "efd_icms_ipi")
 
 
     with pytest.raises(TypeError, match="não é uma função"):
-        c.configurar_valor(10)
+        c.configurar_valor(10)  # type: ignore
 
     with pytest.raises(TypeError, match="não deve conter argumentos"):
         def f1(a: int):
             return a
-        c.configurar_valor(f1)
+        c.configurar_valor(f1)  # type: ignore
 
     with pytest.raises(TypeError, match="deve retornar str, int, float ou None"):
         def f2() -> list:
             return [10]
-        c.configurar_valor(f2)
+        c.configurar_valor(f2)  # type: ignore
 
 
     def f3() -> int:
