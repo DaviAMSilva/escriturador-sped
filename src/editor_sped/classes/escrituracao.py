@@ -121,7 +121,7 @@ class Escrituracao(ContemRegistros, ABC):
     def recalcular_9900(self):
         registro_9001 = self.pesquisar("9001")[0]
 
-        registros_9900 = self.pesquisar("9900")
+        registros_9900 = registro_9001.pesquisar("9900")
         registros_9900_blc = [registro_9900["REG_BLC"].valor_c for registro_9900 in registros_9900]
 
         registros_contagem = {}
@@ -151,6 +151,18 @@ class Escrituracao(ContemRegistros, ABC):
             if registro_nome not in registros_9900_blc:
                 novo_registro_9900 = Registro(f"|9900|{registro_nome}|{registro_qtd}|", registro_9001, self, self.efd_tipo)
                 registro_9001.filhos.append(novo_registro_9900)
+
+
+
+        # Atualizando ou adicionando o Registro |9900|9900|
+        registro_9900_9900 = self.blocos["9"].pesquisar(lambda r: (r.nome == "9900" and r["REG_BLC"].valor_c == "9900"))
+        registro_9900_9900 = registro_9900_9900[0] if registro_9900_9900 else None
+
+        if registro_9900_9900:
+            registro_9900_9900["QTD_REG_BLC"].valor = len(self.blocos["9"].pesquisar("9900"))
+        else:
+            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(self.blocos["9"].pesquisar("9900")) + 1}|", registro_9001, self, self.efd_tipo)
+            registro_9001.filhos.append(novo_registro_9900_9900)
 
 
 
