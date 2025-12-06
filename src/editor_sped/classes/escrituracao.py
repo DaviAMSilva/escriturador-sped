@@ -23,7 +23,6 @@ from .registro_lista import ListaRegistro
 
 
 class Escrituracao(ContemRegistros, ABC):
-    @abstractmethod
     def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
         super().__init__(nome, efd_tipo, ListaRegistro())
 
@@ -118,26 +117,28 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
-    def recalcular_9900(self):
+    def totalizar_9900(self):
+        # Encontrando todos os nomes de registros presentes na escrituração
         registro_9001 = self.pesquisar("9001")[0]
 
         registros_9900 = registro_9001.pesquisar("9900")
         registros_9900_blc = [registro_9900["REG_BLC"].valor_c for registro_9900 in registros_9900]
 
-        registros_contagem = {}
+        registros_encontrados = set()
         for registro in self.pesquisar():
             nome = registro.nome
-            registros_contagem[nome] = registros_contagem.get(nome, 0) + 1
+            registros_encontrados.add(nome)
 
 
 
-        # Atualizando os registros 9900 existentes e removendo os que não existem mais
+        # Removendo os registros os que não existem mais
         registros_9900_remover = []
 
         for registro_9900 in registros_9900:
             registro_nome = registro_9900["REG_BLC"].valor_c
-            if registro_nome in registros_contagem:
-                registro_9900["QTD_REG_BLC"].valor = registros_contagem[registro_nome]
+            if registro_nome in registros_encontrados:
+                if not registro_9900["QTD_REG_BLC"].valor_configurado:
+                    registro_9900["QTD_REG_BLC"].configurar_valor(partial(lambda e, rn: len(e.pesquisar(rn)), self, registro_nome))
             else:
                 registros_9900_remover.append(registro_9900)
 
@@ -147,9 +148,10 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Adicionando novos registros 9900 que não existiam antes
-        for registro_nome, registro_qtd in registros_contagem.items():
+        for registro_nome in registros_encontrados:
             if registro_nome not in registros_9900_blc:
-                novo_registro_9900 = Registro(f"|9900|{registro_nome}|{registro_qtd}|", registro_9001, self, self.efd_tipo)
+                novo_registro_9900 = Registro(f"|9900|{registro_nome}||", registro_9001, self, self.efd_tipo)
+                novo_registro_9900["QTD_REG_BLC"].configurar_valor(partial(lambda e, rn: len(e.pesquisar(rn)), self, registro_nome))
                 registro_9001.filhos.append(novo_registro_9900)
 
 

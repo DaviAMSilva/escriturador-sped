@@ -162,6 +162,12 @@ class Campo:
     def valor_n(self, valor: str | int | float | None) -> None:
         self.valor = valor
 
+
+
+    @property
+    def valor_configurado(self) -> bool:
+        return self._retorna_valor is not None
+
     def configurar_valor(self, retorna_valor: Callable[[], str | int | float]) -> None:
         # Verifica se retorna_valor é uma função sem argumentos e retorna str
         if not callable(retorna_valor):

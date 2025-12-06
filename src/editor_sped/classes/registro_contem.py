@@ -20,7 +20,7 @@ class ContemRegistros(ABC):
     def __init__(self, nome: str, efd_tipo: "EfdTipo", filhos: ListaRegistro) -> None:
         self.nome: str = nome
         self.efd_tipo: EfdTipo = efd_tipo
-        self.filhos: ListaRegistro = ListaRegistro(filhos)
+        self.filhos: ListaRegistro = filhos
 
     def __str__(self) -> str:
         return self.nome
@@ -40,7 +40,7 @@ class ContemRegistros(ABC):
 
     @property
     def tamanho(self) -> int:
-        return sum(f.tamanho for f in self.filhos)
+        return sum(filho.tamanho for filho in self.filhos)
 
     @property
     def contem_filhos(self) -> bool:
@@ -50,9 +50,9 @@ class ContemRegistros(ABC):
     def registros(self) -> ListaRegistro:
         resultados = ListaRegistro()
 
-        for f in self.filhos:
-            resultados.append(f)
-            resultados.extend(f.pesquisar())
+        for filho in self.filhos:
+            resultados.append(filho)
+            resultados.extend(filho.pesquisar())
 
         return resultados
 
