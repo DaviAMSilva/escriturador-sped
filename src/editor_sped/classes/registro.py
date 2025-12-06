@@ -1,8 +1,9 @@
-from typing import overload
+from typing import Callable, Self, overload
 
 from ..classes.campo import Campo
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
+from ..utilidades import registro_key
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -68,3 +69,39 @@ class Registro(ContemRegistros):
     @property
     def tamanho(self) -> int:
         return super().tamanho + 1
+
+
+
+    def adicionar(self, registros: "Registro | ListaRegistro | list[Registro]") -> Self:
+        registros = [registros] if isinstance(registros, Registro) else registros
+
+        for novo_registro in registros:
+            if not isinstance(novo_registro, Registro):
+                raise TypeError(f"Item não é um registro ({novo_registro})")
+
+            if novo_registro.nome not in EFD_INFO[self.efd_tipo]["registros"][self.nome]["filhos"]:
+                raise ValueError(f"O registro {novo_registro} não é um filho válido de {self}")
+
+            for i, filho in enumerate(self.filhos):
+                if registro_key(novo_registro.nome, self.efd_tipo) < registro_key(filho.nome, self.efd_tipo):
+                    self.filhos.insert(i, novo_registro)
+                    break
+            else:
+                self.filhos.append(novo_registro)
+
+        return self
+
+    def remover(self, registros: "Registro | ListaRegistro | list[Registro]" | Callable[["Registro"], bool]) -> Self:
+        registros = [registros] if isinstance(registros, Registro) else registros
+
+        if callable(registros):
+            for i in range(len(self.filhos) - 1, -1, -1):
+                if registros(self.filhos[i]):
+                    del self.filhos[i]
+        else:
+            registros_set = set(registros)
+            for i in range(len(self.filhos) - 1, -1, -1):
+                if self.filhos[i] in registros_set:
+                    del self.filhos[i]
+
+        return self

@@ -9,7 +9,7 @@ from ..classes.registro import Registro
 from ..ler_registros import ler_registros
 from ..tabelas import EFD_INFO
 from ..types import EfdTipo
-from ..utilidades import remover_assinatura_escrituracao
+from ..utilidades import registro_key, remover_assinatura_escrituracao
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
 
@@ -23,6 +23,7 @@ from .registro_lista import ListaRegistro
 
 
 class Escrituracao(ContemRegistros, ABC):
+    @abstractmethod
     def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
         super().__init__(nome, efd_tipo, ListaRegistro())
 
@@ -117,7 +118,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
-    def totalizar_9900(self):
+    def totalizar_9900(self, ordenar_9900=False) -> None:
         # Encontrando todos os nomes de registros presentes na escrituração
         registro_9001 = self.pesquisar("9001")[0]
 
@@ -160,11 +161,16 @@ class Escrituracao(ContemRegistros, ABC):
         registro_9900_9900 = self.blocos["9"].pesquisar(lambda r: (r.nome == "9900" and r["REG_BLC"].valor_c == "9900"))
         registro_9900_9900 = registro_9900_9900[0] if registro_9900_9900 else None
 
-        if registro_9900_9900:
-            registro_9900_9900["QTD_REG_BLC"].valor = len(self.blocos["9"].pesquisar("9900"))
-        else:
-            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(self.blocos['9'].pesquisar('9900')) + 1}|", self.efd_tipo)
+        if not registro_9900_9900:
+            novo_registro_9900_9900 = Registro("|9900|9900||", self.efd_tipo)
+            novo_registro_9900_9900["QTD_REG_BLC"].configurar_valor(partial(lambda e: len(e.pesquisar("9900")), self))
             registro_9001.filhos.append(novo_registro_9900_9900)
+
+
+
+        if ordenar_9900:
+            # Ordenando os registros 9900 de acordo com o registro que ele totaliza
+            registro_9001.filhos.sort(key=lambda r: registro_key(r["REG_BLC"].valor_c, self.efd_tipo))
 
 
 
