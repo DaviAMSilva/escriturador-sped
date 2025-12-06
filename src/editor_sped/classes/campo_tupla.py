@@ -61,6 +61,11 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
 
+    def __repr__(self):
+        return f"TuplaCampo{super().__repr__()}"
+
+
+
     @property
     def nomes(self) -> tuple[str, ...]:
         return tuple(self.dicionario.keys())

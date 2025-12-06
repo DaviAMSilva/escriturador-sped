@@ -52,6 +52,11 @@ class ListaRegistro(list["Registro"]):
 
 
 
+    def __repr__(self):
+        return f"ListaRegistro{super().__repr__()}"
+
+
+
     def pesquisar(self, chave: str | re.Pattern | Callable[["Registro"], bool] | None = None) -> "ListaRegistro":
         # Se for apenas um caractere o caso especial é pesquisar todos desse bloco
         if isinstance(chave, str) and len(chave) == 1:
