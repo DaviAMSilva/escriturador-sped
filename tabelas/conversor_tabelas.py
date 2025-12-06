@@ -17,7 +17,8 @@ from editor_sped.types import EfdInfo, EfdInfoRegistro
 
 
 # Constantes específicas do conversor de tabelas
-EFD_INFO_PASTA = "src/editor_sped/data/"
+EFD_INFO_PASTA_DATA = "src/editor_sped/data/"
+EFD_INFO_PASTA_VISUALIZADOR = "tabelas/visualizador/"
 EFD_INFO_ARQUIVO = "efd_info.json"
 
 EFD_JSON_INDENTACAO = 4
@@ -194,12 +195,21 @@ def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Converte as tabelas EFD para um formato mais prático")
     parser.add_argument("--formatado", action="store_true", help="Gera o arquivo com uma formatação ao invés de ser minimizado")
+    parser.add_argument("--visualizador", action="store_true", help="Gera o arquivo na pasta do visualizador")
     args = parser.parse_args()
 
     efd_info_main = main()
 
-    if not os.path.exists(EFD_INFO_PASTA):
-        os.mkdir(EFD_INFO_PASTA)
+    if args.visualizador:
+        if not os.path.exists(EFD_INFO_PASTA_VISUALIZADOR):
+            os.mkdir(EFD_INFO_PASTA_VISUALIZADOR)
 
-    with open(os.path.join(EFD_INFO_PASTA, EFD_INFO_ARQUIVO), "w", encoding="utf-8") as arquivo_convertido:
-        arquivo_convertido.write(json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))
+        # Salvando como arquivo js para ser carregado no navegador
+        with open(os.path.join(EFD_INFO_PASTA_VISUALIZADOR, EFD_INFO_ARQUIVO.replace("json", "js")), "w", encoding="utf-8") as arquivo_convertido:
+            arquivo_convertido.write("window.EFD_INFO=" + json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))
+    else:
+        if not os.path.exists(EFD_INFO_PASTA_DATA):
+            os.mkdir(EFD_INFO_PASTA_DATA)
+
+        with open(os.path.join(EFD_INFO_PASTA_DATA, EFD_INFO_ARQUIVO), "w", encoding="utf-8") as arquivo_convertido:
+            arquivo_convertido.write(json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))

@@ -1570,7 +1570,7 @@
 
 "0200","36","06","UNID_INV","Unidade de medida utilizada na quantificação de estoques.","C","006","-","O","",""
 
-"0200","36","07","TIPO_ITEM","Tipo do item – Atividades Industriais, Comerciais e Serviços: 00 – Mercadoria para Revenda; 01 – Matéria-prima; 02 – Embalagem; 03 – Produto em Processo; 04 – Produto Acabado; 05 – Subproduto; 06 – Produto Intermediário; 07 – Material de Uso e Consumo; 08 – Ativo Imobilizado; 09 – Serviços; 10 – Outros insumos; 99 – Outras","N","2","-","O","",""
+"0200","36","07","TIPO_ITEM","Tipo do item – Atividades Industriais, Comerciais e Serviços: 00 – Mercadoria para Revenda; 01 – Matéria-prima; 02 – Embalagem; 03 – Produto em Processo; 04 – Produto Acabado; 05 – Subproduto; 06 – Produto Intermediário; 07 – Material de Uso e Consumo; 08 – Ativo Imobilizado; 09 – Serviços; 10 – Outros insumos; 99 – Outras","N","2*","-","O","",""
 
 "0200","36","08","COD_NCM","Código da Nomenclatura Comum do Mercosul","C","008*","-","OC","",""
 

@@ -2,7 +2,8 @@ extra/
 .vscode
 
 # Gerado usando tabelas/conversor_tabelas.py
-src/editor_sped/data/*
+src/editor_sped/data/efd_info.json
+tabelas/visualizador/efd_info.js
 
 # Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
 # Essa configuração permite arquivos numerados, mas ignora arquivos com
