@@ -103,7 +103,7 @@ class Escrituracao(ContemRegistros, ABC):
 
             if registro_bloco_abertura and registro_bloco_fechamento:
                 # Criando o bloco com os blocos de abertura e fechamento
-                self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self, self.efd_tipo)
+                self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
 
                 # Adicionando o cálculo dinâmico dos tamanhos dos blocos para os registros de fechamento
                 registro_bloco_fechamento.campos[2].configurar_valor(partial(lambda b: str(b.tamanho), self.blocos[bloco_info["nome"]]))
@@ -150,7 +150,7 @@ class Escrituracao(ContemRegistros, ABC):
         # Adicionando novos registros 9900 que não existiam antes
         for registro_nome in registros_encontrados:
             if registro_nome not in registros_9900_blc:
-                novo_registro_9900 = Registro(f"|9900|{registro_nome}||", registro_9001, self, self.efd_tipo)
+                novo_registro_9900 = Registro(f"|9900|{registro_nome}||", self.efd_tipo)
                 novo_registro_9900["QTD_REG_BLC"].configurar_valor(partial(lambda e, rn: len(e.pesquisar(rn)), self, registro_nome))
                 registro_9001.filhos.append(novo_registro_9900)
 
@@ -163,7 +163,7 @@ class Escrituracao(ContemRegistros, ABC):
         if registro_9900_9900:
             registro_9900_9900["QTD_REG_BLC"].valor = len(self.blocos["9"].pesquisar("9900"))
         else:
-            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(self.blocos['9'].pesquisar('9900')) + 1}|", registro_9001, self, self.efd_tipo)
+            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(self.blocos['9'].pesquisar('9900')) + 1}|", self.efd_tipo)
             registro_9001.filhos.append(novo_registro_9900_9900)
 
 

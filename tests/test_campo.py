@@ -32,9 +32,9 @@ def test_campo_atribuicao():
     # fmt: on
 
     for registro, campo, valor, interno_c, interno_n, externo_c, externo_n in casos_de_teste:
-        r = Registro(registro, None, None, "efd_icms_ipi")
+        r = Registro(registro, "efd_icms_ipi")
 
-        c = Campo(None, campo, r, None, "efd_icms_ipi")
+        c = Campo(None, campo, r, "efd_icms_ipi")
 
         c.valor = valor
 
@@ -44,9 +44,9 @@ def test_campo_atribuicao():
         assert c.valor_c == externo_c
         assert c.valor_n == externo_n
 
-    r = Registro("|9999||", None, None, "efd_icms_ipi")
-    c1 = Campo(None, 2, r, None, "efd_icms_ipi")
-    c2 = Campo(None, 2, r, None, "efd_icms_ipi")
+    r = Registro("|9999||", "efd_icms_ipi")
+    c1 = Campo(None, 2, r, "efd_icms_ipi")
+    c2 = Campo(None, 2, r, "efd_icms_ipi")
 
     with pytest.raises(ValueError):
         c1.valor = True  # type: ignore
@@ -62,8 +62,8 @@ def test_campo_atribuicao():
 
 
 def test_campo_erro():
-    r = Registro("|9999||", None, None, "efd_icms_ipi")
-    c = Campo(None, 2, r, None, "efd_icms_ipi")
+    r = Registro("|9999||", "efd_icms_ipi")
+    c = Campo(None, 2, r, "efd_icms_ipi")
 
 
     with pytest.raises(TypeError, match="não é uma função"):

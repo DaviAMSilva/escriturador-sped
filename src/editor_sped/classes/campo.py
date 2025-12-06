@@ -8,7 +8,6 @@ from ..types import EfdTipo
 # Útil para evitar importações circulares
 if TYPE_CHECKING:
     from ..classes.registro import Registro
-    from .escrituracao import Escrituracao
 
 
 
@@ -51,10 +50,9 @@ class Campo:
 
         return int(float((valor or "").replace(",", ".")))
 
-    def __init__(self, valor: str | int | float | None, numero: int, registro: "Registro", escrituracao: "Escrituracao | None", efd_tipo: EfdTipo) -> None:
+    def __init__(self, valor: str | int | float | None, numero: int, registro: "Registro", efd_tipo: EfdTipo) -> None:
         self.efd_tipo: EfdTipo = efd_tipo
         self.registro = registro
-        self.escrituracao = escrituracao
 
         info_campos = EFD_INFO[efd_tipo]["registros"][self.registro.nome]["campos"][numero - 1]
 
