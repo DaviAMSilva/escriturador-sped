@@ -16,18 +16,18 @@ def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
 
     # Compara escriturações não apenas pelo texto, mas sim pelos valores
     for line1, line2 in zip(lines1, lines2):
-        campos1 = line1.split("|")[1:-2]
-        campos2 = line2.split("|")[1:-2]
+        campos1 = line1.split("|")[1:-1]
+        campos2 = line2.split("|")[1:-1]
 
-        registro1 = campos1[0]
-        registro2 = campos2[0]
+        nome1 = campos1[0]
+        nome2 = campos2[0]
 
-        assert registro1 == registro2
+        assert nome1 == nome2
         assert len(campos1) == len(campos2)
 
         for i, (campo1, campo2) in enumerate(zip(campos1, campos2)):
-            tipo1 = EFD_INFO[efd_tipo]["registros"][registro1]["campos"][i]["tipo"]
-            tipo2 = EFD_INFO[efd_tipo]["registros"][registro2]["campos"][i]["tipo"]
+            tipo1 = EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tipo"]
+            tipo2 = EFD_INFO[efd_tipo]["registros"][nome2]["campos"][i]["tipo"]
 
             assert tipo1 == tipo2
 
@@ -56,7 +56,7 @@ def test_importar_exportar(textos_todos: dict[str, str], escrituracoes_todas: di
     escrituracao_texto = textos_todos[arquivo]
     escrituracao = escrituracoes_todas[arquivo]
 
-    escrituracao.recalcular_9900()
+    escrituracao.atualizar_9900()
     resultado = escrituracao.texto()
 
     if "efd_icms_ipi" in arquivo:
