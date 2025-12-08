@@ -1,6 +1,5 @@
 import json
 from abc import ABC, abstractmethod
-from functools import partial
 
 from ..classes.bloco import Bloco
 from ..classes.registro import Registro
@@ -89,43 +88,48 @@ class Escrituracao(ContemRegistros, ABC):
             if registro_bloco_abertura and registro_bloco_fechamento:
                 # Criando o bloco com os blocos de abertura e fechamento
                 self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
-
-                # Adicionando o cálculo dinâmico dos tamanhos dos blocos para os registros de fechamento
-                registro_bloco_fechamento.campos[2].configurar_valor(partial(lambda b: str(b.tamanho), self.blocos[bloco_info["nome"]]))
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
                 raise TypeError(f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|" +
                                 f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe")
 
-        # Adicionando o cálculo dinâmico do tamanho da escrituração para o registro de fechamento
-        self.fechamento.campos[2].configurar_valor(partial(lambda e: str(e.tamanho), self))
-
 
 
     def totalizar(self, ordenar_9900=False) -> None:
-        pass
+        # A totalização dos registros e dos blocos dependem um do outro
+        # por isso, é necessário realizar a totalização dessa forma
+        self.totalizar_blocos()
+        self.totalizar_registros(ordenar_9900)
+        self.totalizar_blocos()
+        self.totalizar_escrituracao()
 
-        # FIXME: Reativar totalização
-        # self.totalizar_blocos()
-        # self.totalizar_9900(ordenar_9900)
+    def totalizar_escrituracao(self) -> None:
+        self.fechamento[2].valor_c = self.tamanho
 
     def totalizar_blocos(self) -> None:
         for nome in EFD_ORDEM_BLOCOS[self.efd_tipo]:
             bloco = self.blocos.get(nome, None)
 
             if bloco:
-                bloco.fechamento[f"QTD_LIN_{nome}"].valor_c = bloco.tamanho
+                bloco.abertura[2].valor_c = 0 if bloco.tamanho > 2 else 1
+                bloco.fechamento[2].valor_c = bloco.tamanho
             else:
                 novo_abertura = Registro(f"|{nome}001|1|", self.efd_tipo)
                 novo_fechamento = Registro(f"|{nome}990|2|", self.efd_tipo)
+
+                novo_abertura.pai = self.abertura
+                novo_fechamento.pai = self.abertura
+
                 novo_bloco = Bloco(nome, novo_abertura, novo_fechamento, self.efd_tipo)
                 self.blocos[nome] = novo_bloco
+
                 self.abertura.filhos.append(novo_abertura)
+                self.abertura.filhos.append(novo_fechamento)
 
         # Ordenar os blocos é obrigatório
         self.abertura.filhos.sort(key=lambda r: EFD_ORDEM_BLOCOS[self.efd_tipo].index(r.nome[0]))
 
-    def totalizar_9900(self, ordenar_9900=False) -> None:
+    def totalizar_registros(self, ordenar_9900=False) -> None:
         # Encontrando todos os nomes de registros presentes na escrituração
         registro_9001 = self.pesquisar("9001")[0]
 

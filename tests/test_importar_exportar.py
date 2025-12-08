@@ -56,7 +56,7 @@ def test_importar_exportar(textos_todos: dict[str, str], escrituracoes_todas: di
     escrituracao_texto = textos_todos[arquivo]
     escrituracao = escrituracoes_todas[arquivo]
 
-    escrituracao.totalizar_9900()
+    escrituracao.totalizar()
     resultado = escrituracao.texto()
 
     if "efd_icms_ipi" in arquivo:
