@@ -172,7 +172,7 @@ class Escrituracao(ContemRegistros, ABC):
         if registro_9900_9900:
             registro_9900_9900["QTD_REG_BLC"].valor_c = len(self.pesquisar("9900"))
         else:
-            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(self.pesquisar("9900"))}|", self.efd_tipo)
+            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(self.pesquisar('9900'))}|", self.efd_tipo)
             registro_9001.filhos.append(novo_registro_9900_9900)
 
 
