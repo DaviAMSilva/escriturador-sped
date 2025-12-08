@@ -4270,7 +4270,7 @@
 
 "9990","321","01","REG","Texto fixo contendo “9990”.","C","004","-","O","",""
 
-"9990","321","02","REG","Quantidade total de linhas do Bloco 9.","N","-","-","O","",""
+"9990","321","02","QTD_LIN_9","Quantidade total de linhas do Bloco 9.","N","-","-","O","",""
 
 "9999","322","01","REG","Texto fixo contendo “9999”.","C","004","-","O","",""
 
