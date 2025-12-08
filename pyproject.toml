@@ -17,6 +17,10 @@ TEST = [
     "pytest-pep8",
     "pytest-cov"
 ]
+JUPYTER = [
+    "ipykernel",
+    "ipywidgets"
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
