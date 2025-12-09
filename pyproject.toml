@@ -33,5 +33,5 @@ max-line-length = 160
 max-attributes = 15
 disable = ["C0114", "C0115", "C0116"]
 
-[tool.pytest]
+[tool.pytest.ini_options]
 testpaths = ["tests"]
