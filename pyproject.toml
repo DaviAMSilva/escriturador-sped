@@ -10,13 +10,11 @@ requires-python = ">=3.11"
 
 [project.optional-dependencies]
 DEV = [
-    "autopep8",
     "invoke",
+    "autopep8",
     "pylint",
-    "pytest-cov",
-    "pytest-pep8",
-    "pytest-pylint",
-    "pytest"
+    "pytest",
+    "pytest-cov"
 ]
 JUPYTER = [
     "ipykernel",
@@ -34,3 +32,6 @@ ignore = ["E303"]
 max-line-length = 160
 max-attributes = 15
 disable = ["C0114", "C0115", "C0116"]
+
+[tool.pytest]
+testpaths = ["tests"]

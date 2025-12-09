@@ -1,4 +1,4 @@
-# pylint: disable=import-outside-toplevel,unused-argument,import-error
+# pylint: disable=import-outside-toplevel,unused-argument,import-error,no-value-for-parameter
 
 import json
 import os
@@ -7,22 +7,13 @@ from invoke.context import Context
 from invoke.tasks import task
 
 
-
-
 @task
 def venv(c: Context, python: str = "python"):
     if not os.path.exists("venv"):
         c.run(f"{python} -m venv venv")
 
-    activate(c)
-
-
-@task
-def activate(c: Context):
-    if os.name == "nt":
-        c.run("venv\\Scripts\\activate")
-    else:
-        c.run("source venv/bin/activate")
+    print("Ative o ambiente virtual com:")
+    print(".\\venv\\Scripts\\activate" if os.name == "nt" else "source venv/bin/activate")
 
 
 @task
@@ -35,7 +26,7 @@ def se_install(c: Context):
     if not os.path.exists("sped_extractor"):
         c.run("git clone https://github.com/akretion/sped-extractor.git sped_extractor")
 
-    c.run("pip install requests") # Requerimento não declarado no sped-extractor
+    c.run("pip install requests")  # Requerimento não declarado no sped-extractor
     c.run("pip install -e sped_extractor")
 
 
@@ -50,7 +41,7 @@ def se_download(c: Context):
     MODULES.clear()
     MODULES.update(modules_data)
 
-    main([])
+    main()
 
 
 @task
@@ -64,4 +55,4 @@ def se_extract_tables(c: Context):
     MODULES.clear()
     MODULES.update(modules_data)
 
-    main([], None, None)
+    main()
