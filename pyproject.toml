@@ -9,13 +9,14 @@ dependencies = []
 requires-python = ">=3.11"
 
 [project.optional-dependencies]
-TEST = [
+DEV = [
     "autopep8",
+    "invoke",
     "pylint",
-    "pytest",
-    "pytest-pylint",
+    "pytest-cov",
     "pytest-pep8",
-    "pytest-cov"
+    "pytest-pylint",
+    "pytest"
 ]
 JUPYTER = [
     "ipykernel",
