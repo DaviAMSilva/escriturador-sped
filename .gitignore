@@ -1,5 +1,6 @@
 extra/
 .vscode
+sped_extractor/
 
 # Gerado usando tabelas/conversor_tabelas.py
 src/editor_sped/data/efd_info.json
