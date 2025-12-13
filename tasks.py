@@ -43,8 +43,7 @@ def se_download(c: Context):
     from sped_extractor.spedextractor.constants import MODULES
     from sped_extractor.spedextractor.download import main
 
-    with open("modules.json", "r", encoding="utf-8") as f:
-        modules_data = json.load(f, object_hook=lambda d: {k: tuple(v) for k, v in d.items()})
+    modules_data = modules()
 
     MODULES.clear()
     MODULES.update(modules_data)
@@ -115,19 +114,25 @@ def conversor(c: Context, formatado=False):
     shutil.copy(os.path.join("data", "modules.json"), os.path.join("src", "editor_sped", "data", "modules.json"))
 
 
+@task
+def download(c: Context):
+    se_download(c)
+
 
 @task
 def build(c: Context):
-    se_download()
-    se_extract()
-    se_patch()
-    se_build()
-    se_copy()
-    conversor()
+    # se_download(c) # Por algum motivo essa etapa interrompe todo o processo
+    se_extract(c)
+    se_patch(c)
+    se_build(c)
+    se_copy(c)
+    conversor(c)
 
 
 @task
 def all(c: Context):  # pylint: disable=redefined-builtin
-    venv()
-    install()
-    build()
+    venv(c)
+    install(c)
+    se_install(c)
+    # download(c)
+    build(c)
