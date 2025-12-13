@@ -40,13 +40,7 @@ class TuplaCampo(tuple["Campo", ...]):
 
     def __getitem__(self, chave):
         try:
-            if isinstance(chave, int):
-                if chave == 0:
-                    raise IndexError("Os campos de um registro têm a numeração iniciada pelo número 1")
-
-                return super().__getitem__(chave - 1) if chave >= 1 else super().__getitem__(chave)
-
-            if isinstance(chave, SupportsIndex):
+            if isinstance(chave, (int, SupportsIndex)):
                 return super().__getitem__(chave)
 
             if isinstance(chave, slice):

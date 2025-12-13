@@ -42,6 +42,12 @@ class Registro(ContemRegistros):
     def __getitem__(self, chave: slice) -> TuplaCampo: ...
 
     def __getitem__(self, chave):
+        if isinstance(chave, int):
+            if chave == 0:
+                raise IndexError("Os campos de um registro têm a numeração iniciada pelo número 1")
+
+            return self.campos[chave - 1] if chave > 0 else self.campos[chave]
+
         return self.campos[chave]
 
     def __setitem__(self, chave: int | str, valor: str | int | float | None):
