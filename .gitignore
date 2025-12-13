@@ -2,11 +2,6 @@ extra/
 .vscode
 sped_extractor/
 
-# Arquivos gerados dinamicamente
-src/editor_sped/data/modules.json
-src/editor_sped/data/efd_info.json
-src/editor_sped/visualizador/efd_info.js
-
 # Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
 # Essa configuração permite arquivos numerados, mas ignora arquivos com
 # sufixo maiores que podem ser utilizados para testes com arquivos privados
