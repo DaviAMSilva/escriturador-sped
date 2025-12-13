@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from ..classes.bloco import Bloco
 from ..classes.registro import Registro
 from ..constantes import EFD_ORDEM_BLOCOS
+from ..efd_info import EFD_INFO
 from ..ler_registros import ler_registros
-from ..tabelas import EFD_INFO
 from ..types import EfdTipo
 from ..utilidades import registro_key, remover_assinatura_escrituracao
 from .registro_contem import ContemRegistros

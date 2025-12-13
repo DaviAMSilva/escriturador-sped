@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation
 import pytest
 
 from editor_sped.classes.escrituracao import Escrituracao
-from editor_sped.tabelas import EFD_INFO
+from editor_sped.efd_info import EFD_INFO
 from editor_sped.types import EfdTipo
 
 

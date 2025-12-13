@@ -28,5 +28,4 @@ jobs:
         pip install -e .[DEV]
     - name: Analisar com pylint
       run: |
-        pylint --fail-under=9.8 $(git ls-files 'src/*.py')
-        pylint --fail-under=9.8 $(git ls-files 'tests/*.py')
+        pylint --fail-under=9.8 $(git ls-files 'src/*.py') $(git ls-files 'tests/*.py') tasks.py

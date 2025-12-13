@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "editor_sped"
-version = "0.0.1"
+dynamic = ["version"]
 dependencies = []
 requires-python = ">=3.11"
 
@@ -20,6 +20,9 @@ JUPYTER = [
     "ipykernel",
     "ipywidgets"
 ]
+
+[tool.setuptools.dynamic]
+version = {attr = "editor_sped.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]

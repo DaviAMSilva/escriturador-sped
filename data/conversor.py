@@ -4,7 +4,7 @@ import json
 import os
 from typing import Literal
 
-from editor_sped.constantes import EFD_TIPOS, EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS
+from editor_sped.constantes import EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS, EFD_TIPOS
 from editor_sped.types import EfdInfo, EfdInfoRegistro
 
 
@@ -18,8 +18,8 @@ from editor_sped.types import EfdInfo, EfdInfoRegistro
 
 # Constantes específicas do conversor de tabelas
 EFD_INFO_PASTA_DATA = "src/editor_sped/data/"
-EFD_INFO_PASTA_VISUALIZADOR = "tabelas/visualizador/"
-EFD_INFO_ARQUIVO = "efd_info.json"
+EFD_INFO_PASTA_VISUALIZADOR = "src/editor_sped/visualizador/"
+EFD_INFO_ARQUIVO = "efd_info.{}"
 
 EFD_JSON_INDENTACAO = 4
 
@@ -32,14 +32,14 @@ EFD_JSON_INDENTACAO = 4
 
 
 
-def main():
+def conversor():
     efd_info: EfdInfo = {}
     efd_tipo: Literal["efd_icms_ipi", "efd_pis_cofins"]
 
 
     for efd_tipo in EFD_TIPOS:
-        arquivo_registros = os.path.join(os.path.dirname(__file__), f"{efd_tipo}_registers.csv")
-        arquivo_campos = os.path.join(os.path.dirname(__file__), f"{efd_tipo}_accurate_fields.csv")
+        arquivo_registros = os.path.join(os.path.dirname(__file__), f"{efd_tipo}", "registers.csv")
+        arquivo_campos = os.path.join(os.path.dirname(__file__), f"{efd_tipo}", "accurate_fields.csv")
 
 
 
@@ -190,26 +190,34 @@ def main():
 
 
 
+def main(formatado=False):
+    efd_info_main = conversor()
+
+    if not os.path.exists(EFD_INFO_PASTA_DATA):
+        os.mkdir(EFD_INFO_PASTA_DATA)
+
+    if not os.path.exists(EFD_INFO_PASTA_VISUALIZADOR):
+        os.mkdir(EFD_INFO_PASTA_VISUALIZADOR)
+
+    with open(os.path.join(EFD_INFO_PASTA_DATA, EFD_INFO_ARQUIVO.format("json")), "w", encoding="utf-8") as arquivo_convertido:
+        arquivo_convertido.write(json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if formatado else None, ensure_ascii=False))
+
+    # Salvando como arquivo js para ser carregado no navegador
+    with open(os.path.join(EFD_INFO_PASTA_VISUALIZADOR, EFD_INFO_ARQUIVO.format("js")), "w", encoding="utf-8") as arquivo_convertido:
+        arquivo_convertido.write("window.EFD_INFO=" + json.dumps(efd_info_main, ensure_ascii=False))
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Converte as tabelas EFD para um formato mais prático")
     parser.add_argument("--formatado", action="store_true", help="Gera o arquivo com uma formatação ao invés de ser minimizado")
-    parser.add_argument("--visualizador", action="store_true", help="Gera o arquivo na pasta do visualizador")
     args = parser.parse_args()
 
-    efd_info_main = main()
-
-    if args.visualizador:
-        if not os.path.exists(EFD_INFO_PASTA_VISUALIZADOR):
-            os.mkdir(EFD_INFO_PASTA_VISUALIZADOR)
-
-        # Salvando como arquivo js para ser carregado no navegador
-        with open(os.path.join(EFD_INFO_PASTA_VISUALIZADOR, EFD_INFO_ARQUIVO.replace("json", "js")), "w", encoding="utf-8") as arquivo_convertido:
-            arquivo_convertido.write("window.EFD_INFO=" + json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))
-    else:
-        if not os.path.exists(EFD_INFO_PASTA_DATA):
-            os.mkdir(EFD_INFO_PASTA_DATA)
-
-        with open(os.path.join(EFD_INFO_PASTA_DATA, EFD_INFO_ARQUIVO), "w", encoding="utf-8") as arquivo_convertido:
-            arquivo_convertido.write(json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if args.formatado else None, ensure_ascii=False))
+    main(args.formatado)

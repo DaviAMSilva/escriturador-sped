@@ -22,7 +22,6 @@ jobs:
         pip install -e .[DEV]
     - name: Convertendo tabelas
       run: |
-        mkdir ./src/editor_sped/data
-        python ./tabelas/conversor_tabelas.py
+        python data/conversor.py
     - name: Testar com pytest
       run: pytest

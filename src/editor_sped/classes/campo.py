@@ -2,7 +2,7 @@ from decimal import Decimal, InvalidOperation
 from inspect import signature
 from typing import TYPE_CHECKING, Callable
 
-from ..tabelas import EFD_INFO
+from ..efd_info import EFD_INFO
 from ..types import EfdTipo
 
 # Útil para evitar importações circulares

@@ -1,7 +1,7 @@
 from typing import Callable, Self, overload
 
 from ..classes.campo import Campo
-from ..tabelas import EFD_INFO
+from ..efd_info import EFD_INFO
 from ..types import EfdTipo
 from ..utilidades import registro_key
 from .campo_tupla import TuplaCampo
