@@ -11,7 +11,7 @@ from invoke.tasks import task
 
 
 def modules():
-    with open("modules.json", "r", encoding="utf-8") as m:
+    with open(os.path.join("data", "modules.json"), "r", encoding="utf-8") as m:
         return json.load(m, object_hook=lambda d: {k: tuple(v) for k, v in d.items()})
 
 
@@ -112,7 +112,7 @@ def se_copy(c: Context):
 def conversor(c: Context, formatado=False):
     from data.conversor import main
     main(formatado)
-    shutil.copy("modules.json", os.path.join("src", "editor_sped", "data", "modules.json"))
+    shutil.copy(os.path.join("data", "modules.json"), os.path.join("src", "editor_sped", "data", "modules.json"))
 
 
 
