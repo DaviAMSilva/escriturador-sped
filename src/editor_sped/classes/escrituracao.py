@@ -191,11 +191,22 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 class EscrituracaoICMSIPI(Escrituracao):
-    def __init__(self, escrituracao_texto: str) -> None:
-        super().__init__(escrituracao_texto, "EFD_ICMS_IPI", "efd_icms_ipi")
+    def __init__(self, escrituracao_texto: str | None = None) -> None:
+        if isinstance(escrituracao_texto, str):
+            super().__init__(escrituracao_texto, "EFD_ICMS_IPI", "efd_icms_ipi")
+        elif escrituracao_texto is None:
+            super().__init__("|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI", "efd_icms_ipi")
+        else:
+            raise TypeError("Texto da escrituração inválido")
+
 
 
 
 class EscrituracaoPISCOFINS(Escrituracao):
-    def __init__(self, escrituracao_texto: str) -> None:
-        super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
+    def __init__(self, escrituracao_texto: str | None = None) -> None:
+        if isinstance(escrituracao_texto, str):
+            super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
+        elif escrituracao_texto is None:
+            super().__init__("|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS", "efd_pis_cofins")
+        else:
+            raise TypeError("Texto da escrituração inválido")
