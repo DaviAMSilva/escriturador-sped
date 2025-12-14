@@ -1,4 +1,4 @@
 include src/editor_sped/data/efd_info.json
 include src/editor_sped/data/modules.json
-include src/editor_sped/visualizador/index.html
 include src/editor_sped/visualizador/efd_info.js
+include src/editor_sped/visualizador/index.html
