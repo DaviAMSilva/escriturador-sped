@@ -1,9 +1,8 @@
-# pylint: disable=import-outside-toplevel,unused-argument,import-error,no-value-for-parameter
-
-import json
-import os
+# pylint: disable=import-outside-toplevel,unused-argument,import-error
 
 import importlib.resources
+import json
+import os
 import shutil
 
 from invoke.context import Context
@@ -48,7 +47,8 @@ def se_download(c: Context):
     MODULES.clear()
     MODULES.update(modules_data)
 
-    main([])  # type: ignore
+    if main.callback:
+        main.callback("")
 
 
 @task
@@ -61,7 +61,8 @@ def se_extract(c: Context):
     MODULES.clear()
     MODULES.update(modules_data)
 
-    main([])  # type: ignore
+    if main.callback:
+        main.callback("", 0, 10)
 
 
 @task
@@ -80,15 +81,16 @@ def se_patch(c: Context):
 
 @task
 def se_build(c: Context):
-    from sped_extractor.spedextractor.constants import MODULES
     from sped_extractor.spedextractor.build_csv import main
+    from sped_extractor.spedextractor.constants import MODULES
 
     modules_data = modules()
 
     MODULES.clear()
     MODULES.update(modules_data)
 
-    main([])  # type: ignore
+    if main.callback:
+        main.callback(True)
 
 
 @task
@@ -121,7 +123,7 @@ def download(c: Context):
 
 @task
 def build(c: Context):
-    # se_download(c) # Por algum motivo essa etapa interrompe todo o processo
+    se_download(c)
     se_extract(c)
     se_patch(c)
     se_build(c)
@@ -134,5 +136,4 @@ def all(c: Context):  # pylint: disable=redefined-builtin
     venv(c)
     install(c)
     se_install(c)
-    # download(c)
     build(c)
