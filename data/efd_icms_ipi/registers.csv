@@ -48,6 +48,7 @@
 "B","B020","","True","True","2","V","","O","O","Nota Fiscal (código 01), Nota Fiscal de Serviços (código 03), Nota Fiscal de Serviços Avulsa (código 3B), Nota Fiscal de Produtor (código 04), Conhecimento de Transporte Rodoviário de Cargas (código 08), NF-e (código 55) e NFC-e (código 65)"
 "B","B025","","True","True","3","1:N","","O","O","Detalhamento por combinação de alíquota e item da lista de serviços da Lei Complementar nº 116/2003"
 "B","B030","","","True","2","V","","Não informar","O","Nota fiscal de Serviços Simplificada (código 3A)"
+"B","B035","","","True","3","1:N","","Não informar","O","Detalhamento por combinação de alíquota e item da lista de serviços da Lei Complementar nº 116/2003"
 "B","B350","","","True","2","V","","Não informar","O","Serviços prestados por insituições financeiras"
 "B","B420","","","True","2","V","","Não Informar","O","Totalização dos valores de serviços prestados por combinação de alíquota e item da lista de serviços da Lei Complementar nº 116/2003"
 "B","B440","","True","True","2","V","","O","O","Totalização dos valores retidos"

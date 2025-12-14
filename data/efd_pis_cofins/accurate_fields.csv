@@ -805,6 +805,7 @@
 "D505","218","05","VL_BC_COFINS","Valor da base de cálculo da COFINS","N","-","02","N"
 "D505","218","06","ALIQ_COFINS","Alíquota da COFINS (em percentual)","N","008","04","N"
 "D505","218","07","VL_COFINS","Valor da COFINS","N","-","02","N"
+"D505","219","08","COD_CTA","Código da conta analítica contábil debitada/creditada","C","255","-","N"
 "D509","220","01","REG","Texto fixo contendo ""D509""","C","004*","-","S"
 "D509","220","02","NUM_PROC","Identificação do processo ou ato concessório","C","020","-","S"
 "D509","220","03","IND_PROC","Indicador da origem do processo: 1 - Justiça Federal; 3 – Secretaria da Receita Federal do Brasil 9 – Outros.","C","001*","-","S"
