@@ -32,7 +32,7 @@ EFD_JSON_INDENTACAO = 4
 
 
 
-def conversor():
+def conversor():  # pylint: disable=too-many-locals
     efd_info: EfdInfo = {}
     efd_tipo: Literal["efd_icms_ipi", "efd_pis_cofins"]
 
