@@ -1,5 +1,5 @@
-from ..classes.registro import Registro
 from ..types import EfdTipo
+from .registro import Registro
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
 

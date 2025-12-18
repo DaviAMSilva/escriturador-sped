@@ -2,7 +2,7 @@ import glob
 
 import pytest
 
-from editor_sped import EFD_TIPOS, Registro, ler_registros
+from editor_sped import EFD_TIPOS, Registro
 
 
 @pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
@@ -10,9 +10,9 @@ def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
     registros_texto = textos_todos[arquivo]
 
     if "efd_icms_ipi" in arquivo:
-        registros = ler_registros(registros_texto, "efd_icms_ipi")
+        registros = Registro.ler(registros_texto, "efd_icms_ipi")
     elif "efd_pis_cofins" in arquivo:
-        registros = ler_registros(registros_texto, "efd_pis_cofins")
+        registros = Registro.ler(registros_texto, "efd_pis_cofins")
     else:
         raise FileExistsError(f"Arquivo inválido: {arquivo}")
 
@@ -44,8 +44,8 @@ def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
 
 
 def test_ler_registros_vazio():
-    registros_vazio1 = ler_registros("", "efd_icms_ipi")
-    registros_vazio2 = ler_registros("", "efd_pis_cofins")
+    registros_vazio1 = Registro.ler("", "efd_icms_ipi")
+    registros_vazio2 = Registro.ler("", "efd_pis_cofins")
 
     assert isinstance(registros_vazio1, list)
     assert isinstance(registros_vazio2, list)
@@ -73,4 +73,4 @@ def test_ler_registros_erro():
     for tipo in EFD_TIPOS:
         for registros_texto, erro_esperado in casos_de_teste:
             with pytest.raises(erro_esperado):
-                ler_registros(registros_texto, tipo)
+                Registro.ler(registros_texto, tipo)

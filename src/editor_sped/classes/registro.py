@@ -1,9 +1,9 @@
 from typing import Callable, Self, overload
 
-from ..classes.campo import Campo
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
+from .campo import Campo
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -24,6 +24,11 @@ class Registro(ContemRegistros):
         # 0100 ->    0 + 100 =  100
         # C500 -> 2000 + 500 = 2500
         return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0]) * 1000 + int(nome[1:4])
+
+    @staticmethod
+    def ler(registros_texto: str, efd_tipo: EfdTipo) -> ListaRegistro:
+        from .registro_ler import ler_registros # pylint: disable=import-outside-toplevel,cyclic-import
+        return ler_registros(registros_texto, efd_tipo)
 
 
 

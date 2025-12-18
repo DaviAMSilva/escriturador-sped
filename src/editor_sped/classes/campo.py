@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING, Callable
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
 
-# Útil para evitar importações circulares
 if TYPE_CHECKING:
-    from ..classes.registro import Registro
+    from .registro import Registro
 
 
 

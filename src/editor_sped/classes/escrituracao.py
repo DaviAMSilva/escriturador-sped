@@ -1,13 +1,12 @@
 import json
 from abc import ABC, abstractmethod
 
-from ..classes.bloco import Bloco
-from ..classes.registro import Registro
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
-from ..ler_registros import ler_registros
 from ..types import EfdTipo
 from ..utilidades import remover_assinatura_escrituracao
+from .bloco import Bloco
+from .registro import Registro
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
 
@@ -50,7 +49,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
     def _ler_escrituracao(self, escrituracao_texto: str) -> None:
-        registros_raizes = ler_registros(escrituracao_texto, self.efd_tipo)
+        registros_raizes = Registro.ler(escrituracao_texto, self.efd_tipo)
 
 
 
