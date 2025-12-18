@@ -2,11 +2,13 @@
     "efd_icms_ipi": [
         19,
         "2025-10-28",
-        "http://sped.rfb.gov.br/arquivo/download/7900"
+        "http://sped.rfb.gov.br/arquivo/download/7900",
+        "3.2.1"
     ],
     "efd_pis_cofins": [
         6,
         "2021-06-18",
-        "http://sped.rfb.gov.br/arquivo/download/5836"
+        "http://sped.rfb.gov.br/arquivo/download/5836",
+        "1.35"
     ]
 }
