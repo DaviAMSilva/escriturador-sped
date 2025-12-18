@@ -1,9 +1,9 @@
 from typing import Callable, Self, overload
 
 from ..classes.campo import Campo
+from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
-from ..utilidades import registro_key
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -18,6 +18,15 @@ from .registro_lista import ListaRegistro
 
 
 class Registro(ContemRegistros):
+    @staticmethod
+    def ordem(nome: str, efd_tipo: EfdTipo) -> int:
+        # Exemplos:
+        # 0100 ->    0 + 100 =  100
+        # C500 -> 2000 + 500 = 2500
+        return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0]) * 1000 + int(nome[1:4])
+
+
+
     def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
         campos_textos = campos_texto.split("|")[1:-1]
 
@@ -89,7 +98,7 @@ class Registro(ContemRegistros):
                 raise ValueError(f"O registro {novo_registro} não é um filho válido de {self}")
 
             for i, filho in enumerate(self.filhos):
-                if registro_key(novo_registro.nome, self.efd_tipo) < registro_key(filho.nome, self.efd_tipo):
+                if Registro.ordem(novo_registro.nome, self.efd_tipo) < Registro.ordem(filho.nome, self.efd_tipo):
                     self.filhos.insert(i, novo_registro)
                     break
             else:

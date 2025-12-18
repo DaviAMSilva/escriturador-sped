@@ -1,5 +1,4 @@
-from .constantes import EFD_ENCODING, EFD_NEWLINE, EFD_ORDEM_BLOCOS
-from .types import EfdTipo
+from .constantes import EFD_ENCODING, EFD_NEWLINE
 
 
 
@@ -40,11 +39,3 @@ def abrir_escrituracao(arquivo_nome: str, remover_assinatura: bool = True) -> st
 def salvar_escrituracao(arquivo_nome: str, escrituracao_texto: str) -> None:
     with open(arquivo_nome, "w", encoding=EFD_ENCODING, newline=EFD_NEWLINE) as output:
         output.write(escrituracao_texto)
-
-
-
-def registro_key(nome: str, efd_tipo: EfdTipo) -> int:
-    # Exemplos:
-    # 0100 ->    0 + 100 =  100
-    # C500 -> 2000 + 500 = 2500
-    return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0]) * 1000 + int(nome[1:4])

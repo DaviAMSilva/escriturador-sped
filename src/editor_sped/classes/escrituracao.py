@@ -7,7 +7,7 @@ from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
 from ..ler_registros import ler_registros
 from ..types import EfdTipo
-from ..utilidades import registro_key, remover_assinatura_escrituracao
+from ..utilidades import remover_assinatura_escrituracao
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
 
@@ -179,7 +179,7 @@ class Escrituracao(ContemRegistros, ABC):
 
         if ordenar_9900:
             # Ordenando os registros 9900 de acordo com o registro que ele totaliza
-            registro_9001.filhos.sort(key=lambda r: registro_key(r["REG_BLC"].valor_c, self.efd_tipo))
+            registro_9001.filhos.sort(key=lambda r: Registro.ordem(r["REG_BLC"].valor_c, self.efd_tipo))
 
 
 
