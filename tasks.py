@@ -15,6 +15,19 @@ def modules():
 
 
 @task
+def test(c: Context, coverage: bool = False):
+    if coverage:
+        c.run("pytest --cov=src tests --cov-report=term-missing")
+    else:
+        c.run("pytest tests")
+
+
+@task
+def lint(c: Context):
+    c.run("pylint src tests tasks.py")
+
+
+@task
 def venv(c: Context, python: str = "python"):
     if not os.path.exists("venv"):
         c.run(f"{python} -m venv venv")
