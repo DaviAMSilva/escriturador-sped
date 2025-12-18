@@ -9,36 +9,36 @@ from invoke.context import Context
 from invoke.tasks import task
 
 
-def modules():
-    with open(os.path.join("data", "modules.json"), "r", encoding="utf-8") as m:
-        return json.load(m, object_hook=lambda d: {k: tuple(v) for k, v in d.items()})
+# Redefinindo MODULES do sped-extractor com os dados presentes em data/modules.json
+from sped_extractor.spedextractor.constants import MODULES
+
+with open(os.path.join("data", "modules.json"), "r", encoding="utf-8") as modules_json:
+    modules_data = json.load(modules_json, object_hook=lambda d: {k: tuple(v) for k, v in d.items()})
+
+    MODULES.clear()
+    MODULES.update(modules_data)
 
 
 @task
-def test(c: Context, coverage: bool = False):
-    if coverage:
-        c.run("pytest --cov=src tests --cov-report=term-missing")
-    else:
-        c.run("pytest tests")
-
-
-@task
-def lint(c: Context):
-    c.run("pylint src tests tasks.py")
-
-
-@task
-def venv(c: Context, python: str = "python"):
-    if not os.path.exists("venv"):
-        c.run(f"{python} -m venv venv")
+def venv(c: Context, python: str = "python", pasta: str = "venv"):
+    if not os.path.exists(f"{pasta}"):
+        c.run(f"{python} -m venv {pasta}")
 
     print("Ative o ambiente virtual com:")
-    print(".\\venv\\Scripts\\activate" if os.name == "nt" else "source venv/bin/activate")
+    if os.name == "nt":
+        if "PSModulePath" in os.environ and os.environ.get("PROMPT", "") != "$P$G":
+            print(f"& .\\{pasta}\\Scripts\\Activate.ps1")  # Windows PowerShell
+        else:
+            print(f".\\{pasta}\\Scripts\\activate.bat")  # Windows Command Prompt
+    else:
+        print(f"source {pasta}/bin/activate")  # Linux / MacOS
 
 
 @task
-def install(c: Context):
-    c.run("pip install -e .[DEV]")
+def install(c: Context, dev: bool = True, jupyter: bool = False):
+    extras = ",".join(flag for flag, enabled in (("DEV", dev), ("JUPYTER", jupyter)) if enabled)
+    c.run(f"pip install -e .[{extras}]" if extras else "pip install -e .")
+
 
 
 @task
@@ -52,13 +52,7 @@ def se_install(c: Context):
 
 @task
 def se_download(c: Context):
-    from sped_extractor.spedextractor.constants import MODULES
     from sped_extractor.spedextractor.download import main
-
-    modules_data = modules()
-
-    MODULES.clear()
-    MODULES.update(modules_data)
 
     if main.callback:
         main.callback("")
@@ -66,13 +60,7 @@ def se_download(c: Context):
 
 @task
 def se_extract(c: Context):
-    from sped_extractor.spedextractor.constants import MODULES
     from sped_extractor.spedextractor.extract_tables import main
-
-    modules_data = modules()
-
-    MODULES.clear()
-    MODULES.update(modules_data)
 
     if main.callback:
         main.callback("", 0, 10)
@@ -80,8 +68,6 @@ def se_extract(c: Context):
 
 @task
 def se_patch(c: Context):
-    modules_data = modules()
-
     for tipo in ("efd_icms_ipi", "efd_pis_cofins"):
         resource = importlib.resources.files("sped_extractor") / "spedextractor" / "specs" / tipo / str(modules_data[tipo][0]) / "camelot_patch"
         with importlib.resources.as_file(resource) as pasta:
@@ -95,12 +81,6 @@ def se_patch(c: Context):
 @task
 def se_build(c: Context):
     from sped_extractor.spedextractor.build_csv import main
-    from sped_extractor.spedextractor.constants import MODULES
-
-    modules_data = modules()
-
-    MODULES.clear()
-    MODULES.update(modules_data)
 
     if main.callback:
         main.callback(True)
@@ -108,8 +88,6 @@ def se_build(c: Context):
 
 @task
 def se_copy(c: Context):
-    modules_data = modules()
-
     os.makedirs(os.path.join(os.path.dirname(__file__), "data"), exist_ok=True)
 
     for tipo in ("efd_icms_ipi", "efd_pis_cofins"):
@@ -123,15 +101,10 @@ def se_copy(c: Context):
 
 
 @task
-def conversor(c: Context, formatado=False):
+def conversor(c: Context, formatado: bool = False):
     from data.conversor import main
     main(formatado)
     shutil.copy(os.path.join("data", "modules.json"), os.path.join("src", "editor_sped", "data", "modules.json"))
-
-
-@task
-def download(c: Context):
-    se_download(c)
 
 
 @task
@@ -146,7 +119,19 @@ def build(c: Context):
 
 @task
 def all(c: Context):  # pylint: disable=redefined-builtin
-    venv(c)
     install(c)
     se_install(c)
     build(c)
+
+
+@task
+def test(c: Context, coverage: bool = False):
+    if coverage:
+        c.run("pytest tests --cov=src --cov-report=term-missing")
+    else:
+        c.run("pytest tests")
+
+
+@task
+def lint(c: Context):
+    c.run("pylint src tests tasks.py data/conversor.py")
