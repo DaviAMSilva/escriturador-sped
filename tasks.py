@@ -79,11 +79,11 @@ def se_patch(c: Context):
 
 
 @task
-def se_build(c: Context):
+def se_build(c: Context, patch: bool = True):
     from sped_extractor.spedextractor.build_csv import main
 
     if main.callback:
-        main.callback(True)
+        main.callback(patch)
 
 
 @task
