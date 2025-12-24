@@ -54,12 +54,11 @@ def test_conversor():
         assert bloco["nome"] in BLOCOS_EFD_PIS_COFINS
 
 
-
-def verificar_registro(efd, nome, registro, campos):
+def verificar_registro(efd_registros, nome, registro, campos):
     # Nome e descrição
-    assert nome in efd
+    assert nome in efd_registros
     assert len(nome) == 4
-    assert re.match(r"^[0ABCDEFGHIKMP19][0-9]{3}$", nome)
+    assert re.fullmatch(r"[0ABCDEFGHIKMP19][0-9]{3}", nome)
     assert len(registro["descricao"]) > 0
 
     # Nível
@@ -77,16 +76,17 @@ def verificar_registro(efd, nome, registro, campos):
 
     # Pai e filhos
     assert isinstance(registro["filhos"], list)
-    assert (registro["pai"] is None and nome in ("0000", "9999")) or (isinstance(registro["pai"], str) and len(registro["pai"]) == 4) and registro["pai"] in efd
+    assert (registro["pai"] is None and nome in ("0000", "9999")) or (isinstance(registro["pai"], str) and registro["pai"] in efd_registros)
 
 
 
     # Campos
     for campo in registro["campos"]:
         # Nome e descrição
-        assert len(campo["nome"]) > 0
-        assert campo["nome"].find(" ") == -1, campo["nome"]
-        assert len(campo["descricao"]) > 0
+        assert len(campo["nome"]) >= 2
+        assert re.fullmatch(r"[A-ZÀ-ÿe0-9_-]+", campo["nome"]), campo["nome"]
+        assert not re.fullmatch(r".*([e_-])\1.*", campo["nome"]), campo["nome"]
+        assert len(campo["descricao"]) >= 8
 
         # Tamanho e número
         assert campo["numero"] >= 1
