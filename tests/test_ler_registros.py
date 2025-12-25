@@ -3,16 +3,17 @@ import glob
 import pytest
 
 from editor_sped import EFD_TIPOS, Registro
+from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 
 
 @pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
 def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
     registros_texto = textos_todos[arquivo]
 
-    if "efd_icms_ipi" in arquivo:
-        registros = Registro.ler(registros_texto, "efd_icms_ipi")
-    elif "efd_pis_cofins" in arquivo:
-        registros = Registro.ler(registros_texto, "efd_pis_cofins")
+    if EFD_ICMS_IPI in arquivo:
+        registros = Registro.ler(registros_texto, EFD_ICMS_IPI)
+    elif EFD_PIS_COFINS in arquivo:
+        registros = Registro.ler(registros_texto, EFD_PIS_COFINS)
     else:
         raise FileExistsError(f"Arquivo inválido: {arquivo}")
 
@@ -44,8 +45,8 @@ def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
 
 
 def test_ler_registros_vazio():
-    registros_vazio1 = Registro.ler("", "efd_icms_ipi")
-    registros_vazio2 = Registro.ler("", "efd_pis_cofins")
+    registros_vazio1 = Registro.ler("", EFD_ICMS_IPI)
+    registros_vazio2 = Registro.ler("", EFD_PIS_COFINS)
 
     assert isinstance(registros_vazio1, list)
     assert isinstance(registros_vazio2, list)

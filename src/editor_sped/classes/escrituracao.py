@@ -1,7 +1,7 @@
 import json
 from abc import ABC, abstractmethod
 
-from ..constantes import EFD_ORDEM_BLOCOS
+from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
 from ..utilidades import remover_assinatura_escrituracao
@@ -126,7 +126,7 @@ class Escrituracao(ContemRegistros, ABC):
                 self.abertura.filhos.append(novo_fechamento)
 
         # Ordenar os blocos é obrigatório
-        self.abertura.filhos.sort(key=lambda r: EFD_ORDEM_BLOCOS[self.efd_tipo].index(r.nome[0]))
+        self.abertura.filhos.sort(key=lambda r: Registro.ordem(r.nome, r.efd_tipo))
 
     def totalizar_registros(self, ordenar_9900=False) -> None:
         # Encontrando todos os nomes de registros presentes na escrituração
@@ -192,9 +192,9 @@ class Escrituracao(ContemRegistros, ABC):
 class EscrituracaoICMSIPI(Escrituracao):
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(escrituracao_texto, "EFD_ICMS_IPI", "efd_icms_ipi")
+            super().__init__(escrituracao_texto, "EFD_ICMS_IPI", EFD_ICMS_IPI)
         elif escrituracao_texto is None:
-            super().__init__("|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI", "efd_icms_ipi")
+            super().__init__("|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI", EFD_ICMS_IPI)
         else:
             raise TypeError("Texto da escrituração inválido")
 
@@ -204,8 +204,8 @@ class EscrituracaoICMSIPI(Escrituracao):
 class EscrituracaoPISCOFINS(Escrituracao):
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(escrituracao_texto, "EFD_PIS_COFINS", "efd_pis_cofins")
+            super().__init__(escrituracao_texto, "EFD_PIS_COFINS", EFD_PIS_COFINS)
         elif escrituracao_texto is None:
-            super().__init__("|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS", "efd_pis_cofins")
+            super().__init__("|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS", EFD_PIS_COFINS)
         else:
             raise TypeError("Texto da escrituração inválido")

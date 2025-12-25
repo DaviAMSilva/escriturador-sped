@@ -4,6 +4,7 @@ from decimal import Decimal, InvalidOperation
 import pytest
 
 from editor_sped.classes.escrituracao import Escrituracao
+from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 from editor_sped.efd_info import EFD_INFO
 from editor_sped.types import EfdTipo
 
@@ -59,9 +60,9 @@ def test_importar_exportar(textos_todos: dict[str, str], escrituracoes_todas: di
     escrituracao.totalizar()
     resultado = escrituracao.texto()
 
-    if "efd_icms_ipi" in arquivo:
-        comparar_escrituracoes(escrituracao_texto, resultado, "efd_icms_ipi")
-    elif "efd_pis_cofins" in arquivo:
-        comparar_escrituracoes(escrituracao_texto, resultado, "efd_pis_cofins")
+    if EFD_ICMS_IPI in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, EFD_ICMS_IPI)
+    elif EFD_PIS_COFINS in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, EFD_PIS_COFINS)
     else:
         raise FileExistsError(f"Arquivo inválido: {arquivo}")

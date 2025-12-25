@@ -1,6 +1,7 @@
 import re
 
 from data.conversor import EFD_MAIOR_NIVEL, conversor
+from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 
 from .constantes import BLOCOS_EFD_ICMS_IPI, BLOCOS_EFD_PIS_COFINS, REGISTROS_EFD_ICMS_IPI, REGISTROS_EFD_PIS_COFINS
 
@@ -16,41 +17,41 @@ def test_conversor():
 
 
     # Os SPEDs existem
-    assert "efd_icms_ipi" in efd_info
-    assert "efd_pis_cofins" in efd_info
+    assert EFD_ICMS_IPI in efd_info
+    assert EFD_PIS_COFINS in efd_info
 
 
     # As listas de registros tem os tamanhos corretos
-    assert len(efd_info["efd_icms_ipi"]["registros"]) == len(REGISTROS_EFD_ICMS_IPI)
-    assert len(efd_info["efd_pis_cofins"]["registros"]) == len(REGISTROS_EFD_PIS_COFINS)
+    assert len(efd_info[EFD_ICMS_IPI]["registros"]) == len(REGISTROS_EFD_ICMS_IPI)
+    assert len(efd_info[EFD_PIS_COFINS]["registros"]) == len(REGISTROS_EFD_PIS_COFINS)
 
 
     # Os registros corretos existem nas listas
     for registro_nome, registro_campos in REGISTROS_EFD_ICMS_IPI.items():
-        verificar_registro(efd_info["efd_icms_ipi"]["registros"], registro_nome, efd_info["efd_icms_ipi"]["registros"][registro_nome], registro_campos)
+        verificar_registro(efd_info[EFD_ICMS_IPI]["registros"], registro_nome, efd_info[EFD_ICMS_IPI]["registros"][registro_nome], registro_campos)
 
     for registro_nome, registro_campos in REGISTROS_EFD_PIS_COFINS.items():
-        verificar_registro(efd_info["efd_pis_cofins"]["registros"], registro_nome, efd_info["efd_pis_cofins"]["registros"][registro_nome], registro_campos)
+        verificar_registro(efd_info[EFD_PIS_COFINS]["registros"], registro_nome, efd_info[EFD_PIS_COFINS]["registros"][registro_nome], registro_campos)
 
 
     # Verificando que todos os registros são válidos
-    for registro_nome in efd_info["efd_icms_ipi"]["registros"]:
+    for registro_nome in efd_info[EFD_ICMS_IPI]["registros"]:
         assert registro_nome in REGISTROS_EFD_ICMS_IPI
 
-    for registro_nome in efd_info["efd_pis_cofins"]["registros"]:
+    for registro_nome in efd_info[EFD_PIS_COFINS]["registros"]:
         assert registro_nome in REGISTROS_EFD_PIS_COFINS
 
 
     # As listas de blocos tem os tamanhos corretos
-    assert len(efd_info["efd_icms_ipi"]["blocos"]) == len(BLOCOS_EFD_ICMS_IPI)
-    assert len(efd_info["efd_pis_cofins"]["blocos"]) == len(BLOCOS_EFD_PIS_COFINS)
+    assert len(efd_info[EFD_ICMS_IPI]["blocos"]) == len(BLOCOS_EFD_ICMS_IPI)
+    assert len(efd_info[EFD_PIS_COFINS]["blocos"]) == len(BLOCOS_EFD_PIS_COFINS)
 
 
     # Os blocos corretos existem nas listas
-    for bloco in efd_info["efd_icms_ipi"]["blocos"]:
+    for bloco in efd_info[EFD_ICMS_IPI]["blocos"]:
         assert bloco["nome"] in BLOCOS_EFD_ICMS_IPI
 
-    for bloco in efd_info["efd_pis_cofins"]["blocos"]:
+    for bloco in efd_info[EFD_PIS_COFINS]["blocos"]:
         assert bloco["nome"] in BLOCOS_EFD_PIS_COFINS
 
 
