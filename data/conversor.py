@@ -62,9 +62,7 @@ def conversor():  # pylint: disable=too-many-locals
 
 
                 objeto_registros[linha_registros["code"]] = {
-                    # Substituindo “ (0x201C) e ” (0x201D) pelas aspas duplas padrão
-                    "descricao": linha_registros["desc"].strip().replace("“", "\"").replace("”", "\""),
-
+                    "descricao": linha_registros["desc"].strip(),
                     "nivel": int(linha_registros["level"]),
                     "obrigatorio": registro_obrigatorio,
 
@@ -146,7 +144,7 @@ def conversor():  # pylint: disable=too-many-locals
                 objeto_registros[registro_nome]["campos"].append({
                     "numero": int(linha_campos["Nº"]),
                     "nome": linha_campos["Campo"].replace(" ", "").replace("*", ""),
-                    "descricao": linha_campos["Descrição"].strip().replace("“", "\"").replace("”", "\""),
+                    "descricao": linha_campos["Descrição"].strip(),
                     "obrigatorio": campo_obrigatorio,
                     "tamanho": tamanho_campo,
                     "tamanho_exato": len(linha_campos["Tam"]) > 0 and linha_campos["Tam"][-1] == "*",
