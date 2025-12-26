@@ -1,7 +1,7 @@
+.prof/
 .vscode
-sped_extractor/
 extra/
-prof/
+sped_extractor/
 
 # Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
 # Essa configuração permite arquivos numerados, mas ignora arquivos com
