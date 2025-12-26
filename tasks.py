@@ -36,8 +36,19 @@ def venv(c: Context, python: str = "python", pasta: str = "venv"):
 
 @task
 def install(c: Context, dev: bool = True, jupyter: bool = False):
-    extras = ",".join(flag for flag, enabled in (("DEV", dev), ("JUPYTER", jupyter)) if enabled)
-    c.run(f"pip install -e .[{extras}]" if extras else "pip install -e .")
+    cmd = ["pip", "install", "-e", "."]
+    extras = []
+
+    if dev:
+        extras.append("DEV")
+
+    if jupyter:
+        extras.append("JUPYTER")
+
+    if extras:
+        cmd[-1] = f".[{','.join(extras)}]"
+
+    c.run(" ".join(cmd))
 
 
 
@@ -125,13 +136,23 @@ def all(c: Context):  # pylint: disable=redefined-builtin
 
 
 @task
-def test(c: Context, coverage: bool = False):
-    if coverage:
-        c.run("pytest tests --cov=src --cov-report=term-missing")
-    else:
-        c.run("pytest tests")
+def lint(c: Context):
+    c.run("pylint src tests tasks.py data/conversor.py")
 
 
 @task
-def lint(c: Context):
-    c.run("pylint src tests tasks.py data/conversor.py")
+def test(c: Context, coverage: bool = False, profile: bool = False):
+    cmd = ["pytest", "tests", "--pstats-dir", ".prof"]
+
+    if coverage:
+        cmd += ["--cov=src", "--cov-report=term-missing"]
+
+    if profile:
+        cmd += ["--profile"]
+
+    c.run(" ".join(cmd))
+
+
+@task
+def snakeviz(c: Context, arquivo: str = "prof/combined.prof"):
+    c.run(f"snakeviz {arquivo}")
