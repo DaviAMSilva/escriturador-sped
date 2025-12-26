@@ -4,6 +4,7 @@ import importlib.resources
 import json
 import os
 import shutil
+from typing import Iterable, Sequence
 
 from invoke.context import Context
 from invoke.tasks import task
