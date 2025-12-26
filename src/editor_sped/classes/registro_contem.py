@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class ContemRegistros(ABC):
-    def __init__(self, nome: str, efd_tipo: "EfdTipo", filhos: ListaRegistro) -> None:
+    def __init__(self, nome: str, efd_tipo: EfdTipo, filhos: ListaRegistro) -> None:
         self.nome: str = nome
         self.efd_tipo: EfdTipo = efd_tipo
         self.filhos: ListaRegistro = filhos
@@ -60,13 +60,8 @@ class ContemRegistros(ABC):
         primeiro=False
     ) -> "ListaRegistro":
         return self.filhos.pesquisar(
-            nome,
-            campos,
-            campos_c=campos_c,
-            campos_n=campos_n,
-            filtro=filtro,
-            recursivo=recursivo,
-            primeiro=primeiro
+            nome, campos, campos_c=campos_c, campos_n=campos_n,
+            filtro=filtro, recursivo=recursivo, primeiro=primeiro
         )
 
     def primeiro(
@@ -79,7 +74,10 @@ class ContemRegistros(ABC):
         campos_n: dict[str | int, int | float | None] | None = None,
         recursivo=True
     ) -> "Registro":
-        encontrado = self.pesquisar(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro, recursivo=recursivo, primeiro=True)
+        encontrado = self.pesquisar(
+            nome, campos, campos_c=campos_c, campos_n=campos_n,
+            filtro=filtro, recursivo=recursivo, primeiro=True
+        )
 
         try:
             return encontrado[0]

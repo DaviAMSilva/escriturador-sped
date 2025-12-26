@@ -1,5 +1,5 @@
 import re
-from typing import Any, Callable, Self, overload
+from typing import Any, Callable, Iterable, Self, overload
 
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
@@ -43,10 +43,16 @@ class Registro(ContemRegistros):
         if len(campos_textos) != campos_esperados:
             raise SyntaxError(f"A quantidade de campos é diferente da quantidade esperada ({len(campos_textos)} ao invés de {campos_esperados})")
 
-        # self.pai é Registro ao invés de Registro | None por motivos de praticidade
-        self.pai: Registro = None  # type: ignore
-        self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
+        # fmt: off
+        self.descricao   = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
+        self.nivel       = EFD_INFO[self.efd_tipo]["registros"][self.nome]["nivel"]
+        self.obrigatorio = EFD_INFO[self.efd_tipo]["registros"][self.nome]["obrigatorio"]
+        self.unico       = EFD_INFO[self.efd_tipo]["registros"][self.nome]["unico"]
+        # fmt: on
 
+        # self.pai é Registro ao invés de Registro | None por motivos de praticidade
+        # O único caso em que pai é None é na abertura e fechamento da escrituração
+        self.pai: Registro = None  # type: ignore
         self.campos = TuplaCampo(Campo(campo, i + 1, self, self.efd_tipo) for i, campo in enumerate(campos_textos))
 
 
@@ -125,7 +131,7 @@ class Registro(ContemRegistros):
 
 
 
-    def adicionar(self, registros: "Registro | ListaRegistro | list[Registro]") -> Self:
+    def adicionar(self, registros: "Registro | ListaRegistro" | Iterable["Registro"]) -> Self:
         registros = [registros] if isinstance(registros, Registro) else registros
 
         for novo_registro in registros:
@@ -144,7 +150,7 @@ class Registro(ContemRegistros):
 
         return self
 
-    def remover(self, registros: "Registro | ListaRegistro | list[Registro]" | Callable[["Registro"], bool]) -> Self:
+    def remover(self, registros: "Registro | ListaRegistro" | Iterable["Registro"] | Callable[["Registro"], bool]) -> Self:
         registros = [registros] if isinstance(registros, Registro) else registros
 
         if callable(registros):

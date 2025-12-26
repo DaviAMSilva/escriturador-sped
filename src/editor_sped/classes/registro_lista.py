@@ -26,6 +26,7 @@ class ListaRegistro(list["Registro"]):
         # Isso é necessário pois se Registro for importado no topo
         # do arquivo ocorrem erros devido a uma importação circular
         from .registro import Registro  # pylint: disable=import-outside-toplevel
+
         for registro in self:
             if not isinstance(registro, Registro):
                 raise TypeError(f"Item diferente de Registro em inicialização de ListaRegistro ({registro})")
@@ -81,13 +82,8 @@ class ListaRegistro(list["Registro"]):
 
             if recursivo and filho.filhos:
                 encontrados.extend(filho.pesquisar(
-                    nome,
-                    campos,
-                    campos_c=campos_c,
-                    campos_n=campos_n,
-                    filtro=filtro,
-                    recursivo=recursivo,
-                    primeiro=primeiro
+                    nome, campos, campos_c=campos_c, campos_n=campos_n,
+                    filtro=filtro, recursivo=recursivo, primeiro=primeiro
                 ))
 
                 if primeiro and encontrados:
@@ -105,7 +101,10 @@ class ListaRegistro(list["Registro"]):
         campos_n: dict[str | int, int | float | None] | None = None,
         recursivo=True
     ) -> "Registro":
-        encontrado = self.pesquisar(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro, recursivo=recursivo, primeiro=True)
+        encontrado = self.pesquisar(
+            nome, campos, campos_c=campos_c, campos_n=campos_n,
+            filtro=filtro, recursivo=recursivo, primeiro=True
+        )
 
         try:
             return encontrado[0]
