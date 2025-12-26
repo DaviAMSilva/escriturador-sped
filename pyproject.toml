@@ -49,7 +49,9 @@ DEV = [
     "autopep8",
     "pylint",
     "pytest",
-    "pytest-cov"
+    "pytest-cov",
+    "pytest-profiling",
+    "snakeviz"
 ]
 JUPYTER = [
     "ipykernel",
