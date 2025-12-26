@@ -25,7 +25,7 @@ class ListaRegistro(list["Registro"]):
 
         # Isso é necessário pois se Registro for importado no topo
         # do arquivo ocorrem erros devido a uma importação circular
-        from .registro import Registro # pylint: disable=import-outside-toplevel
+        from .registro import Registro  # pylint: disable=import-outside-toplevel
         for registro in self:
             if not isinstance(registro, Registro):
                 raise TypeError(f"Item diferente de Registro em inicialização de ListaRegistro ({registro})")
@@ -57,57 +57,60 @@ class ListaRegistro(list["Registro"]):
 
 
 
-    def pesquisar(self, chave: str | re.Pattern | Callable[["Registro"], bool] | None = None) -> "ListaRegistro":
-        # Se for apenas um caractere o caso especial é pesquisar todos desse bloco
-        if isinstance(chave, str) and len(chave) == 1:
-            chave += "..."
+    def pesquisar(
+        self,
+        nome: str | re.Pattern | None = None,
+        campos: dict[str | int, str | int | float | None] | None = None,
+        filtro: Callable[["Registro"], bool] | None = None,
+        *,
+        campos_c: dict[str | int, str] | None = None,
+        campos_n: dict[str | int, int | float | None] | None = None,
+        recursivo=True,
+        primeiro=False
+    ) -> "ListaRegistro":
+        encontrados = ListaRegistro()
 
-        resultados = ListaRegistro()
+        for filho in self:
+            valido = filho.teste(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro)
 
-        if isinstance(chave, (str, re.Pattern)):
-            for filho in self:
-                if re.compile(chave).fullmatch(filho.nome):
-                    resultados.append(filho)
-                if filho.contem_filhos:
-                    resultados.extend(filho.pesquisar(chave))
-            return resultados
+            if valido:
+                if primeiro:
+                    return ListaRegistro([filho])
 
-        if callable(chave):
-            for filho in self:
-                if chave(filho):
-                    resultados.append(filho)
-                if filho.contem_filhos:
-                    resultados.extend(filho.pesquisar(chave))
-            return resultados
+                encontrados.append(filho)
 
-        if chave is None:
-            for filho in self:
-                resultados.append(filho)
-                if filho.contem_filhos:
-                    resultados.extend(filho.pesquisar(chave))
-            return resultados
+            if recursivo and filho.filhos:
+                encontrados.extend(filho.pesquisar(
+                    nome,
+                    campos,
+                    campos_c=campos_c,
+                    campos_n=campos_n,
+                    filtro=filtro,
+                    recursivo=recursivo,
+                    primeiro=primeiro
+                ))
 
-        raise TypeError(f"Valor de chave inválido ({chave})")
+                if primeiro and encontrados:
+                    return encontrados[0:1]
 
-    def filtrar(self, filtro: str | re.Pattern | Callable[["Registro"], bool] | None = None):
-        resultados = ListaRegistro()
+        return encontrados
 
-        if isinstance(filtro, (str, re.Pattern)):
-            for filho in self:
-                if re.compile(filtro).fullmatch(filho.nome):
-                    resultados.append(filho)
-            return resultados
+    def primeiro(
+        self,
+        nome: str | re.Pattern | None = None,
+        campos: dict[str | int, str | int | float | None] | None = None,
+        filtro: Callable[["Registro"], bool] | None = None,
+        *,
+        campos_c: dict[str | int, str] | None = None,
+        campos_n: dict[str | int, int | float | None] | None = None,
+        recursivo=True
+    ) -> "Registro":
+        encontrado = self.pesquisar(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro, recursivo=recursivo, primeiro=True)
 
-        if callable(filtro):
-            for filho in self:
-                if filtro(filho):
-                    resultados.append(filho)
-            return resultados
-
-        if filtro is None:
-            return ListaRegistro(self)
-
-        raise TypeError(f"Valor de filtro inválido ({filtro})")
+        try:
+            return encontrado[0]
+        except IndexError as e:
+            raise ValueError("O registro pesquisado não foi encontrado") from e
 
 
 

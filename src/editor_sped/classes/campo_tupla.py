@@ -40,8 +40,11 @@ class TuplaCampo(tuple["Campo", ...]):
 
     def __getitem__(self, chave):
         try:
-            if isinstance(chave, (int, SupportsIndex)):
-                return super().__getitem__(chave)
+            if isinstance(chave, int):
+                if chave == 0:
+                    raise IndexError("Os campos de um registro têm a numeração iniciada pelo número 1")
+
+                return super().__getitem__(chave - 1) if chave > 0 else super().__getitem__(chave)
 
             if isinstance(chave, slice):
                 return TuplaCampo(super().__getitem__(chave))
@@ -52,6 +55,17 @@ class TuplaCampo(tuple["Campo", ...]):
             raise KeyError(f"Campo não encontrado pelo valor de pesquisa ({chave})") from e
 
         raise TypeError(f"Valor inválido ({chave})")
+
+
+
+    def __contains__(self, chave: object) -> bool:
+        if isinstance(chave, str):
+            return chave in self.dicionario
+
+        if isinstance(chave, int):
+            return 1 <= chave <= len(self)
+
+        return super().__contains__(chave)
 
 
 

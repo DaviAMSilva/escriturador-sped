@@ -9,7 +9,7 @@ from editor_sped.efd_info import EFD_INFO
 from editor_sped.types import EfdTipo
 
 
-def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo): # pylint: disable=too-many-locals
+def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
     lines1 = texto1.splitlines()
     lines2 = texto2.splitlines()
 

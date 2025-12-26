@@ -1,4 +1,4 @@
-# pylint: disable=W0621
+# pylint: disable=redefined-outer-name
 
 import os
 from glob import glob

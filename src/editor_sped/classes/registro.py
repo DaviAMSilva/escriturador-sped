@@ -1,4 +1,5 @@
-from typing import Callable, Self, overload
+import re
+from typing import Any, Callable, Self, overload
 
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
@@ -27,7 +28,7 @@ class Registro(ContemRegistros):
 
     @staticmethod
     def ler(registros_texto: str, efd_tipo: EfdTipo) -> ListaRegistro:
-        from .registro_ler import ler_registros # pylint: disable=import-outside-toplevel,cyclic-import
+        from .registro_ler import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
         return ler_registros(registros_texto, efd_tipo)
 
 
@@ -43,7 +44,7 @@ class Registro(ContemRegistros):
             raise SyntaxError(f"A quantidade de campos é diferente da quantidade esperada ({len(campos_textos)} ao invés de {campos_esperados})")
 
         # self.pai é Registro ao invés de Registro | None por motivos de praticidade
-        self.pai: Registro = None # type: ignore
+        self.pai: Registro = None  # type: ignore
         self.descricao = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
 
         self.campos = TuplaCampo(Campo(campo, i + 1, self, self.efd_tipo) for i, campo in enumerate(campos_textos))
@@ -58,15 +59,15 @@ class Registro(ContemRegistros):
 
     def __getitem__(self, chave):
         if isinstance(chave, int):
-            if chave == 0:
-                raise IndexError("Os campos de um registro têm a numeração iniciada pelo número 1")
-
-            return self.campos[chave - 1] if chave > 0 else self.campos[chave]
+            return self.campos[chave]
 
         return self.campos[chave]
 
     def __setitem__(self, chave: int | str, valor: str | int | float | None):
         self.campos[chave].valor = valor
+
+    def __contains__(self, chave: str | int | Campo):
+        return chave in self.campos
 
 
 
@@ -90,6 +91,37 @@ class Registro(ContemRegistros):
     @property
     def tamanho(self) -> int:
         return super().tamanho + 1
+
+
+
+    def teste(
+        self,
+        nome: str | re.Pattern | None = None,
+        campos: dict[str | int, str | int | float | None] | None = None,
+        *,
+        campos_c: dict[str | int, str] | None = None,
+        campos_n: dict[str | int, int | float | None] | None = None,
+        filtro: Callable[["Registro"], bool] | None = None
+    ) -> bool:
+        ok_nome = re.compile(nome).fullmatch(self.nome) if nome else True
+        ok_filtro = filtro(self) if filtro else True
+
+        ok_campos = True
+
+        campos_todos: list[tuple[dict[str | int, Any], Callable[[Campo], Any]]] = [
+            (campos or {}, lambda c: c.valor),
+            (campos_c or {}, lambda c: c.valor_c),
+            (campos_n or {}, lambda c: c.valor_n)
+        ]
+
+        for campos_atual, extrator in campos_todos:
+            if ok_campos:
+                for campo, valor in campos_atual.items():
+                    if campo in self and valor != extrator(self[campo]):
+                        ok_campos = False
+                        break
+
+        return bool(ok_nome and ok_filtro and ok_campos)
 
 
 

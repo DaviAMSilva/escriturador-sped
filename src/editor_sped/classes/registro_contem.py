@@ -43,20 +43,45 @@ class ContemRegistros(ABC):
         return sum(filho.tamanho for filho in self.filhos)
 
     @property
-    def contem_filhos(self) -> bool:
-        return len(self.filhos) >= 1
-
-    @property
     def registros(self) -> ListaRegistro:
-        resultados = ListaRegistro()
-
-        for filho in self.filhos:
-            resultados.append(filho)
-            resultados.extend(filho.pesquisar())
-
-        return resultados
+        return self.pesquisar()
 
 
 
-    def pesquisar(self, chave: str | re.Pattern | Callable[["Registro"], bool] | None = None) -> "ListaRegistro":
-        return self.filhos.pesquisar(chave)
+    def pesquisar(
+        self,
+        nome: str | re.Pattern | None = None,
+        campos: dict[str | int, str | int | float | None] | None = None,
+        filtro: Callable[["Registro"], bool] | None = None,
+        *,
+        campos_c: dict[str | int, str] | None = None,
+        campos_n: dict[str | int, int | float | None] | None = None,
+        recursivo=True,
+        primeiro=False
+    ) -> "ListaRegistro":
+        return self.filhos.pesquisar(
+            nome,
+            campos,
+            campos_c=campos_c,
+            campos_n=campos_n,
+            filtro=filtro,
+            recursivo=recursivo,
+            primeiro=primeiro
+        )
+
+    def primeiro(
+        self,
+        nome: str | re.Pattern | None = None,
+        campos: dict[str | int, str | int | float | None] | None = None,
+        filtro: Callable[["Registro"], bool] | None = None,
+        *,
+        campos_c: dict[str | int, str] | None = None,
+        campos_n: dict[str | int, int | float | None] | None = None,
+        recursivo=True
+    ) -> "Registro":
+        encontrado = self.pesquisar(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro, recursivo=recursivo, primeiro=True)
+
+        try:
+            return encontrado[0]
+        except IndexError as e:
+            raise ValueError("O registro pesquisado não foi encontrado") from e

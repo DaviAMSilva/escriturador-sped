@@ -165,7 +165,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Atualizando ou adicionando o Registro |9900|9900|
-        registro_9900_9900 = self.blocos["9"].pesquisar(lambda r: (r.nome == "9900" and r["REG_BLC"].valor_c == "9900"))
+        registro_9900_9900 = self.blocos["9"].pesquisar("9900", {"REG_BLC": "9900"})
         registro_9900_9900 = registro_9900_9900[0] if registro_9900_9900 else None
 
         if registro_9900_9900:

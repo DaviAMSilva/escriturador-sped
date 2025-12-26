@@ -33,11 +33,11 @@ def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
     assert isinstance(primeiro_registro.descricao, str)
     assert primeiro_registro.efd_tipo in EFD_TIPOS
 
-    assert primeiro_registro.contem_filhos
+    assert primeiro_registro.filhos
     assert isinstance(primeiro_registro.filhos, list)
     assert isinstance(primeiro_registro.campos, tuple)
 
-    if primeiro_registro.contem_filhos:
+    if primeiro_registro.filhos:
         assert primeiro_registro.tamanho > 1 and len(primeiro_registro.filhos) > 0
     else:
         assert primeiro_registro.tamanho == 1 and len(primeiro_registro.filhos) == 0
