@@ -154,5 +154,5 @@ def test(c: Context, coverage: bool = False, profile: bool = False):
 
 
 @task
-def snakeviz(c: Context, arquivo: str = "prof/combined.prof"):
+def snakeviz(c: Context, arquivo: str = ".prof/combined.prof"):
     c.run(f"snakeviz {arquivo}")
