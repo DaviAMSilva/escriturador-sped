@@ -790,6 +790,7 @@
 "D500","215","20","COD_INF","Código da informação complementar (campo 02 do Registro 0450)","C","006","-","N"
 "D500","215","21","VL_PIS","Valor do PIS/PASEP","N","-","02","N"
 "D500","215","22","VL_COFINS","Valor da COFINS","N","-","02","N"
+"D500","215","23","CHV_DOC_E","Chave do Documento Fiscal Eletrônico","N","044*","-","N"
 "D501","216","01","REG","Texto fixo contendo ""D501”","C","004*","-","S"
 "D501","216","02","CST_PIS","Código da Situação Tributária referente ao PIS/PASEP","N","002*","-","S"
 "D501","216","03","VL_ITEM","Valor Total dos Itens (Serviços)","N","-","02","S"
