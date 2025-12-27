@@ -141,7 +141,7 @@ def lint(c: Context):
 
 
 @task
-def test(c: Context, coverage: bool = False, profile: bool = False):
+def test(c: Context, coverage: bool = False, profile: bool = False, profile_svg: bool = False):
     cmd = ["pytest", "tests", "--pstats-dir", ".prof"]
 
     if coverage:
@@ -149,6 +149,9 @@ def test(c: Context, coverage: bool = False, profile: bool = False):
 
     if profile:
         cmd += ["--profile"]
+
+    if profile_svg:
+        cmd += ["--profile-svg"]
 
     c.run(" ".join(cmd))
 
