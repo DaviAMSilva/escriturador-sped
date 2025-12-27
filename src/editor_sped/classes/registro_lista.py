@@ -1,4 +1,3 @@
-import re
 from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
 
 if TYPE_CHECKING:
@@ -23,21 +22,13 @@ class ListaRegistro(list["Registro"]):
     def __init__(self, iteravel=()) -> None:
         super().__init__(iteravel)
 
-        # Isso é necessário pois se Registro for importado no topo
-        # do arquivo ocorrem erros devido a uma importação circular
-        from .registro import Registro  # pylint: disable=import-outside-toplevel
-
-        for registro in self:
-            if not isinstance(registro, Registro):
-                raise TypeError(f"Item diferente de Registro em inicialização de ListaRegistro ({registro})")
-
 
 
     @overload
     def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
 
     @overload
-    def __getitem__(self, chave: str | re.Pattern | slice | None) -> "ListaRegistro": ...
+    def __getitem__(self, chave: str | slice | None) -> "ListaRegistro": ...
 
     def __getitem__(self, chave):
         if isinstance(chave, (SupportsIndex, int)):
@@ -46,7 +37,7 @@ class ListaRegistro(list["Registro"]):
         if isinstance(chave, slice):
             return ListaRegistro(super().__getitem__(chave))
 
-        if isinstance(chave, (str, re.Pattern)) or chave is None:
+        if isinstance(chave, str) or chave is None:
             return self.pesquisar(chave)
 
         raise TypeError(f"Valor inválido ({chave})")
@@ -60,7 +51,7 @@ class ListaRegistro(list["Registro"]):
 
     def pesquisar(
         self,
-        nome: str | re.Pattern | None = None,
+        nome: str | None = None,
         campos: dict[str | int, str | int | float | None] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         *,
@@ -93,7 +84,7 @@ class ListaRegistro(list["Registro"]):
 
     def primeiro(
         self,
-        nome: str | re.Pattern | None = None,
+        nome: str | None = None,
         campos: dict[str | int, str | int | float | None] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         *,

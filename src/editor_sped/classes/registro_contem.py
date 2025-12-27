@@ -1,4 +1,3 @@
-import re
 from abc import ABC
 from typing import TYPE_CHECKING, Callable
 
@@ -50,7 +49,7 @@ class ContemRegistros(ABC):
 
     def pesquisar(
         self,
-        nome: str | re.Pattern | None = None,
+        nome: str | None = None,
         campos: dict[str | int, str | int | float | None] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         *,
@@ -66,7 +65,7 @@ class ContemRegistros(ABC):
 
     def primeiro(
         self,
-        nome: str | re.Pattern | None = None,
+        nome: str | None = None,
         campos: dict[str | int, str | int | float | None] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         *,

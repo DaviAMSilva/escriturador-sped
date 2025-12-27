@@ -1,5 +1,6 @@
 import json
 from abc import ABC, abstractmethod
+from collections import Counter
 
 from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS
 from ..efd_info import EFD_INFO
@@ -130,15 +131,12 @@ class Escrituracao(ContemRegistros, ABC):
 
     def totalizar_registros(self, ordenar_9900=False) -> None:
         # Encontrando todos os nomes de registros presentes na escrituração
-        registro_9001 = self.pesquisar("9001")[0]
+        registro_9001 = self.blocos["9"].abertura
 
-        registros_9900 = registro_9001.pesquisar("9900")
+        registros_9900 = registro_9001.filhos
         registros_9900_blc = [registro_9900["REG_BLC"].valor_c for registro_9900 in registros_9900]
 
-        registros_encontrados = set()
-        for registro in self.pesquisar():
-            nome = registro.nome
-            registros_encontrados.add(nome)
+        registros_contagem = Counter(registro.nome for registro in self.registros)
 
 
 
@@ -147,8 +145,8 @@ class Escrituracao(ContemRegistros, ABC):
 
         for registro_9900 in registros_9900:
             registro_nome = registro_9900["REG_BLC"].valor_c
-            if registro_nome in registros_encontrados:
-                registro_9900["QTD_REG_BLC"].valor_c = len(self.pesquisar(registro_nome))
+            if registro_nome in registros_contagem:
+                registro_9900["QTD_REG_BLC"].valor_c = registros_contagem[registro_nome]
             else:
                 registros_9900_remover.append(registro_9900)
 
@@ -157,21 +155,19 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Adicionando novos registros 9900 que não existiam antes
-        for registro_nome in registros_encontrados:
+        for registro_nome in registros_contagem:
             if registro_nome not in registros_9900_blc:
-                novo_registro_9900 = Registro(f"|9900|{registro_nome}|{len(self.pesquisar(registro_nome))}|", self.efd_tipo)
+                novo_registro_9900 = Registro(f"|9900|{registro_nome}|{registros_contagem[registro_nome]}|", self.efd_tipo)
                 registro_9001.filhos.append(novo_registro_9900)
 
 
 
         # Atualizando ou adicionando o Registro |9900|9900|
-        registro_9900_9900 = self.blocos["9"].pesquisar("9900", {"REG_BLC": "9900"})
-        registro_9900_9900 = registro_9900_9900[0] if registro_9900_9900 else None
-
-        if registro_9900_9900:
-            registro_9900_9900["QTD_REG_BLC"].valor_c = len(self.pesquisar("9900"))
-        else:
-            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(self.pesquisar('9900'))}|", self.efd_tipo)
+        try:
+            registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
+            registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
+        except ValueError:
+            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.efd_tipo)
             registro_9001.filhos.append(novo_registro_9900_9900)
 
 

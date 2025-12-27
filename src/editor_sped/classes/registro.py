@@ -1,4 +1,3 @@
-import re
 from typing import Any, Callable, Iterable, Self, overload
 
 from ..constantes import EFD_ORDEM_BLOCOS
@@ -102,32 +101,44 @@ class Registro(ContemRegistros):
 
     def teste(
         self,
-        nome: str | re.Pattern | None = None,
+        nome: str | None = None,
         campos: dict[str | int, str | int | float | None] | None = None,
         *,
         campos_c: dict[str | int, str] | None = None,
         campos_n: dict[str | int, int | float | None] | None = None,
         filtro: Callable[["Registro"], bool] | None = None
     ) -> bool:
-        ok_nome = re.compile(nome).fullmatch(self.nome) if nome else True
-        ok_filtro = filtro(self) if filtro else True
+        if nome and nome != self.nome:
+            return False
 
-        ok_campos = True
+        if filtro and not filtro(self):
+            return False
 
-        campos_todos: list[tuple[dict[str | int, Any], Callable[[Campo], Any]]] = [
-            (campos or {}, lambda c: c.valor),
-            (campos_c or {}, lambda c: c.valor_c),
-            (campos_n or {}, lambda c: c.valor_n)
-        ]
+        if campos or campos_c or campos_n:
+            campos_todos: list[tuple[dict[str | int, Any], str]] = [
+                (campos or {}, ""),
+                (campos_c or {}, "C"),
+                (campos_n or {}, "N")
+            ]
 
-        for campos_atual, extrator in campos_todos:
-            if ok_campos:
-                for campo, valor in campos_atual.items():
-                    if campo in self and valor != extrator(self[campo]):
-                        ok_campos = False
-                        break
+            for campos_atual, atributo in campos_todos:
+                for campo_nome, campo_valor in campos_atual.items():
+                    try:
+                        campo = self[campo_nome]
 
-        return bool(ok_nome and ok_filtro and ok_campos)
+                        if atributo == "C":
+                            valor_teste = campo.valor_c
+                        elif atributo == "N":
+                            valor_teste = campo.valor_n
+                        else:
+                            valor_teste = campo.valor
+
+                        if campo_valor != valor_teste:
+                            return False
+                    except KeyError:
+                        continue
+
+        return True
 
 
 
