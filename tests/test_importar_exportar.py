@@ -26,30 +26,34 @@ def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
         assert nome1 == nome2
         assert len(campos1) == len(campos2)
 
-        for i, (campo1, campo2) in enumerate(zip(campos1, campos2)):
-            tipo1 = EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tipo"]
-            tipo2 = EFD_INFO[efd_tipo]["registros"][nome2]["campos"][i]["tipo"]
+        comparar_campos(efd_tipo, campos1, campos2, nome1, nome2)
 
-            assert tipo1 == tipo2
 
-            if tipo1 == "N":
-                # Campos vazios estão OK
-                if campo1 == "" and campo2 == "":
-                    continue
+def comparar_campos(efd_tipo, campos1, campos2, nome1, nome2):
+    for i, (campo1, campo2) in enumerate(zip(campos1, campos2)):
+        tipo1 = EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tipo"]
+        tipo2 = EFD_INFO[efd_tipo]["registros"][nome2]["campos"][i]["tipo"]
 
-                try:
-                    valor1 = Decimal(campo1.replace(",", "."))
-                    valor2 = Decimal(campo2.replace(",", "."))
+        assert tipo1 == tipo2
 
-                    # Valor numérico
-                    assert valor1 == valor2
-                except InvalidOperation as e:
-                    raise ValueError("Não foi possível converter para decimal") from e
-            elif tipo1 == "C":
-                # Valor alfanumérico
-                assert campo1 == campo2
-            else:
-                raise ValueError(f"Tipo de campo desconhecido: {tipo1}")
+        if tipo1 == "N":
+            # Campos vazios estão OK
+            if campo1 == "" and campo2 == "":
+                continue
+
+            try:
+                valor1 = Decimal(campo1.replace(",", "."))
+                valor2 = Decimal(campo2.replace(",", "."))
+
+                # Valor numérico
+                assert valor1 == valor2
+            except InvalidOperation as e:
+                raise ValueError("Não foi possível converter para decimal") from e
+        elif tipo1 == "C":
+            # Valor alfanumérico
+            assert campo1 == campo2
+        else:
+            raise ValueError(f"Tipo de campo desconhecido: {tipo1}")
 
 
 @pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))

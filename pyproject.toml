@@ -13,7 +13,7 @@ maintainers = [{ name = "Davi Augusto Moreira da Silva", email = "daviamsilva@ho
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { text = "MIT" }
 
-keywords = [ "sped", "fiscal", "contabil", "brasil", "receita-federal", "text-processing" ]
+keywords = [ "sped", "fiscal", "efd-fiscal", "contribuicoes", "efd-contribuicoes", "brasil", "receita-federal", "text-processing" ]
 
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -27,7 +27,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Topic :: Office/Business :: Financial",
-    "Topic :: Text Processing :: General"
+    "Topic :: Text Processing :: General",
 ]
 
 dependencies = []
@@ -51,7 +51,7 @@ DEV = [
     "pytest",
     "pytest-cov",
     "pytest-profiling",
-    "snakeviz"
+    "snakeviz",
 ]
 JUPYTER = [
     "ipykernel",
@@ -78,8 +78,9 @@ ignore = ["E303"]
 
 
 [tool.pylint]
-max-line-length = 160
+max-args = 10
 max-attributes = 15
+max-line-length = 160
 disable = ["C0114", "C0115", "C0116"]
 
 
