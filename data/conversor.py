@@ -69,7 +69,7 @@ def conversor():
                 assert len(linha_registros) == len(COLUNAS["registros"][efd_tipo]), ("registros", efd_tipo, linha_registros)
                 assert all(registro is not None for registro in linha_registros.values())
 
-                registro_obrigatorio: bool = linha_registros["spec_required"] == "O"
+                registro_obrigatorio: bool = linha_registros["spec_required"] in ("O", "S")
                 # NOTE: os campos "spec_in" e "spec_out" não devem ser usados para identificar
                 # a obrigatoriedade geral de um registro devido a vários falsos positivos
                 # or (
