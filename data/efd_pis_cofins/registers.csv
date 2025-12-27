@@ -5,7 +5,7 @@
 "0","0100","True","2","V","S","Dados do Contabilista"
 "0","0110","True","2","1","S","Regimes de Apuração da Contribuição Social e de Apropriação de Crédito"
 "0","0111","True","3","1:1","S","Tabela de Receita Bruta Mensal para Fins de Rateio de Créditos Comuns"
-"0","0120","True","2","V","S","Identificação de EFD-Contribuições sem dados a Escriturar"
+"0","0120","True","2","V","S","Identificação de EFD-Contribuições Sem Dados a Escriturar e Outras Informações de Interesse Do Fisco"
 "0","0140","True","2","V","S","Tabela de Cadastro de Estabelecimento"
 "0","0145","","3","1:1","","Regime de Apuração da Contribuição Previdenciária sobre a Receita Bruta"
 "0","0150","True","3","1:N","S","Tabela de Cadastro do Participante"
