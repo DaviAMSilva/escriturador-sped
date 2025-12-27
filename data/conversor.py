@@ -23,6 +23,17 @@ EFD_INFO_ARQUIVO = "efd_info.{}"
 
 EFD_JSON_INDENTACAO = 4
 
+# Nomes das colunas esperadas para cada arquivo e cada módulo
+COLUNAS = {
+    "registros": {
+        "efd_icms_ipi": ["block", "code", "required", "in_required", "out_required", "level", "card", "spec_required", "spec_in", "spec_out", "desc"],
+        "efd_pis_cofins": ["block", "code", "required", "level", "card", "spec_required", "desc"]
+    },
+    "campos": {
+        "efd_icms_ipi": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig", "Entr", "Saídas"],
+        "efd_pis_cofins": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"]
+    }
+}
 
 
 
@@ -32,7 +43,8 @@ EFD_JSON_INDENTACAO = 4
 
 
 
-def conversor():  # pylint: disable=too-many-locals
+
+def conversor():
     efd_info: EfdInfo = {}
 
 
@@ -48,7 +60,15 @@ def conversor():  # pylint: disable=too-many-locals
 
 
         with open(arquivo_registros, encoding="utf-8", newline="") as ar:
-            for linha_registros in csv.DictReader(ar):
+            csv_registros = csv.DictReader(ar)
+
+            if csv_registros.fieldnames != COLUNAS["registros"][efd_tipo]:
+                raise ValueError(f"Colunas inválidas no arquivo registers.csv do módulo {efd_tipo}")
+
+            for linha_registros in csv_registros:
+                assert len(linha_registros) == len(COLUNAS["registros"][efd_tipo]), ("registros", efd_tipo, linha_registros)
+                assert all(registro is not None for registro in linha_registros.values())
+
                 registro_obrigatorio: bool = linha_registros["spec_required"] == "O"
                 # NOTE: os campos "spec_in" e "spec_out" não devem ser usados para identificar
                 # a obrigatoriedade geral de um registro devido a vários falsos positivos
@@ -112,7 +132,15 @@ def conversor():  # pylint: disable=too-many-locals
 
 
         with open(arquivo_campos, encoding="utf-8", newline="") as ac:
-            for linha_campos in csv.DictReader(ac):
+            csv_campos = csv.DictReader(ac)
+
+            if csv_campos.fieldnames != COLUNAS["campos"][efd_tipo]:
+                raise ValueError(f"Colunas inválidas no arquivo accurate_fields do módulo {efd_tipo}")
+
+            for linha_campos in csv_campos:
+                assert len(linha_campos) == len(COLUNAS["campos"][efd_tipo]), ("campos", efd_tipo, linha_campos)
+                assert all(campo is not None for campo in linha_campos.values())
+
                 registro_nome = linha_campos["Register"]
 
                 # NOTE: Os campos "Entr" e "Saídas" podem ser usados para identificar a obrigatoriedade geral de um campo apenas quando ambos forem "O"
