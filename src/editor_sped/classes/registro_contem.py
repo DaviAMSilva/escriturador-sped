@@ -73,7 +73,7 @@ class ContemRegistros(ABC):
         campos_n: dict[str | int, int | float | None] | None = None,
         recursivo=True
     ) -> "Registro":
-        encontrado = self.pesquisar(
+        encontrado = self.filhos.pesquisar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True
         )

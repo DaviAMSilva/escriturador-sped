@@ -72,7 +72,7 @@ class ListaRegistro(list["Registro"]):
                 encontrados.append(filho)
 
             if recursivo and filho.filhos:
-                encontrados.extend(filho.pesquisar(
+                encontrados.extend(filho.filhos.pesquisar(
                     nome, campos, campos_c=campos_c, campos_n=campos_n,
                     filtro=filtro, recursivo=recursivo, primeiro=primeiro
                 ))
