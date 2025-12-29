@@ -1,5 +1,4 @@
 from decimal import Decimal, InvalidOperation
-from inspect import signature
 from typing import TYPE_CHECKING, Callable
 
 from ..efd_info import EFD_INFO
@@ -92,9 +91,6 @@ class Campo:
         return self.texto()
 
     def texto(self) -> str:
-        if self._retorna_valor:
-            return Campo.valor_para_texto(self._retorna_valor(), self.decimal, self.tamanho, self.tamanho_exato)
-
         return self._valor_alfanumerico
 
 
@@ -139,9 +135,6 @@ class Campo:
 
     @property
     def valor_c(self) -> str:
-        if self._retorna_valor:
-            self.valor = self._retorna_valor()
-
         return self._valor_alfanumerico
 
     @valor_c.setter
@@ -151,9 +144,6 @@ class Campo:
 
     @property
     def valor_n(self) -> int | float:
-        if self._retorna_valor:
-            self.valor = self._retorna_valor()
-
         if self._valor_numerico is None:
             # Infelizmente não é prático informar corretamente o tipo de retorno, pois ferramentas
             # como Pylance irão reclamar que o seguinte código, por exemplo, pode gerar erros:
@@ -168,25 +158,3 @@ class Campo:
     @valor_n.setter
     def valor_n(self, valor: str | int | float | None) -> None:
         self.valor = valor
-
-
-
-    @property
-    def valor_configurado(self) -> bool:
-        return self._retorna_valor is not None
-
-    def configurar_valor(self, retorna_valor: Callable[[], str | int | float | None]) -> None:
-        # Verifica se retorna_valor é uma função sem argumentos e retorna str
-        if not callable(retorna_valor):
-            raise TypeError(f"O parâmetro '{retorna_valor}' não é uma função")
-
-        sig = signature(retorna_valor)
-        if len(sig.parameters) != 0:
-            raise TypeError("A função fornecida não deve conter argumentos")
-        if sig.return_annotation not in (sig.empty, str, int, float):
-            raise TypeError("A função fornecida deve retornar str, int, float ou None")
-
-        self._retorna_valor = retorna_valor
-
-    def desconfigurar_valor(self) -> None:
-        self._retorna_valor = None
