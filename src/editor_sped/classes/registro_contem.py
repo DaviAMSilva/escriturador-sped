@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable
 
 from ..types import EfdTipo
@@ -21,16 +21,21 @@ class ContemRegistros(ABC):
         self.efd_tipo: EfdTipo = efd_tipo
         self.filhos: ListaRegistro = filhos
 
+
+
     def __str__(self) -> str:
-        return self.nome
+        return self.texto()
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.nome})"
+        return f"{self.__class__.__name__}({repr(self.nome)})"
 
     def __len__(self) -> int:
         return self.tamanho
 
 
+
+    @abstractmethod
+    def texto(self) -> str: ...
 
     def serialize(self) -> dict:
         return {"nome": self.nome, "filhos": self.filhos}

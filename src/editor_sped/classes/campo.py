@@ -84,7 +84,7 @@ class Campo:
         return self.texto()
 
     def __repr__(self) -> str:
-        return f"Campo({self.nome})"
+        return f"Campo({repr(self.nome)}, {repr(self.valor)})"
 
 
 

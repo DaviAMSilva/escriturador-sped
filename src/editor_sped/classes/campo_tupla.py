@@ -69,7 +69,7 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"TuplaCampo{super().__repr__()}"
 
 

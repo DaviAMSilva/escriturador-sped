@@ -71,6 +71,11 @@ class Registro(ContemRegistros):
     def __setitem__(self, chave: int | str, valor: str | int | float | None):
         self.campos[chave].valor = valor
 
+
+
+    def __repr__(self) -> str:
+        return f"Registro({repr(self.linha)})"
+
     def __contains__(self, chave: str | int | Campo):
         return chave in self.campos
 
@@ -91,7 +96,7 @@ class Registro(ContemRegistros):
 
     @property
     def linha(self) -> str:
-        return f"|{'|'.join([str(c) for c in self.campos])}|\n"
+        return f"|{'|'.join([str(c) for c in self.campos])}|"
 
     @property
     def tamanho(self) -> int:
