@@ -21,6 +21,11 @@ class Bloco(ContemRegistros):
 
 
 
+    def __getitem__(self, chave: str) -> ListaRegistro:
+        return self.filhos.pesquisar(chave)
+
+
+
     def texto(self) -> str:
         return self.abertura.texto() + self.fechamento.texto()
 

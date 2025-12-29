@@ -1,7 +1,7 @@
 import re
 
 from data.conversor import EFD_MAIOR_NIVEL, conversor
-from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
+from editor_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, Campo
 
 from .constantes import BLOCOS_EFD_ICMS_IPI, BLOCOS_EFD_PIS_COFINS, REGISTROS_EFD_ICMS_IPI, REGISTROS_EFD_PIS_COFINS
 
@@ -101,4 +101,4 @@ def verificar_registro(efd_registros, nome, registro, campos):
         assert campo["decimal"] is None or (isinstance(campo["decimal"], int) and int(campo["decimal"]) > 0)
 
         # Tipo
-        assert campo["tipo"] in ("C", "N")
+        assert campo["tipo"] in (Campo.ALFANUMERICO, Campo.NUMERICO)

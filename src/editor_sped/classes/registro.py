@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterable, Self, overload
+from typing import Any, Callable, Iterable, Never, overload
 
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
@@ -117,8 +117,8 @@ class Registro(ContemRegistros):
         if campos or campos_c or campos_n:
             campos_todos: list[tuple[dict[str | int, Any], str]] = [
                 (campos or {}, ""),
-                (campos_c or {}, "C"),
-                (campos_n or {}, "N")
+                (campos_c or {}, Campo.ALFANUMERICO),
+                (campos_n or {}, Campo.NUMERICO)
             ]
 
             for campos_atual, atributo in campos_todos:
@@ -126,10 +126,10 @@ class Registro(ContemRegistros):
                     try:
                         campo = self[campo_nome]
 
-                        if atributo == "C":
-                            valor_teste = campo.valor_c
-                        elif atributo == "N":
+                        if atributo == Campo.ALFANUMERICO:
                             valor_teste = campo.valor_n
+                        elif atributo == Campo.NUMERICO:
+                            valor_teste = campo.valor_c
                         else:
                             valor_teste = campo.valor
 
@@ -142,10 +142,10 @@ class Registro(ContemRegistros):
 
 
 
-    def adicionar(self, registros: "Registro | ListaRegistro" | Iterable["Registro"]) -> Self:
-        registros = [registros] if isinstance(registros, Registro) else registros
+    def adicionar(self, registros: "Registro | ListaRegistro" | Iterable["Registro"]) -> ListaRegistro:
+        registros_adicionados = ListaRegistro()
 
-        for novo_registro in registros:
+        for novo_registro in [registros] if isinstance(registros, Registro) else registros:
             if not isinstance(novo_registro, Registro):
                 raise TypeError(f"Item não é um registro ({novo_registro})")
 
@@ -154,24 +154,48 @@ class Registro(ContemRegistros):
 
             for i, filho in enumerate(self.filhos):
                 if Registro.ordem(novo_registro.nome, self.efd_tipo) < Registro.ordem(filho.nome, self.efd_tipo):
+                    registros_adicionados.append(novo_registro)
                     self.filhos.insert(i, novo_registro)
                     break
             else:
+                registros_adicionados.append(novo_registro)
                 self.filhos.append(novo_registro)
 
-        return self
+        return registros_adicionados
 
-    def remover(self, registros: "Registro | ListaRegistro" | Iterable["Registro"] | Callable[["Registro"], bool]) -> Self:
-        registros = [registros] if isinstance(registros, Registro) else registros
+    @overload
+    def remover(
+        self, registros: "Registro | ListaRegistro" | Iterable["Registro"], *,
+        nome: Never = ..., filtro: Never = ..., campos: Never = ..., campos_c: Never = ..., campos_n: Never = ...
+    ) -> ListaRegistro: ...
 
-        if callable(registros):
-            for i in range(len(self.filhos) - 1, -1, -1):
-                if registros(self.filhos[i]):
-                    del self.filhos[i]
-        else:
-            registros_set = set(registros)
+    @overload
+    def remover(
+        self, registros: None = None, *,
+        nome: str | None = ...,
+        filtro: Callable[["Registro"], bool] | None = ...,
+        campos: dict[str | int, str | int | float | None] | None = ...,
+        campos_c: dict[str | int, str] | None = ...,
+        campos_n: dict[str | int, int | float | None] | None = ...
+    ) -> ListaRegistro: ...
+
+    def remover(self, registros=None, *, nome=None, filtro=None, campos=None, campos_c=None, campos_n=None) -> ListaRegistro:
+        registros_removidos = ListaRegistro()
+
+        if registros:
+            if nome or filtro or campos or campos_c or campos_n:
+                raise TypeError("Não são permitidos outros parâmetros se 'registros' estiver presente")
+
+            registros_set = set([registros] if isinstance(registros, Registro) else registros)
+
             for i in range(len(self.filhos) - 1, -1, -1):
                 if self.filhos[i] in registros_set:
+                    registros_removidos.append(self.filhos[i])
+                    del self.filhos[i]
+        elif nome or filtro or campos or campos_c or campos_n:
+            for i in range(len(self.filhos) - 1, -1, -1):
+                if self.filhos[i].teste(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro):
+                    registros_removidos.append(self.filhos[i])
                     del self.filhos[i]
 
-        return self
+        return registros_removidos

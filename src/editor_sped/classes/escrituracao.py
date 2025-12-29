@@ -39,6 +39,14 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
+    def __getitem__(self, chave: str) -> Bloco:
+        try:
+            return self.blocos[chave]
+        except KeyError as e:
+            raise KeyError(f"Bloco não encontrado ({chave})") from e
+
+
+
     def json(self, *args, indent=4, ensure_ascii=False, **kwargs) -> str:
         return json.dumps(self, indent=indent, ensure_ascii=ensure_ascii, default=lambda obj: obj.serialize(), *args, **kwargs)
 
@@ -158,6 +166,7 @@ class Escrituracao(ContemRegistros, ABC):
         for registro_nome in registros_contagem:
             if registro_nome not in registros_9900_blc:
                 novo_registro_9900 = Registro(f"|9900|{registro_nome}|{registros_contagem[registro_nome]}|", self.efd_tipo)
+                novo_registro_9900.pai = registro_9001
                 registro_9001.filhos.append(novo_registro_9900)
 
 
@@ -168,6 +177,7 @@ class Escrituracao(ContemRegistros, ABC):
             registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
         except ValueError:
             novo_registro_9900_9900 = Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.efd_tipo)
+            novo_registro_9900_9900.pai = registro_9001
             registro_9001.filhos.append(novo_registro_9900_9900)
 
 

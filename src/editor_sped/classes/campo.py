@@ -22,6 +22,8 @@ class Campo:
     ALFANUMERICO = "C"
     NUMERICO = "N"
 
+
+
     @staticmethod
     def valor_para_texto(valor: str | int | float | None, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> str:
         if isinstance(valor, str):
@@ -49,6 +51,8 @@ class Campo:
 
         return int(float((valor or "").replace(",", ".")))
 
+
+
     def __init__(self, valor: str | int | float | None, numero: int, registro: "Registro", efd_tipo: EfdTipo) -> None:
         self.efd_tipo: EfdTipo = efd_tipo
         self.registro = registro
@@ -69,16 +73,20 @@ class Campo:
 
         self._valor_alfanumerico: str = ""
         self._valor_numerico: Decimal | None = None
-        self._retorna_valor: Callable[[], str | int | float] | None = None
+        self._retorna_valor: Callable[[], str | int | float | None] | None = None
 
         # Converte o valor inicial se necessário
         self.valor = valor
+
+
 
     def __str__(self) -> str:
         return self.texto()
 
     def __repr__(self) -> str:
         return f"Campo({self.nome})"
+
+
 
     def serialize(self) -> str:
         return self.texto()
@@ -88,6 +96,8 @@ class Campo:
             return Campo.valor_para_texto(self._retorna_valor(), self.decimal, self.tamanho, self.tamanho_exato)
 
         return self._valor_alfanumerico
+
+
 
     @property
     def valor(self) -> str | int | float:
@@ -165,7 +175,7 @@ class Campo:
     def valor_configurado(self) -> bool:
         return self._retorna_valor is not None
 
-    def configurar_valor(self, retorna_valor: Callable[[], str | int | float]) -> None:
+    def configurar_valor(self, retorna_valor: Callable[[], str | int | float | None]) -> None:
         # Verifica se retorna_valor é uma função sem argumentos e retorna str
         if not callable(retorna_valor):
             raise TypeError(f"O parâmetro '{retorna_valor}' não é uma função")

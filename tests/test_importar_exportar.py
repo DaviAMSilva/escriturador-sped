@@ -3,10 +3,8 @@ from decimal import Decimal, InvalidOperation
 
 import pytest
 
+from editor_sped import EFD_ICMS_IPI, EFD_INFO, EFD_PIS_COFINS, Campo, EfdTipo
 from editor_sped.classes.escrituracao import Escrituracao
-from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
-from editor_sped.efd_info import EFD_INFO
-from editor_sped.types import EfdTipo
 
 
 def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
@@ -36,7 +34,7 @@ def comparar_campos(efd_tipo, campos1, campos2, nome1, nome2):
 
         assert tipo1 == tipo2
 
-        if tipo1 == "N":
+        if tipo1 == Campo.NUMERICO:
             # Campos vazios estão OK
             if campo1 == "" and campo2 == "":
                 continue
@@ -49,7 +47,7 @@ def comparar_campos(efd_tipo, campos1, campos2, nome1, nome2):
                 assert valor1 == valor2
             except InvalidOperation as e:
                 raise ValueError("Não foi possível converter para decimal") from e
-        elif tipo1 == "C":
+        elif tipo1 == Campo.ALFANUMERICO:
             # Valor alfanumérico
             assert campo1 == campo2
         else:
