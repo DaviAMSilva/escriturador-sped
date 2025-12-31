@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Iterable
 
 from ..types import EfdTipo
 from .registro_lista import ListaRegistro
@@ -55,11 +55,11 @@ class ContemRegistros(ABC):
     def pesquisar(
         self,
         nome: str | None = None,
-        campos: dict[str | int, str | int | float | None] | None = None,
-        filtro: Callable[["Registro"], bool] | None = None,
+        campos: dict[str | int, str | int | float | None | Iterable[str | int | float | None]] | None = None,
         *,
-        campos_c: dict[str | int, str] | None = None,
-        campos_n: dict[str | int, int | float | None] | None = None,
+        campos_c: dict[str | int, str | Iterable[str]] | None = None,
+        campos_n: dict[str | int, int | float | None | Iterable[int | float | None]] | None = None,
+        filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
     ) -> "ListaRegistro":
@@ -71,11 +71,11 @@ class ContemRegistros(ABC):
     def primeiro(
         self,
         nome: str | None = None,
-        campos: dict[str | int, str | int | float | None] | None = None,
-        filtro: Callable[["Registro"], bool] | None = None,
+        campos: dict[str | int, str | int | float | None | Iterable[str | int | float | None]] | None = None,
         *,
-        campos_c: dict[str | int, str] | None = None,
-        campos_n: dict[str | int, int | float | None] | None = None,
+        campos_c: dict[str | int, str | Iterable[str]] | None = None,
+        campos_n: dict[str | int, int | float | None | Iterable[int | float | None]] | None = None,
+        filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":
         encontrado = self.filhos.pesquisar(

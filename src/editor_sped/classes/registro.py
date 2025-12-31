@@ -107,10 +107,10 @@ class Registro(ContemRegistros):
     def teste(
         self,
         nome: str | None = None,
-        campos: dict[str | int, str | int | float | None] | None = None,
+        campos: dict[str | int, str | int | float | None | Iterable[str | int | float | None]] | None = None,
         *,
-        campos_c: dict[str | int, str] | None = None,
-        campos_n: dict[str | int, int | float | None] | None = None,
+        campos_c: dict[str | int, str | Iterable[str]] | None = None,
+        campos_n: dict[str | int, int | float | None | Iterable[int | float | None]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None
     ) -> bool:
         if nome and nome != self.nome:
@@ -130,18 +130,22 @@ class Registro(ContemRegistros):
                 for campo_nome, campo_valor in campos_atual.items():
                     try:
                         campo = self[campo_nome]
-
-                        if atributo == Campo.ALFANUMERICO:
-                            valor_teste = campo.valor_n
-                        elif atributo == Campo.NUMERICO:
-                            valor_teste = campo.valor_c
-                        else:
-                            valor_teste = campo.valor
-
-                        if campo_valor != valor_teste:
-                            return False
                     except KeyError:
                         continue
+
+                    if atributo == Campo.ALFANUMERICO:
+                        valor_teste = campo.valor_n
+                    elif atributo == Campo.NUMERICO:
+                        valor_teste = campo.valor_c
+                    else:
+                        valor_teste = campo.valor
+
+                    if isinstance(campo_valor, str) or not isinstance(campo_valor, Iterable):
+                        if valor_teste != campo_valor:
+                            return False
+                    else:
+                        if valor_teste not in campo_valor:
+                            return False
 
         return True
 
