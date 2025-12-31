@@ -26,9 +26,17 @@ class Registro(ContemRegistros):
         return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0]) * 1000 + int(nome[1:4])
 
     @staticmethod
-    def ler(registros_texto: str, efd_tipo: EfdTipo) -> ListaRegistro:
+    def ler(registros: str, efd_tipo: EfdTipo) -> "Registro":
         from .registro_ler import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
-        return ler_registros(registros_texto, efd_tipo)
+        try:
+            return ler_registros(registros, efd_tipo)[0]
+        except IndexError as e:
+            raise ValueError("Não foi possível ler o registro") from e
+
+    @staticmethod
+    def ler_varios(registros: str | list[str], efd_tipo: EfdTipo) -> ListaRegistro:
+        from .registro_ler import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
+        return ler_registros(registros, efd_tipo)
 
 
 

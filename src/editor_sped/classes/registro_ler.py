@@ -13,9 +13,13 @@ from .registro_lista import ListaRegistro
 
 
 
-def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> ListaRegistro:
-    if registros_texto == "" or not isinstance(registros_texto, str):
-        return ListaRegistro()
+def ler_registros(registros: str | list[str], efd_tipo: EfdTipo) -> ListaRegistro:
+    if not registros or not isinstance(registros, (str, list)):
+        raise TypeError(f"Tipo inválido para parâmetro 'registros' ({registros})")
+
+    # Transformando em lista
+    if isinstance(registros, str):
+        registros = registros.splitlines()
 
     nivel_anterior = -1
 
@@ -26,7 +30,10 @@ def ler_registros(registros_texto: str, efd_tipo: EfdTipo) -> ListaRegistro:
     registros_raiz: ListaRegistro = ListaRegistro()
 
     # Para cada registro informado
-    for registro_atual in registros_texto.splitlines():
+    for registro_atual in registros:
+        if not registro_atual or not isinstance(registro_atual, str):
+            raise TypeError(f"Tipo inválido para parâmetro 'registros' ({registro_atual})")
+
         registro_atual_campos = registro_atual.split("|")
 
         # Um registro precisa começar e iniciar com o caractere |

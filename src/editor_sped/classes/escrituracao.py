@@ -58,7 +58,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
     def _ler_escrituracao(self, escrituracao_texto: str) -> None:
-        registros_raizes = Registro.ler(escrituracao_texto, self.efd_tipo)
+        registros_raizes = Registro.ler_varios(escrituracao_texto, self.efd_tipo)
 
 
 

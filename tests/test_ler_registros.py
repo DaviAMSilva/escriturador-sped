@@ -11,9 +11,9 @@ def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
     registros_texto = textos_todos[arquivo]
 
     if EFD_ICMS_IPI in arquivo:
-        registros = Registro.ler(registros_texto, EFD_ICMS_IPI)
+        registros = Registro.ler_varios(registros_texto, EFD_ICMS_IPI)
     elif EFD_PIS_COFINS in arquivo:
-        registros = Registro.ler(registros_texto, EFD_PIS_COFINS)
+        registros = Registro.ler_varios(registros_texto, EFD_PIS_COFINS)
     else:
         raise FileExistsError(f"Arquivo inválido: {arquivo}")
 
@@ -45,13 +45,11 @@ def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
 
 
 def test_ler_registros_vazio():
-    registros_vazio1 = Registro.ler("", EFD_ICMS_IPI)
-    registros_vazio2 = Registro.ler("", EFD_PIS_COFINS)
+    valores_teste = ("", None, [""], [None])
 
-    assert isinstance(registros_vazio1, list)
-    assert isinstance(registros_vazio2, list)
-    assert len(registros_vazio1) == 0
-    assert len(registros_vazio2) == 0
+    for valor_teste in valores_teste:
+        with pytest.raises(TypeError):
+            Registro.ler(valor_teste, EFD_ICMS_IPI)  # type: ignore
 
 
 
