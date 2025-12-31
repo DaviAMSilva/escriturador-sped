@@ -148,11 +148,11 @@ class Registro(ContemRegistros):
                     else:
                         valor_teste = campo.valor
 
-                    if isinstance(campo_valor, str) or not isinstance(campo_valor, Iterable):
-                        if valor_teste != campo_valor:
+                    if isinstance(campo_valor, Iterable):
+                        if valor_teste not in campo_valor:
                             return False
                     else:
-                        if valor_teste not in campo_valor:
+                        if valor_teste != campo_valor:
                             return False
 
         return True
