@@ -142,9 +142,9 @@ class Registro(ContemRegistros):
                         continue
 
                     if atributo == Campo.ALFANUMERICO:
-                        valor_teste = campo.valor_n
-                    elif atributo == Campo.NUMERICO:
                         valor_teste = campo.valor_c
+                    elif atributo == Campo.NUMERICO:
+                        valor_teste = campo.valor_n
                     else:
                         valor_teste = campo.valor
 
