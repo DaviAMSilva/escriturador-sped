@@ -1,5 +1,4 @@
 from decimal import Decimal, InvalidOperation
-from typing import Callable
 
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
@@ -70,7 +69,6 @@ class Campo:
 
         self._valor_alfanumerico: str = ""
         self._valor_numerico: Decimal | None = None
-        self._retorna_valor: Callable[[], str | int | float | None] | None = None
 
         # Converte o valor inicial se necessário
         self.valor = valor
