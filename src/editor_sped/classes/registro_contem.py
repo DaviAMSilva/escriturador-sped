@@ -16,18 +16,18 @@ if TYPE_CHECKING:
 
 
 class ContemRegistros(ABC):
-    def __init__(self, nome: str, efd_tipo: EfdTipo, filhos: ListaRegistro) -> None:
+    def __init__(self, nome: str, filhos: ListaRegistro, efd_tipo: EfdTipo) -> None:
         self.nome: str = nome
-        self.efd_tipo: EfdTipo = efd_tipo
         self.filhos: ListaRegistro = filhos
+        self.efd_tipo: EfdTipo = efd_tipo
 
 
 
-    def __str__(self) -> str:
-        return self.texto()
+    @abstractmethod
+    def __str__(self) -> str: ...
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({repr(self.nome)})"
+    @abstractmethod
+    def __repr__(self) -> str: ...
 
     def __len__(self) -> int:
         return self.tamanho

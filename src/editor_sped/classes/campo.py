@@ -1,11 +1,9 @@
 from decimal import Decimal, InvalidOperation
-from typing import TYPE_CHECKING, Callable
+from typing import Callable
 
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
 
-if TYPE_CHECKING:
-    from .registro import Registro
 
 
 
@@ -53,7 +51,8 @@ class Campo:
 
 
     def __init__(self, valor: str | int | float | None, nome_registro: str, numero: int, efd_tipo: EfdTipo) -> None:
-        self.efd_tipo: EfdTipo = efd_tipo
+        self.nome_registro = nome_registro
+        self.efd_tipo = efd_tipo
 
         info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro]["campos"][numero - 1]
 
@@ -82,7 +81,7 @@ class Campo:
         return self.texto()
 
     def __repr__(self) -> str:
-        return f"Campo({repr(self.nome)}, {repr(self.valor)})"
+        return f"Campo({repr(self.nome_registro)}, {repr(self.nome)}, {repr(self.tipo)}, {repr(self.valor)})"
 
 
 

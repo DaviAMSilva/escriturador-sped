@@ -17,12 +17,23 @@ class Bloco(ContemRegistros):
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
 
-        super().__init__(nome, efd_tipo, ListaRegistro([self.abertura, self.fechamento]))
+        super().__init__(nome, ListaRegistro([self.abertura, self.fechamento]), efd_tipo)
 
 
 
     def __getitem__(self, chave: str) -> ListaRegistro:
         return self.filhos.pesquisar(chave)
+
+    def __contains__(self, chave: str):
+        return bool(self.filhos.pesquisar(chave, primeiro=True))
+
+
+
+    def __str__(self) -> str:
+        return f"Bloco {self.nome}: {self.tamanho} linhas"
+
+    def __repr__(self) -> str:
+        return f"Bloco({repr(self.nome)}, tamanho={repr(self.tamanho)})"
 
 
 

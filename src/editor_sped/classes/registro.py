@@ -43,7 +43,7 @@ class Registro(ContemRegistros):
     def __init__(self, campos_texto: str, pai: "Registro | None", efd_tipo: EfdTipo) -> None:
         campos_textos = campos_texto.split("|")[1:-1]
 
-        super().__init__(campos_textos[0], efd_tipo, ListaRegistro())
+        super().__init__(campos_textos[0], ListaRegistro(), efd_tipo)
 
         campos_esperados = len(EFD_INFO[self.efd_tipo]["registros"][self.nome]["campos"])
 
@@ -79,13 +79,16 @@ class Registro(ContemRegistros):
     def __setitem__(self, chave: int | str, valor: str | int | float | None):
         self.campos[chave].valor = valor
 
+    def __contains__(self, chave: str | int | Campo):
+        return chave in self.campos
 
+
+
+    def __str__(self) -> str:
+        return self.linha
 
     def __repr__(self) -> str:
         return f"Registro({repr(self.linha)})"
-
-    def __contains__(self, chave: str | int | Campo):
-        return chave in self.campos
 
 
 

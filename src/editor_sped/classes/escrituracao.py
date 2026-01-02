@@ -23,7 +23,7 @@ from .registro_lista import ListaRegistro
 class Escrituracao(ContemRegistros, ABC):
     @abstractmethod
     def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
-        super().__init__(nome, efd_tipo, ListaRegistro())
+        super().__init__(nome, ListaRegistro(), efd_tipo)
 
         self.blocos: dict[str, Bloco] = {}
 
@@ -45,6 +45,16 @@ class Escrituracao(ContemRegistros, ABC):
         except KeyError as e:
             raise KeyError(f"Bloco não encontrado ({chave})") from e
 
+    def __contains__(self, chave: str):
+        return chave in self.blocos
+
+
+
+    def __str__(self) -> str:
+        return f"Escrituracao {self.nome}: {self.tamanho} linhas"
+
+    def __repr__(self) -> str:
+        return f"Escrituracao({repr(self.nome)}, tamanho={repr(self.tamanho)})"
 
 
     def json(self, *args, indent=4, ensure_ascii=False, **kwargs) -> str:
