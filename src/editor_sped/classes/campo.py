@@ -52,11 +52,10 @@ class Campo:
 
 
 
-    def __init__(self, valor: str | int | float | None, numero: int, registro: "Registro", efd_tipo: EfdTipo) -> None:
+    def __init__(self, valor: str | int | float | None, nome_registro: str, numero: int, efd_tipo: EfdTipo) -> None:
         self.efd_tipo: EfdTipo = efd_tipo
-        self.registro = registro
 
-        info_campos = EFD_INFO[efd_tipo]["registros"][self.registro.nome]["campos"][numero - 1]
+        info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro]["campos"][numero - 1]
 
         # fmt: off
         self.nome          = info_campos["nome"]
@@ -108,7 +107,7 @@ class Campo:
     @valor.setter
     def valor(self, valor: str | int | float | None) -> None:
         if not (isinstance(valor, (str, int, float)) or valor is None):
-            raise TypeError(f"O valor para o campo '{self.nome}' deve ser str, int, float ou None")
+            raise TypeError(f"O valor para o campo {repr(self)} deve ser str, int, float ou None")
 
         if self.tipo == Campo.ALFANUMERICO:
             self._valor_numerico = None
@@ -131,7 +130,7 @@ class Campo:
             except InvalidOperation as e:
                 raise ValueError(f"Não foi possível converter valor para Decimal ({valor})") from e
         else:
-            raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
+            raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
 
     @property
     def valor_c(self) -> str:

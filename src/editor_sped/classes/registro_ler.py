@@ -56,7 +56,7 @@ def ler_registros(registros: str | list[str], efd_tipo: EfdTipo) -> ListaRegistr
             # Se a diferença entre o nível anterior e o atual for maior que 1 positivo há um erro de estrutura
             raise SyntaxError(f"Registros fora da ordem válida. (de {nivel_anterior} para {nivel_atual})")
 
-        ultimos_registros[nivel_atual] = Registro(registro_atual, efd_tipo)
+        ultimos_registros[nivel_atual] = Registro(registro_atual, None, efd_tipo)
 
         ultimos_registros_registro_atual = ultimos_registros[nivel_atual]
         ultimos_registros_registro_anterior = ultimos_registros[nivel_atual - 1]

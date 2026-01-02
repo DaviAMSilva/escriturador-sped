@@ -40,7 +40,7 @@ class Registro(ContemRegistros):
 
 
 
-    def __init__(self, campos_texto: str, efd_tipo: EfdTipo) -> None:
+    def __init__(self, campos_texto: str, pai: "Registro | None", efd_tipo: EfdTipo) -> None:
         campos_textos = campos_texto.split("|")[1:-1]
 
         super().__init__(campos_textos[0], efd_tipo, ListaRegistro())
@@ -59,8 +59,8 @@ class Registro(ContemRegistros):
 
         # self.pai é Registro ao invés de Registro | None por motivos de praticidade
         # O único caso em que pai é None é na abertura e fechamento da escrituração
-        self.pai: Registro = None  # type: ignore
-        self.campos = TuplaCampo(Campo(campo, i + 1, self, self.efd_tipo) for i, campo in enumerate(campos_textos))
+        self.pai: Registro = pai  # type: ignore
+        self.campos = TuplaCampo(Campo(campo, self.nome, i + 1, self.efd_tipo) for i, campo in enumerate(campos_textos))
 
 
 
