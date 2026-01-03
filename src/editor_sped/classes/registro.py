@@ -124,13 +124,13 @@ class Registro(ContemRegistros):
         campos_n: dict[str | int, int | float | None | Iterable[int | float | None]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None
     ) -> bool:
-        if nome and nome != self.nome:
+        if nome is not None and nome != self.nome:
             return False
 
-        if filtro and not filtro(self):
+        if filtro is not None and not filtro(self):
             return False
 
-        if campos or campos_c or campos_n:
+        if campos is not None or campos_c is not None or campos_n is not None:
             campos_todos: list[tuple[dict[str | int, Any], str]] = [
                 (campos or {}, ""),
                 (campos_c or {}, Campo.ALFANUMERICO),
@@ -151,7 +151,7 @@ class Registro(ContemRegistros):
                     else:
                         valor_teste = campo.valor
 
-                    if isinstance(campo_valor, Iterable):
+                    if isinstance(campo_valor, Iterable) and not isinstance(campo_valor, str):
                         if valor_teste not in campo_valor:
                             return False
                     else:
@@ -167,18 +167,20 @@ class Registro(ContemRegistros):
 
         for novo_registro in [registros] if isinstance(registros, Registro) else registros:
             if not isinstance(novo_registro, Registro):
-                raise TypeError(f"Item não é um registro ({novo_registro})")
+                raise TypeError(f"Item não é um registro ({repr(novo_registro)})")
 
             if novo_registro.nome not in EFD_INFO[self.efd_tipo]["registros"][self.nome]["filhos"]:
-                raise ValueError(f"O registro {novo_registro} não é um filho válido de {self}")
+                raise ValueError(f"O registro {repr(novo_registro)} não é um filho válido de {repr(self)}")
 
             for i, filho in enumerate(self.filhos):
                 if Registro.ordem(novo_registro.nome, self.efd_tipo) < Registro.ordem(filho.nome, self.efd_tipo):
                     registros_adicionados.append(novo_registro)
+                    novo_registro.pai = self
                     self.filhos.insert(i, novo_registro)
                     break
             else:
                 registros_adicionados.append(novo_registro)
+                novo_registro.pai = self
                 self.filhos.append(novo_registro)
 
         return registros_adicionados
@@ -210,11 +212,13 @@ class Registro(ContemRegistros):
 
             for i in range(len(self.filhos) - 1, -1, -1):
                 if self.filhos[i] in registros_set:
+                    self.filhos[i].pai = None  # type: ignore
                     registros_removidos.append(self.filhos[i])
                     del self.filhos[i]
         elif nome or filtro or campos or campos_c or campos_n:
             for i in range(len(self.filhos) - 1, -1, -1):
                 if self.filhos[i].teste(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro):
+                    self.filhos[i].pai = None  # type: ignore
                     registros_removidos.append(self.filhos[i])
                     del self.filhos[i]
 
