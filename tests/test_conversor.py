@@ -1,19 +1,17 @@
 import re
 
 from data.conversor import EFD_MAIOR_NIVEL, conversor
-from editor_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, Campo
+from editor_sped import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS, Campo
 
-from .constantes import BLOCOS_EFD_ICMS_IPI, BLOCOS_EFD_PIS_COFINS, REGISTROS_EFD_ICMS_IPI, REGISTROS_EFD_PIS_COFINS
+from .constantes import REGISTROS_EFD_ICMS_IPI, REGISTROS_EFD_PIS_COFINS
 
 
 def test_conversor():
     efd_info = conversor()
 
 
-
     # Convertido para dicionário
     assert isinstance(efd_info, dict)
-
 
 
     # Os SPEDs existem
@@ -43,16 +41,16 @@ def test_conversor():
 
 
     # As listas de blocos tem os tamanhos corretos
-    assert len(efd_info[EFD_ICMS_IPI]["blocos"]) == len(BLOCOS_EFD_ICMS_IPI)
-    assert len(efd_info[EFD_PIS_COFINS]["blocos"]) == len(BLOCOS_EFD_PIS_COFINS)
+    assert len(efd_info[EFD_ICMS_IPI]["blocos"]) == len(EFD_ORDEM_BLOCOS[EFD_ICMS_IPI])
+    assert len(efd_info[EFD_PIS_COFINS]["blocos"]) == len(EFD_ORDEM_BLOCOS[EFD_PIS_COFINS])
 
 
     # Os blocos corretos existem nas listas
     for bloco in efd_info[EFD_ICMS_IPI]["blocos"]:
-        assert bloco["nome"] in BLOCOS_EFD_ICMS_IPI
+        assert bloco["nome"] in EFD_ORDEM_BLOCOS[EFD_ICMS_IPI]
 
     for bloco in efd_info[EFD_PIS_COFINS]["blocos"]:
-        assert bloco["nome"] in BLOCOS_EFD_PIS_COFINS
+        assert bloco["nome"] in EFD_ORDEM_BLOCOS[EFD_PIS_COFINS]
 
 
 def verificar_registro(efd_registros, nome, registro, campos):
@@ -78,7 +76,6 @@ def verificar_registro(efd_registros, nome, registro, campos):
     # Pai e filhos
     assert isinstance(registro["filhos"], list)
     assert (registro["pai"] is None and nome in ("0000", "9999")) or (isinstance(registro["pai"], str) and registro["pai"] in efd_registros)
-
 
 
     # Campos
