@@ -92,16 +92,25 @@ class Registro(ContemRegistros):
 
 
 
+    def texto(self) -> str:
+        return \
+            f"|{'|'.join([str(c) for c in self.campos])}|\n" + \
+            f"{''.join([f.texto() for f in self.filhos])}"
+
     def serialize(self) -> dict:
         s = super().serialize()
         return {"nome": s["nome"], "campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": s["filhos"]}
 
 
 
-    def texto(self) -> str:
-        return \
-            f"|{'|'.join([str(c) for c in self.campos])}|\n" + \
-            f"{''.join([f.texto() for f in self.filhos])}"
+    def valores(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str | int | float | None]:
+        return self.campos.valores(valores)
+
+    def valores_c(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str]:
+        return self.campos.valores_c(valores)
+
+    def valores_n(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, int | float | None]:
+        return self.campos.valores_n(valores)
 
 
 

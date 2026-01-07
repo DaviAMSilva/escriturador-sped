@@ -74,6 +74,32 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
 
+    def valores(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str | int | float | None]:
+        if isinstance(valores, dict):
+            for campo, valor in valores.items():
+                if campo in self:
+                    self[campo].valor = valor
+
+        return {campo.nome: campo.valor for campo in self}
+
+    def valores_c(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str]:
+        if isinstance(valores, dict):
+            for campo, valor in valores.items():
+                if campo in self:
+                    self[campo].valor = valor
+
+        return {campo.nome: campo.valor_c for campo in self}
+
+    def valores_n(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, int | float | None]:
+        if isinstance(valores, dict):
+            for campo, valor in valores.items():
+                if campo in self:
+                    self[campo].valor = valor
+
+        return {campo.nome: campo.valor_n for campo in self}
+
+
+
     @property
     def nomes(self) -> tuple[str, ...]:
         return tuple(self.dicionario.keys())
