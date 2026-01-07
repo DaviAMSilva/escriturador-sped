@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable, Iterable
+from typing import TYPE_CHECKING, Callable, Iterable, Iterator
 
 from ..types import EfdTipo
 from .registro_lista import ListaRegistro
@@ -31,6 +31,9 @@ class ContemRegistros(ABC):
 
     def __len__(self) -> int:
         return self.tamanho
+
+    def __iter__(self) -> Iterator:
+        return iter(self.filhos)
 
 
 
