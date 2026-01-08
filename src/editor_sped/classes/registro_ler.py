@@ -1,3 +1,4 @@
+from typing import Iterable
 from ..constantes import EFD_MAIOR_NIVEL
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
@@ -13,8 +14,8 @@ from .registro_lista import ListaRegistro
 
 
 
-def ler_registros(registros: str | list[str], efd_tipo: EfdTipo) -> ListaRegistro:
-    if not registros or not isinstance(registros, (str, list)):
+def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
+    if not registros or not isinstance(registros, (str, Iterable)):
         raise TypeError(f"Tipo inválido para parâmetro 'registros' ({registros})")
 
     # Transformando em lista

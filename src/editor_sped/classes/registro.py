@@ -3,7 +3,7 @@ from typing import Any, Callable, Iterable, Never, overload
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
-from .campo import Campo
+from .campo import Alfanumerico, Campo, Numerico
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -34,7 +34,7 @@ class Registro(ContemRegistros):
             raise ValueError("Não foi possível ler o registro") from e
 
     @staticmethod
-    def ler_varios(registros: str | list[str], efd_tipo: EfdTipo) -> ListaRegistro:
+    def ler_varios(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
         from .registro_ler import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
         return ler_registros(registros, efd_tipo)
 
@@ -48,7 +48,7 @@ class Registro(ContemRegistros):
         campos_esperados = len(EFD_INFO[self.efd_tipo]["registros"][self.nome]["campos"])
 
         if len(campos_textos) != campos_esperados:
-            raise SyntaxError(f"A quantidade de campos é diferente da quantidade esperada ({len(campos_textos)} ao invés de {campos_esperados})")
+            raise SyntaxError(f"A quantidade de campos é diferente do esperada ({len(campos_textos)} ao invés de {campos_esperados} no registro {repr(self)})")
 
         # fmt: off
         self.descricao   = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
@@ -65,7 +65,7 @@ class Registro(ContemRegistros):
 
 
     @overload
-    def __getitem__(self, chave: int | str) -> Campo: ...
+    def __getitem__(self, chave: str | int) -> Campo: ...
 
     @overload
     def __getitem__(self, chave: slice) -> TuplaCampo: ...
@@ -76,7 +76,7 @@ class Registro(ContemRegistros):
 
         return self.campos[chave]
 
-    def __setitem__(self, chave: int | str, valor: str | int | float | None):
+    def __setitem__(self, chave: str | int, valor: Alfanumerico | Numerico):
         self.campos[chave].valor = valor
 
     def __contains__(self, chave: str | int | Campo):
@@ -103,17 +103,6 @@ class Registro(ContemRegistros):
 
 
 
-    def valores(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str | int | float | None]:
-        return self.campos.valores(valores)
-
-    def valores_c(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str]:
-        return self.campos.valores_c(valores)
-
-    def valores_n(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, int | float | None]:
-        return self.campos.valores_n(valores)
-
-
-
     @property
     def linha(self) -> str:
         return f"|{'|'.join([str(c) for c in self.campos])}|"
@@ -127,10 +116,10 @@ class Registro(ContemRegistros):
     def teste(
         self,
         nome: str | None = None,
-        campos: dict[str | int, str | int | float | None | Iterable[str | int | float | None]] | None = None,
+        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, str | Iterable[str]] | None = None,
-        campos_n: dict[str | int, int | float | None | Iterable[int | float | None]] | None = None,
+        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None
     ) -> bool:
         if nome is not None and nome != self.nome:
@@ -171,7 +160,7 @@ class Registro(ContemRegistros):
 
 
 
-    def adicionar(self, registros: "Registro | ListaRegistro" | Iterable["Registro"]) -> ListaRegistro:
+    def adicionar(self, registros: "Registro | ListaRegistro | Iterable[Registro]") -> ListaRegistro:
         registros_adicionados = ListaRegistro()
 
         for novo_registro in [registros] if isinstance(registros, Registro) else registros:
@@ -196,7 +185,7 @@ class Registro(ContemRegistros):
 
     @overload
     def remover(
-        self, registros: "Registro | ListaRegistro" | Iterable["Registro"], *,
+        self, registros: "Registro | ListaRegistro | Iterable[Registro]", *,
         nome: Never = ..., filtro: Never = ..., campos: Never = ..., campos_c: Never = ..., campos_n: Never = ...
     ) -> ListaRegistro: ...
 
@@ -205,9 +194,9 @@ class Registro(ContemRegistros):
         self, registros: None = None, *,
         nome: str | None = ...,
         filtro: Callable[["Registro"], bool] | None = ...,
-        campos: dict[str | int, str | int | float | None] | None = ...,
-        campos_c: dict[str | int, str] | None = ...,
-        campos_n: dict[str | int, int | float | None] | None = ...
+        campos: dict[str | int, Alfanumerico | Numerico] | None = ...,
+        campos_c: dict[str | int, Alfanumerico] | None = ...,
+        campos_n: dict[str | int, Numerico] | None = ...
     ) -> ListaRegistro: ...
 
     def remover(self, registros=None, *, nome=None, filtro=None, campos=None, campos_c=None, campos_n=None) -> ListaRegistro:

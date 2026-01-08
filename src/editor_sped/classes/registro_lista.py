@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
 
+from editor_sped.classes.campo import Alfanumerico, Numerico
+
 if TYPE_CHECKING:
     from .registro import Registro
 
@@ -52,10 +54,10 @@ class ListaRegistro(list["Registro"]):
     def pesquisar(
         self,
         nome: str | None = None,
-        campos: dict[str | int, str | int | float | None | Iterable[str | int | float | None]] | None = None,
+        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, str | Iterable[str]] | None = None,
-        campos_n: dict[str | int, int | float | None | Iterable[int | float | None]] | None = None,
+        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
@@ -85,10 +87,10 @@ class ListaRegistro(list["Registro"]):
     def primeiro(
         self,
         nome: str | None = None,
-        campos: dict[str | int, str | int | float | None | Iterable[str | int | float | None]] | None = None,
+        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, str | Iterable[str]] | None = None,
-        campos_n: dict[str | int, int | float | None | Iterable[int | float | None]] | None = None,
+        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":

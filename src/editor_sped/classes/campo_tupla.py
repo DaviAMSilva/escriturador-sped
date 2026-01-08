@@ -1,6 +1,6 @@
 from typing import Iterable, Self, SupportsIndex, overload
 
-from .campo import Campo
+from .campo import Alfanumerico, Campo, Numerico
 
 
 
@@ -74,7 +74,7 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
 
-    def valores(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str | int | float | None]:
+    def valores(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
         if isinstance(valores, dict):
             for campo, valor in valores.items():
                 if campo in self:
@@ -82,7 +82,7 @@ class TuplaCampo(tuple["Campo", ...]):
 
         return {campo.nome: campo.valor for campo in self}
 
-    def valores_c(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, str]:
+    def valores_c(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
         if isinstance(valores, dict):
             for campo, valor in valores.items():
                 if campo in self:
@@ -90,7 +90,7 @@ class TuplaCampo(tuple["Campo", ...]):
 
         return {campo.nome: campo.valor_c for campo in self}
 
-    def valores_n(self, valores: dict[str, str | int | float | None] | None = None) -> dict[str, int | float | None]:
+    def valores_n(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
         if isinstance(valores, dict):
             for campo, valor in valores.items():
                 if campo in self:

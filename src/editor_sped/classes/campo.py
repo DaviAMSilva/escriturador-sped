@@ -10,6 +10,18 @@ from ..types import EfdTipo
 
 
 
+type Alfanumerico = str
+type Numerico = int | float | None
+type Numerico0 = int | float
+
+
+
+
+
+
+
+
+
 
 class Campo:
     # Tipos de campo
@@ -19,9 +31,9 @@ class Campo:
 
 
     @staticmethod
-    def valor_para_texto(valor: str | int | float | None, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> str:
+    def alfanumerico(valor: Alfanumerico | Numerico, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> Alfanumerico:
         if isinstance(valor, str):
-            return str(valor)[:tamanho]
+            return valor[:tamanho]
 
         if valor is None:
             return ""
@@ -29,25 +41,36 @@ class Campo:
         if tamanho_exato:
             tamanho_esquerda = tamanho - (decimal + 1 if decimal else 0)
             tamanho_direita = decimal if decimal else 0
-            return f"{valor:0{tamanho_esquerda}.{tamanho_direita}f}".replace(".", ",") if decimal \
-                else f"{int(valor):0{tamanho_esquerda}d}".replace(".", ",")
 
-        return f"{valor:.{decimal or 0}f}".replace(".", ",") if decimal\
-            else str(int(valor)).replace(".", ",")
+            if decimal:
+                return f"{valor:0{tamanho_esquerda}.{tamanho_direita}f}".replace(".", ",")
+
+            return f"{int(valor):0{tamanho_esquerda}d}".replace(".", ",")
+
+        if decimal:
+            return f"{valor:.{decimal}f}".replace(".", ",")
+
+        return str(int(valor)).replace(".", ",")
 
     @staticmethod
-    def texto_para_valor(valor: str, decimal: int | None) -> int | float | None:
+    def numerico(valor: Alfanumerico | Numerico, decimal: int | None) -> Numerico:
         if valor in ("", None):
             return None
 
+        if isinstance(valor, str):
+            if decimal:
+                return float(valor.replace(",", "."))
+
+            return int(valor.replace(",", "."))
+
         if decimal:
-            return float((valor or "").replace(",", "."))
+            return float(valor)
 
-        return int(float((valor or "").replace(",", ".")))
+        return int(valor)
 
 
 
-    def __init__(self, valor: str | int | float | None, nome_registro: str, numero: int, efd_tipo: EfdTipo) -> None:
+    def __init__(self, valor: Alfanumerico | Numerico, nome_registro: str, numero: int, efd_tipo: EfdTipo) -> None:
         self.nome_registro = nome_registro
         self.efd_tipo = efd_tipo
 
@@ -65,8 +88,8 @@ class Campo:
         self.tipo          = info_campos["tipo"]
         # fmt: on
 
-        self._valor_alfanumerico: str = ""
-        self._valor_numerico: int | float | None = None
+        self._valor_alfanumerico: Alfanumerico = ""
+        self._valor_numerico: Numerico = None
 
         # Converte o valor inicial se necessário
         self.valor = valor
@@ -90,17 +113,17 @@ class Campo:
 
 
     @property
-    def valor(self) -> str | int | float:
+    def valor(self) -> Alfanumerico | Numerico:
         if self.tipo == Campo.ALFANUMERICO:
             return self.valor_c
 
         if self.tipo == Campo.NUMERICO:
             return self.valor_n
 
-        raise ValueError(f"Tipo de campo desconhecido: {self.tipo}")
+        raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
 
     @valor.setter
-    def valor(self, valor: str | int | float | None) -> None:
+    def valor(self, valor: Alfanumerico | Numerico) -> None:
         if not (isinstance(valor, (str, int, float)) or valor is None):
             raise TypeError(f"O valor para o campo {repr(self)} deve ser str, int, float ou None")
 
@@ -116,12 +139,7 @@ class Campo:
                 self._valor_numerico = None if valor in (None, "") else round(float(valor), self.decimal) if self.decimal else int(valor)
 
                 # Convertendo o campo também para a versão alfanumérica
-                self._valor_alfanumerico = Campo.valor_para_texto(
-                    float(self._valor_numerico) if self.decimal else int(self._valor_numerico),
-                    self.decimal,
-                    self.tamanho,
-                    self.tamanho_exato
-                ) if self._valor_numerico is not None else ""
+                self._valor_alfanumerico = Campo.alfanumerico(self._valor_numerico, self.decimal, self.tamanho, self.tamanho_exato)
             except (ValueError, OverflowError) as e:
                 if self.decimal:
                     raise ValueError(f"Não foi possível converter valor para float ({valor})") from e
@@ -130,22 +148,22 @@ class Campo:
         else:
             raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
 
+
+
     @property
-    def valor_c(self) -> str:
+    def valor_c(self) -> Alfanumerico:
         return self._valor_alfanumerico
 
     @valor_c.setter
-    def valor_c(self, valor: str | int | float | None) -> None:
+    def valor_c(self, valor: Alfanumerico | Numerico) -> None:
         self.valor = valor
 
 
+
     @property
-    def valor_n(self) -> int | float:
+    def valor_n(self) -> Numerico:
         if self._valor_numerico is None:
-            # Infelizmente não é prático informar corretamente o tipo de retorno, pois ferramentas
-            # como Pylance irão reclamar que o seguinte código, por exemplo, pode gerar erros:
-            # campo.valor_n += 10 (None + 10 geraria erro)
-            return None  # type: ignore
+            return None
 
         if self.decimal:
             return float(self._valor_numerico)
@@ -153,5 +171,21 @@ class Campo:
         return int(self._valor_numerico)
 
     @valor_n.setter
-    def valor_n(self, valor: str | int | float | None) -> None:
+    def valor_n(self, valor: Alfanumerico | Numerico) -> None:
+        self.valor = valor
+
+
+
+    @property
+    def valor_n0(self) -> Numerico0:
+        if self._valor_numerico is None:
+            return 0
+
+        if self.decimal:
+            return float(self._valor_numerico)
+
+        return int(self._valor_numerico)
+
+    @valor_n0.setter
+    def valor_n0(self, valor: Alfanumerico | Numerico) -> None:
         self.valor = valor
