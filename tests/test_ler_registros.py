@@ -5,17 +5,19 @@ import pytest
 from editor_sped import EFD_TIPOS, Registro
 from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 
+from .cache import cache
+
 
 @pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
-def test_ler_registros(textos_todos: dict[str, str], arquivo: str):
-    registros_texto = textos_todos[arquivo]
+def test_ler_registros(arquivo: str):
+    registros_texto = cache.texto(arquivo)
 
     if EFD_ICMS_IPI in arquivo:
         registros = Registro.ler_varios(registros_texto, EFD_ICMS_IPI)
     elif EFD_PIS_COFINS in arquivo:
         registros = Registro.ler_varios(registros_texto, EFD_PIS_COFINS)
     else:
-        raise FileExistsError(f"Arquivo inválido: {arquivo}")
+        raise ValueError(f"Arquivo inválido: {arquivo}")
 
 
     assert isinstance(registros, list)

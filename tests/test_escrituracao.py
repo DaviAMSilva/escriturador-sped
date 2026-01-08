@@ -1,7 +1,8 @@
 import pytest
 
 from editor_sped import Registro
-from editor_sped.classes.escrituracao import Escrituracao
+
+from .cache import cache
 
 
 @pytest.mark.parametrize("arquivo,tamanho_total,tamanho_blocos", [
@@ -10,8 +11,8 @@ from editor_sped.classes.escrituracao import Escrituracao
     ("efd_pis_cofins_3.txt", 53, {"0": 5, "A": 2, "C": 2, "D": 2, "F": 2, "I": 2, "M": 4, "P": 2, "1": 2, "9": 30}),
     ("efd_pis_cofins_4.txt", 316, {"0": 112, "A": 11, "C": 31, "D": 13, "F": 10, "I": 2, "M": 66, "P": 2, "1": 2, "9": 67})
 ])
-def test_blocos(escrituracoes_pis_cofins: dict[str, Escrituracao], arquivo:str, tamanho_total:int, tamanho_blocos:dict[str, int]):
-    escrituracao = escrituracoes_pis_cofins[arquivo]
+def test_blocos(arquivo: str, tamanho_total: int, tamanho_blocos: dict[str, int]):
+    escrituracao = cache.escrituracao(arquivo)
 
     assert isinstance(escrituracao.abertura, Registro)
     assert isinstance(escrituracao.fechamento, Registro)
