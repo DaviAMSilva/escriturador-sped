@@ -7,5 +7,5 @@ from .types import EfdInfo
 try:
     with files("editor_sped.data").joinpath("efd_info.json").open("r", encoding="utf-8") as efd_info_arquivo:
         EFD_INFO: EfdInfo = json.loads(efd_info_arquivo.read())
-except FileNotFoundError as e:
-    raise FileNotFoundError("Não foi possível encontrar o arquivo efd_info.json") from e
+except FileNotFoundError:
+    EFD_INFO: EfdInfo = {}
