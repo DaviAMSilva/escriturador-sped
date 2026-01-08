@@ -48,6 +48,7 @@ class Registro(ContemRegistros):
         campos_esperados = len(EFD_INFO[self.efd_tipo]["registros"][self.nome]["campos"])
 
         if len(campos_textos) != campos_esperados:
+            self.campos = TuplaCampo()
             raise SyntaxError(f"A quantidade de campos é diferente do esperada ({len(campos_textos)} ao invés de {campos_esperados} no registro {repr(self)})")
 
         # fmt: off
