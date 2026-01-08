@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
 
-from editor_sped.classes.campo import Alfanumerico, Numerico
+from .campo import Alfanumerico, Numerico
 
 if TYPE_CHECKING:
     from .registro import Registro
