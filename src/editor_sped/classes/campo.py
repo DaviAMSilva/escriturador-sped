@@ -1,5 +1,3 @@
-from decimal import Decimal, InvalidOperation
-
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
 
@@ -68,7 +66,7 @@ class Campo:
         # fmt: on
 
         self._valor_alfanumerico: str = ""
-        self._valor_numerico: Decimal | None = None
+        self._valor_numerico: int | float | None = None
 
         # Converte o valor inicial se necessário
         self.valor = valor
@@ -111,11 +109,11 @@ class Campo:
             self._valor_alfanumerico = str(valor)[:self.tamanho] if valor not in ("", None) else ""
         elif self.tipo == Campo.NUMERICO:
             try:
-                self._valor_numerico = Decimal(str(valor).replace(",", ".")) if valor not in ("", None) else None
+                if isinstance(valor, str):
+                    valor = valor.replace(",", ".")
 
                 # Arrendondado para a quantidade exata de casas decimais
-                if self._valor_numerico:
-                    self._valor_numerico = Decimal(round(self._valor_numerico, self.decimal))
+                self._valor_numerico = None if valor in (None, "") else round(float(valor), self.decimal) if self.decimal else int(valor)
 
                 # Convertendo o campo também para a versão alfanumérica
                 self._valor_alfanumerico = Campo.valor_para_texto(
@@ -124,8 +122,11 @@ class Campo:
                     self.tamanho,
                     self.tamanho_exato
                 ) if self._valor_numerico is not None else ""
-            except InvalidOperation as e:
-                raise ValueError(f"Não foi possível converter valor para Decimal ({valor})") from e
+            except (ValueError, OverflowError) as e:
+                if self.decimal:
+                    raise ValueError(f"Não foi possível converter valor para float ({valor})") from e
+
+                raise ValueError(f"Não foi possível converter valor para inteiro ({valor})") from e
         else:
             raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
 
