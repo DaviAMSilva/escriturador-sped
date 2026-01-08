@@ -10,9 +10,9 @@ from ..types import EfdTipo
 
 
 
-type Alfanumerico = str
-type Numerico = int | float | None
-type Numerico0 = int | float
+Alfanumerico = str
+Numerico = int | float | None
+Numerico0 = int | float
 
 
 
