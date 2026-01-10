@@ -21,18 +21,18 @@ class ListaRegistro(list["Registro"]):
     @overload
     def __init__(self, iteravel: Iterable["Registro"]) -> None: ...
 
-    def __init__(self, iteravel=()) -> None:
+    def __init__(self, iteravel: Iterable["Registro"] = ()) -> None:
         super().__init__(iteravel)
 
 
 
     @overload
-    def __getitem__(self, chave: SupportsIndex | int) -> "Registro": ...
+    def __getitem__(self, chave: int | SupportsIndex) -> "Registro": ...
 
     @overload
     def __getitem__(self, chave: str | slice | None) -> "ListaRegistro": ...
 
-    def __getitem__(self, chave):
+    def __getitem__(self, chave: str | int | SupportsIndex | slice | None):
         if isinstance(chave, (SupportsIndex, int)):
             return super().__getitem__(chave)
 

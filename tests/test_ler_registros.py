@@ -13,9 +13,9 @@ def test_ler_registros(arquivo: str):
     registros_texto = cache.texto(arquivo)
 
     if EFD_ICMS_IPI in arquivo:
-        registros = Registro.ler_varios(registros_texto, EFD_ICMS_IPI)
+        registros = Registro.ler(registros_texto, EFD_ICMS_IPI)
     elif EFD_PIS_COFINS in arquivo:
-        registros = Registro.ler_varios(registros_texto, EFD_PIS_COFINS)
+        registros = Registro.ler(registros_texto, EFD_PIS_COFINS)
     else:
         raise ValueError(f"Arquivo inválido: {arquivo}")
 

@@ -27,18 +27,18 @@ class TuplaCampo(tuple["Campo", ...]):
     @overload
     def __new__(cls, iteravel: Iterable["Campo"]) -> Self: ...
 
-    def __new__(cls, iteravel=()):
+    def __new__(cls, iteravel: Iterable["Campo"] = ()):
         return super(TuplaCampo, cls).__new__(cls, tuple(iteravel))
 
 
 
     @overload
-    def __getitem__(self, chave: SupportsIndex | int | str) -> "Campo": ...
+    def __getitem__(self, chave: str | int | SupportsIndex) -> "Campo": ...
 
     @overload
     def __getitem__(self, chave: slice) -> "TuplaCampo": ...
 
-    def __getitem__(self, chave):
+    def __getitem__(self, chave: str | int | SupportsIndex | slice):
         try:
             if isinstance(chave, int):
                 if chave == 0:

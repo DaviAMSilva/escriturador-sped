@@ -26,15 +26,7 @@ class Registro(ContemRegistros):
         return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0]) * 1000 + int(nome[1:4])
 
     @staticmethod
-    def ler(registros: str, efd_tipo: EfdTipo) -> "Registro":
-        from .registro_ler import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
-        try:
-            return ler_registros(registros, efd_tipo)[0]
-        except IndexError as e:
-            raise ValueError("Não foi possível ler o registro") from e
-
-    @staticmethod
-    def ler_varios(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
+    def ler(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
         from .registro_ler import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
         return ler_registros(registros, efd_tipo)
 
@@ -71,10 +63,7 @@ class Registro(ContemRegistros):
     @overload
     def __getitem__(self, chave: slice) -> TuplaCampo: ...
 
-    def __getitem__(self, chave):
-        if isinstance(chave, int):
-            return self.campos[chave]
-
+    def __getitem__(self, chave: str | int | slice):
         return self.campos[chave]
 
     def __setitem__(self, chave: str | int, valor: Alfanumerico | Numerico):
@@ -186,21 +175,37 @@ class Registro(ContemRegistros):
 
     @overload
     def remover(
-        self, registros: "Registro | ListaRegistro | Iterable[Registro]", *,
-        nome: Never = ..., filtro: Never = ..., campos: Never = ..., campos_c: Never = ..., campos_n: Never = ...
+        self,
+        registros: "Registro | ListaRegistro | Iterable[Registro]",
+        *,
+        nome: Never = ...,
+        filtro: Never = ...,
+        campos: Never = ...,
+        campos_c: Never = ...,
+        campos_n: Never = ...
     ) -> ListaRegistro: ...
 
     @overload
     def remover(
-        self, registros: None = None, *,
+        self, registros: None = None,
+        *,
         nome: str | None = ...,
         filtro: Callable[["Registro"], bool] | None = ...,
-        campos: dict[str | int, Alfanumerico | Numerico] | None = ...,
-        campos_c: dict[str | int, Alfanumerico] | None = ...,
-        campos_n: dict[str | int, Numerico] | None = ...
+        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = ...,
+        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = ...,
+        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = ...
     ) -> ListaRegistro: ...
 
-    def remover(self, registros=None, *, nome=None, filtro=None, campos=None, campos_c=None, campos_n=None) -> ListaRegistro:
+    def remover(
+        self,
+        registros: "Registro | ListaRegistro | Iterable[Registro] | None" = None,
+        *,
+        nome: str | None = None,
+        filtro: Callable[["Registro"], bool] | None = None,
+        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None
+    ) -> ListaRegistro:
         registros_removidos = ListaRegistro()
 
         if registros:
