@@ -32,28 +32,52 @@ class Registro(ContemRegistros):
 
 
 
-    def __init__(self, campos_texto: str, pai: "Registro | None", efd_tipo: EfdTipo) -> None:
-        campos_textos = campos_texto.split("|")[1:-1]
+    def __init__(self, campos: str | dict[str | int, Alfanumerico | Numerico], pai: "Registro | None", efd_tipo: EfdTipo) -> None:
+        info_registros = EFD_INFO[efd_tipo]["registros"]
 
-        super().__init__(campos_textos[0], ListaRegistro(), efd_tipo)
+        if isinstance(campos, str):
+            campos_textos = campos.split("|")[1:-1]
+            registro_nome = campos_textos[0]
 
-        campos_esperados = len(EFD_INFO[self.efd_tipo]["registros"][self.nome]["campos"])
+            super().__init__(registro_nome, ListaRegistro(), efd_tipo)
+            info_registro = info_registros[registro_nome]
 
-        if len(campos_textos) != campos_esperados:
-            self.campos = TuplaCampo()
-            raise SyntaxError(f"A quantidade de campos é diferente do esperada ({len(campos_textos)} ao invés de {campos_esperados} no registro {repr(self)})")
+            if len(campos_textos) != len(info_registro["campos"]):
+                raise SyntaxError(
+                    "A quantidade de campos é diferente da esperada "
+                    f"({len(campos_textos)} ao invés de {len(info_registro['campos'])} no registro {self.nome})"
+                )
+
+            self.campos = TuplaCampo(Campo(campo, registro_nome, i, efd_tipo) for i, campo in enumerate(campos_textos, 1))
+        elif isinstance(campos, dict):
+            # Usando a validade do primeiro campo para determinar a presença obrigatória do campo que contém o nome do registros
+            registro_nome = (
+                campos["REG"] if "REG" in campos and campos["REG"] in info_registros
+                else campos[1] if 1 in campos and campos[1] in info_registros
+                else None
+            )
+
+            if not registro_nome:
+                raise ValueError("Pelo menos um nome de registro válido com chave 'REG' ou 1 deve existir")
+
+            super().__init__(registro_nome, ListaRegistro(), efd_tipo)
+            info_registro = info_registros[registro_nome]
+
+            self.campos = TuplaCampo(
+                Campo(campos.get(efd_info_campo["nome"], campos.get(efd_info_campo["numero"], None)), registro_nome, efd_info_campo["numero"], efd_tipo)
+                for efd_info_campo in info_registro["campos"]
+            )
+        else:
+            raise TypeError(f"Tipo inválido para parâmetro 'campos' ({campos})")
 
         # fmt: off
-        self.descricao   = EFD_INFO[self.efd_tipo]["registros"][self.nome]["descricao"]
-        self.nivel       = EFD_INFO[self.efd_tipo]["registros"][self.nome]["nivel"]
-        self.obrigatorio = EFD_INFO[self.efd_tipo]["registros"][self.nome]["obrigatorio"]
-        self.unico       = EFD_INFO[self.efd_tipo]["registros"][self.nome]["unico"]
+        self.descricao   = info_registro["descricao"]
+        self.nivel       = info_registro["nivel"]
+        self.obrigatorio = info_registro["obrigatorio"]
+        self.unico       = info_registro["unico"]
         # fmt: on
 
-        # self.pai é Registro ao invés de Registro | None por motivos de praticidade
-        # O único caso em que pai é None é na abertura e fechamento da escrituração
-        self.pai: Registro = pai  # type: ignore
-        self.campos = TuplaCampo(Campo(campo, self.nome, i + 1, self.efd_tipo) for i, campo in enumerate(campos_textos))
+        self.pai: Registro | None = pai
 
 
 
