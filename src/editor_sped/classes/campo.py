@@ -79,9 +79,7 @@ class Campo:
         # fmt: off
         self.nome          = info_campos["nome"]
         self.descricao     = info_campos["descricao"]
-
         self.decimal       = info_campos["decimal"]
-        self.numero        = info_campos["numero"]
         self.obrigatorio   = info_campos["obrigatorio"]
         self.tamanho       = info_campos["tamanho"]
         self.tamanho_exato = info_campos["tamanho_exato"]
@@ -91,7 +89,7 @@ class Campo:
         self._valor_alfanumerico: Alfanumerico = ""
         self._valor_numerico: Numerico = None
 
-        # Converte o valor inicial se necessário
+        # Converte o valor passado para os valores interno corretos
         self.valor = valor
 
 

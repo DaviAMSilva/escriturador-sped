@@ -38,9 +38,9 @@ class Registro(ContemRegistros):
         if isinstance(campos, str):
             campos_textos = campos.split("|")[1:-1]
             registro_nome = campos_textos[0]
+            info_registro = info_registros[registro_nome]
 
             super().__init__(registro_nome, ListaRegistro(), efd_tipo)
-            info_registro = info_registros[registro_nome]
 
             if len(campos_textos) != len(info_registro["campos"]):
                 raise SyntaxError(
@@ -60,8 +60,9 @@ class Registro(ContemRegistros):
             if not registro_nome:
                 raise ValueError("Pelo menos um nome de registro válido com chave 'REG' ou 1 deve existir")
 
-            super().__init__(registro_nome, ListaRegistro(), efd_tipo)
             info_registro = info_registros[registro_nome]
+
+            super().__init__(registro_nome, ListaRegistro(), efd_tipo)
 
             self.campos = TuplaCampo(
                 Campo(campos.get(efd_info_campo["nome"], campos.get(efd_info_campo["numero"], None)), registro_nome, efd_info_campo["numero"], efd_tipo)
@@ -107,9 +108,10 @@ class Registro(ContemRegistros):
 
 
     def texto(self) -> str:
-        return \
-            f"|{'|'.join([str(c) for c in self.campos])}|\n" + \
+        return (
+            f"|{'|'.join([str(c) for c in self.campos])}|\n"
             f"{''.join([f.texto() for f in self.filhos])}"
+        )
 
     def serialize(self) -> dict:
         s = super().serialize()
