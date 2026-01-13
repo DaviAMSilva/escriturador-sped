@@ -28,7 +28,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
     ultimos_registros: list[Registro | None] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
 
     # Para a lista atual de registros é usado para os registros que estão na raiz e não têm pais
-    registros_raiz: ListaRegistro = ListaRegistro()
+    registros_raiz = ListaRegistro()
 
     # Para cada registro informado
     for registro_atual in registros:
@@ -57,14 +57,24 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
             # Se a diferença entre o nível anterior e o atual for maior que 1 positivo há um erro de estrutura
             raise SyntaxError(f"Registros fora da ordem válida. (de {nivel_anterior} para {nivel_atual})")
 
+
+
+        # Criando o objeto registro em si
         ultimos_registros[nivel_atual] = Registro(registro_atual, None, efd_tipo)
+
+
 
         ultimos_registros_registro_atual = ultimos_registros[nivel_atual]
         ultimos_registros_registro_anterior = ultimos_registros[nivel_atual - 1]
+
         if ultimos_registros_registro_atual is not None:
-            # Verificamos se existe um registro pai válido
+            # Verificamos se existe um registro pai com nível válido
             if nivel_atual - 1 >= 0 and ultimos_registros_registro_anterior is not None:
-                # Se existir:
+                # Verificamos se existe um registro pai com nome válido
+                if EFD_INFO[efd_tipo]["registros"][ultimos_registros_registro_atual.nome]["pai"] != ultimos_registros_registro_anterior.nome:
+                    raise SyntaxError(f"{repr(ultimos_registros_registro_atual)} não é um filho válido de {repr(ultimos_registros_registro_anterior)}")
+
+                # Se existir e for válido:
                 # Adicionamos o registro atual como filho do registro acima dele (nível - 1)
                 # De maneira inversa criamos a ligação do registro filho com o registro pai
                 ultimos_registros_registro_anterior.filhos.append(ultimos_registros_registro_atual)
