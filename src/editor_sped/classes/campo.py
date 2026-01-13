@@ -39,18 +39,17 @@ class Campo:
             return ""
 
         if tamanho_exato:
-            tamanho_esquerda = tamanho - (decimal + 1 if decimal else 0)
-            tamanho_direita = decimal if decimal else 0
-
             if decimal:
-                return f"{valor:0{tamanho_esquerda}.{tamanho_direita}f}".replace(".", ",")
+                resultado = f"{valor:0{tamanho - (decimal + 1 if decimal else 0)}.{decimal if decimal else 0}f}"
+                return resultado.replace(".", ",") if "." in resultado else resultado
 
-            return f"{int(valor):0{tamanho_esquerda}d}".replace(".", ",")
+            return f"{int(valor):0{tamanho - (decimal + 1 if decimal else 0)}d}"
 
         if decimal:
-            return f"{valor:.{decimal}f}".replace(".", ",")
+            resultado = f"{valor:.{decimal}f}"
+            return resultado.replace(".", ",") if "." in resultado else resultado
 
-        return str(int(valor)).replace(".", ",")
+        return str(int(valor))
 
     @staticmethod
     def numerico(valor: Alfanumerico | Numerico, decimal: int | None) -> Numerico:
@@ -59,12 +58,12 @@ class Campo:
 
         if isinstance(valor, str):
             if decimal:
-                return float(valor.replace(",", "."))
+                return round(float(valor.replace(",", ".")), decimal)
 
             return int(valor.replace(",", "."))
 
         if decimal:
-            return float(valor)
+            return round(float(valor), decimal)
 
         return int(valor)
 
@@ -122,29 +121,60 @@ class Campo:
 
     @valor.setter
     def valor(self, valor: Alfanumerico | Numerico) -> None:
-        if not (isinstance(valor, (str, int, float)) or valor is None):
-            raise TypeError(f"O valor para o campo {repr(self)} deve ser str, int, float ou None")
+        # Como o mais comum é valor ser str, testa-se somente str primeiro
+        if valor is not None and not isinstance(valor, str):
+            if not isinstance(valor, (int, float)):
+                raise TypeError(f"O valor para o campo {repr(self)} deve ser str, int, float ou None")
 
-        if self.tipo == Campo.ALFANUMERICO:
-            self._valor_numerico = None
-            self._valor_alfanumerico = str(valor)[:self.tamanho] if valor not in ("", None) else ""
-        elif self.tipo == Campo.NUMERICO:
+        # A maioria dos campos é numérico, então testamos esse tipo primeiro
+        if self.tipo == Campo.NUMERICO:
+            # Os casos "" e "0" são tão comuns que merecem tratamento especial
+            if valor == "":
+                self._valor_numerico = None
+                self._valor_alfanumerico = ""
+                return
+
+            if valor == "0":
+                self._valor_numerico = 0
+                self._valor_alfanumerico = Campo.alfanumerico(0, self.decimal, self.tamanho, self.tamanho_exato)
+                return
+
+            # Todos os outros casos numéricos
             try:
-                if isinstance(valor, str):
+                # Remover vírgulas apenas se presente
+                if isinstance(valor, str) and "," in valor:
                     valor = valor.replace(",", ".")
 
-                # Arrendondado para a quantidade exata de casas decimais
-                self._valor_numerico = None if valor in (None, "") else round(float(valor), self.decimal) if self.decimal else int(valor)
-
-                # Convertendo o campo também para a versão alfanumérica
-                self._valor_alfanumerico = Campo.alfanumerico(self._valor_numerico, self.decimal, self.tamanho, self.tamanho_exato)
+                if valor is None:
+                    novo_valor = None
+                elif self.decimal:
+                    novo_valor = round(float(valor), self.decimal)
+                else:
+                    novo_valor = int(valor)
             except (ValueError, OverflowError) as e:
                 if self.decimal:
                     raise ValueError(f"Não foi possível converter valor para float ({valor})") from e
+                raise ValueError(f"Não foi possível converter valor para int ({valor})") from e
 
-                raise ValueError(f"Não foi possível converter valor para inteiro ({valor})") from e
-        else:
-            raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
+            self._valor_numerico = novo_valor
+            self._valor_alfanumerico = Campo.alfanumerico(novo_valor, self.decimal, self.tamanho, self.tamanho_exato)
+            return
+
+
+
+        if self.tipo == Campo.ALFANUMERICO:
+            self._valor_numerico = None
+
+            if valor == "" or valor is None:
+                self._valor_alfanumerico = ""
+                return
+
+            self._valor_alfanumerico = valor[:self.tamanho] if isinstance(valor, str) else str(valor)[:self.tamanho]
+            return
+
+
+
+        raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
 
 
 
