@@ -3,7 +3,7 @@ from typing import Any, Callable, Iterable, Never, Self, overload
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
-from .campo import Alfanumerico, Campo, Numerico
+from .campo import Alfanumerico, Campo, Numerico, Numerico0
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -145,6 +145,20 @@ class Registro(ContemRegistros):
     @property
     def tamanho(self) -> int:
         return super().tamanho + 1
+
+
+
+    def valores(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
+        return self.campos.valores(valores)
+
+    def valores_c(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
+        return self.campos.valores_c(valores)
+
+    def valores_n(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
+        return self.campos.valores_n(valores)
+
+    def valores_n0(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico0]:
+        return self.campos.valores_n0(valores)
 
 
 
