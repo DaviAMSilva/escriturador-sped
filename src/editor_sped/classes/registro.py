@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterable, Never, overload
+from typing import Any, Callable, Iterable, Never, Self, overload
 
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
@@ -195,9 +195,7 @@ class Registro(ContemRegistros):
 
 
 
-    def adicionar(self, registros: "Registro | ListaRegistro | Iterable[Registro]") -> ListaRegistro:
-        registros_adicionados = ListaRegistro()
-
+    def adicionar(self, registros: "Registro | ListaRegistro | Iterable[Registro]") -> Self:
         for novo_registro in [registros] if isinstance(registros, Registro) else registros:
             if not isinstance(novo_registro, Registro):
                 raise TypeError(f"Item não é um registro ({repr(novo_registro)})")
@@ -207,16 +205,14 @@ class Registro(ContemRegistros):
 
             for i, filho in enumerate(self.filhos):
                 if Registro.ordem(novo_registro.nome, self.efd_tipo) < Registro.ordem(filho.nome, self.efd_tipo):
-                    registros_adicionados.append(novo_registro)
                     novo_registro.pai = self
                     self.filhos.insert(i, novo_registro)
                     break
             else:
-                registros_adicionados.append(novo_registro)
                 novo_registro.pai = self
                 self.filhos.append(novo_registro)
 
-        return registros_adicionados
+        return self
 
     @overload
     def remover(
@@ -228,7 +224,7 @@ class Registro(ContemRegistros):
         campos: Never = ...,
         campos_c: Never = ...,
         campos_n: Never = ...
-    ) -> ListaRegistro: ...
+    ) -> Self: ...
 
     @overload
     def remover(
@@ -239,7 +235,7 @@ class Registro(ContemRegistros):
         campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = ...,
         campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = ...,
         campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = ...
-    ) -> ListaRegistro: ...
+    ) -> Self: ...
 
     def remover(
         self,
@@ -250,9 +246,7 @@ class Registro(ContemRegistros):
         campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
         campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None
-    ) -> ListaRegistro:
-        registros_removidos = ListaRegistro()
-
+    ) -> Self:
         if registros:
             if nome or filtro or campos or campos_c or campos_n:
                 raise TypeError("Não são permitidos outros parâmetros se 'registros' estiver presente")
@@ -262,13 +256,11 @@ class Registro(ContemRegistros):
             for i in range(len(self.filhos) - 1, -1, -1):
                 if self.filhos[i] in registros_set:
                     self.filhos[i].pai = None  # type: ignore
-                    registros_removidos.append(self.filhos[i])
                     del self.filhos[i]
         elif nome or filtro or campos or campos_c or campos_n:
             for i in range(len(self.filhos) - 1, -1, -1):
                 if self.filhos[i].teste(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro):
                     self.filhos[i].pai = None  # type: ignore
-                    registros_removidos.append(self.filhos[i])
                     del self.filhos[i]
 
-        return registros_removidos
+        return self
