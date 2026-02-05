@@ -203,6 +203,9 @@ class Registro(ContemRegistros):
             if novo_registro.nome not in EFD_INFO[self.efd_tipo]["registros"][self.nome]["filhos"]:
                 raise ValueError(f"O registro {repr(novo_registro)} não é um filho válido de {repr(self)}")
 
+            if novo_registro.pai is not None:
+                novo_registro.pai.remover(novo_registro)
+
             for i, filho in enumerate(self.filhos):
                 if Registro.ordem(novo_registro.nome, self.efd_tipo) < Registro.ordem(filho.nome, self.efd_tipo):
                     novo_registro.pai = self
