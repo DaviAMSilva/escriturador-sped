@@ -33,23 +33,25 @@ class Campo:
     @staticmethod
     def alfanumerico(valor: Alfanumerico | Numerico, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> Alfanumerico:
         if isinstance(valor, str):
-            return valor[:tamanho]
+            if len(valor) > tamanho:
+                return valor[:tamanho]
+            return valor
 
         if valor is None:
             return ""
-
-        if tamanho_exato:
-            if decimal:
-                resultado = f"{valor:0{tamanho - (decimal + 1 if decimal else 0)}.{decimal if decimal else 0}f}"
-                return resultado.replace(".", ",") if "." in resultado else resultado
-
-            return f"{int(valor):0{tamanho - (decimal + 1 if decimal else 0)}d}"
 
         if decimal:
             resultado = f"{valor:.{decimal}f}"
             return resultado.replace(".", ",") if "." in resultado else resultado
 
-        return str(int(valor))
+        # Abaixo dessa linhas apenas números inteiros fazem sentido
+        if not isinstance(valor, int):
+            valor = int(valor)
+
+        if tamanho_exato:
+            return f"{valor:0{tamanho}d}"
+
+        return str(valor)
 
     @staticmethod
     def numerico(valor: Alfanumerico | Numerico, decimal: int | None) -> Numerico:
@@ -70,9 +72,6 @@ class Campo:
 
 
     def __init__(self, valor: Alfanumerico | Numerico, nome_registro: str, numero: int, efd_tipo: EfdTipo) -> None:
-        self.nome_registro = nome_registro
-        self.efd_tipo = efd_tipo
-
         info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro]["campos"][numero - 1]
 
         # fmt: off
@@ -97,7 +96,7 @@ class Campo:
         return self.texto()
 
     def __repr__(self) -> str:
-        return f"Campo({repr(self.nome_registro)}, {repr(self.nome)}, {repr(self.tipo)}, {repr(self.valor)})"
+        return f"Campo({repr(self.nome)}, {repr(self.tipo)}, {repr(self.valor)})"
 
 
 
@@ -126,6 +125,8 @@ class Campo:
             if not isinstance(valor, (int, float)):
                 raise TypeError(f"O valor para o campo {repr(self)} deve ser str, int, float ou None")
 
+
+
         # A maioria dos campos é numérico, então testamos esse tipo primeiro
         if self.tipo == Campo.NUMERICO:
             # Os casos "" e "0" são tão comuns que merecem tratamento especial
@@ -136,7 +137,7 @@ class Campo:
 
             if valor == "0":
                 self._valor_numerico = 0
-                self._valor_alfanumerico = Campo.alfanumerico(0, self.decimal, self.tamanho, self.tamanho_exato)
+                self._valor_alfanumerico = "0"
                 return
 
             # Todos os outros casos numéricos
