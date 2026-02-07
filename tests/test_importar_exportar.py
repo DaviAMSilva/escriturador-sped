@@ -46,6 +46,10 @@ def comparar_campos(efd_tipo: EfdTipo, campos1: list[str], campos2: list[str], n
 
                 # Valor numérico
                 assert valor1 == valor2
+
+                # Valor numérico com tamanho exato
+                if EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tamanho_exato"]:
+                    assert campo1 == campo2
             except InvalidOperation as e:
                 raise ValueError("Não foi possível converter para decimal") from e
         elif tipo1 == Campo.ALFANUMERICO:
