@@ -281,3 +281,8 @@ class Registro(ContemRegistros):
                     del self.filhos[i]
 
         return self
+
+    def limpar(self) -> Self:
+        self.filhos.clear()
+
+        return self
