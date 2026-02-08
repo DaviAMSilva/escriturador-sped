@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .constantes import EFD_ENCODING, EFD_NEWLINE
 
 
@@ -23,19 +25,15 @@ def remover_assinatura_escrituracao(escrituracao_texto: str):
 
 
 
-def abrir_escrituracao(arquivo_nome: str, remover_assinatura: bool = True) -> str:
-    with open(arquivo_nome, "r", encoding=EFD_ENCODING) as arquivo:
-        escrituracao_texto = arquivo.read()
+def abrir_escrituracao(arquivo: str | Path) -> str:
+    with open(arquivo, "r", encoding=EFD_ENCODING) as entrada:
+        escrituracao_texto = entrada.read()
 
-    # Decide se a assinatura deve ser removida. Como o propósito principal é validação
-    # de estrutura a assinatura é removida por padrão na abertura do arquivo
-    if remover_assinatura:
-        return remover_assinatura_escrituracao(escrituracao_texto)
-
-    return escrituracao_texto
+    # Como o propósito é validação de estrutura a assinatura é removida por padrão na abertura do arquivo
+    return remover_assinatura_escrituracao(escrituracao_texto)
 
 
 
-def salvar_escrituracao(arquivo_nome: str, escrituracao_texto: str) -> None:
-    with open(arquivo_nome, "w", encoding=EFD_ENCODING, newline=EFD_NEWLINE) as output:
-        output.write(escrituracao_texto)
+def salvar_escrituracao(arquivo: str | Path, texto: str) -> None:
+    with open(arquivo, "w", encoding=EFD_ENCODING, newline=EFD_NEWLINE) as saida:
+        saida.write(texto)

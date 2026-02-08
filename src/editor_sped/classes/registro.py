@@ -52,6 +52,7 @@ class Registro(ContemRegistros):
                 raise SyntaxError(
                     "A quantidade de campos é diferente da esperada "
                     f"({recebido} ao invés de {esperado} no registro {self.nome})"
+                    ". É provável que o tipo da escrituração esteja incorreto" if self.nome == "0000" else ""
                 )
 
             self.campos = TuplaCampo(

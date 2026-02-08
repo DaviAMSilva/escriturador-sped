@@ -1,11 +1,13 @@
 import json
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections import Counter
+from pathlib import Path
+from typing import Self
 
 from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
-from ..utilidades import remover_assinatura_escrituracao
+from ..utilidades import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 from .bloco import Bloco
 from .registro import Registro
 from .registro_contem import ContemRegistros
@@ -21,7 +23,16 @@ from .registro_lista import ListaRegistro
 
 
 class Escrituracao(ContemRegistros, ABC):
-    @abstractmethod
+    @classmethod
+    def abrir(cls, arquivo: str | Path) -> Self:
+        # Isso é estranho, mas funciona pois as subclasses usam apenas um parâmetro
+        return cls(abrir_escrituracao(arquivo))  # type: ignore # pylint: disable=no-value-for-parameter
+
+    def salvar(self, arquivo: str | Path) -> None:
+        salvar_escrituracao(arquivo, self.texto())
+
+
+
     def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
         super().__init__(nome, ListaRegistro(), efd_tipo)
 
@@ -108,8 +119,10 @@ class Escrituracao(ContemRegistros, ABC):
                 self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
-                raise TypeError(f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|" +
-                                f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe")
+                raise TypeError(
+                    f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|"
+                    f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe"
+                )
 
 
 
