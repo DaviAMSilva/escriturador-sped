@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Visualizador Registros SPED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="efd_info.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-bottom: 25%;
+        }
+
+        select {
+            margin-bottom: 20px;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        table tr td:nth-child(1) {
+            text-align: center;
+        }
+
+        .registro {
+            cursor: pointer;
+            color: #007BFF;
+            position: relative;
+        }
+
+        .registro:hover::after {
+            content: attr(data-title);
+            white-space: pre-wrap;
+            text-align: left;
+            position: absolute;
+            top: 100%;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: .9em;
+            z-index: 1000;
+            width: 700px;
+        }
+
+        .campo {
+            cursor: pointer;
+            color: #28A745;
+            position: relative;
+        }
+
+        .campo:hover::after {
+            content: attr(data-title);
+            white-space: pre-wrap;
+            position: absolute;
+            top: 100%;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: .9em;
+            z-index: 1000;
+            width: 700px;
+        }
+
+        .campo small {
+            font-size: 0.70em;
+            margin-left: 1px;
+            color: darkgreen;
+            user-select: none;
+        }
+
+        .selecao {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .campo:not(:first-child)::before {
+                content: "\A";
+                white-space: pre;
+            }
+
+            .registro:hover::after,
+            .campo:hover::after {
+                font-size: 0.75em;
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <span class="selecao">
+        Escolha o tipo de escrituração:
+        <select name="efd_tipo" id="efd_tipo" onchange="toggleVisibility()">
+            <option value="efd_icms_ipi">EFD_ICMS_IPI</option>
+            <option value="efd_pis_cofins">EFD_PIS_COFINS</option>
+        </select>
+    </span>
+    <div id="container-principal">
+        <div id="container-efd_icms_ipi">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Registro</th>
+                        <th>Campos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="container-efd_pis_cofins">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Registro</th>
+                        <th>Campos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        function toggleVisibility() {
+            const selectedValue = document.getElementById("efd_tipo").value;
+            document.getElementById("container-efd_icms_ipi").style.display = selectedValue === "efd_icms_ipi" ? "block" : "none";
+            document.getElementById("container-efd_pis_cofins").style.display = selectedValue === "efd_pis_cofins" ? "block" : "none";
+        }
+        toggleVisibility();
+
+
+
+        // Testa se o arquivo foi carregado corretamente
+        if (typeof EFD_INFO === "undefined") {
+            console.error("Erro ao carregar o arquivo efd_info.json:", new Error("EFD_INFO is undefined"));
+            const warningMessage = "O arquivo efd_info.json não foi encontrado. Tenha certeza que o arquivo foi gerado corretamente.";
+            const warningElement = document.createElement("div");
+            warningElement.style.color = "red";
+            warningElement.textContent = warningMessage;
+            document.body.appendChild(warningElement);
+            throw new Error(warningMessage);
+        }
+
+
+
+        const EFD_ORDEM_BLOCOS = {
+            "efd_icms_ipi": ["0", "B", "C", "D", "E", "G", "H", "K", "1", "9"],
+            "efd_pis_cofins": ["0", "A", "C", "D", "F", "I", "M", "P", "1", "9"]
+        }
+
+
+
+
+        const tipos = ["efd_icms_ipi", "efd_pis_cofins"];
+
+        for (const tipo of tipos) {
+            const registros = EFD_INFO[tipo].registros;
+
+            const registros_ordenados = Object.keys(registros).sort((a, b) => {
+                const chaveA = EFD_ORDEM_BLOCOS[tipo].indexOf(a[0]) * 1000 + parseInt(a.slice(1, 4), 10);
+                const chaveB = EFD_ORDEM_BLOCOS[tipo].indexOf(b[0]) * 1000 + parseInt(b.slice(1, 4), 10);
+                return chaveA - chaveB;
+            });
+
+            for (const nome of registros_ordenados) {
+                const { campos, ...dados_registro } = registros[nome];
+
+                const tr = document.createElement("tr");
+                const tdRegistro = document.createElement("td");
+                const spanRegistro = document.createElement("span");
+                spanRegistro.textContent = nome;
+                spanRegistro.setAttribute("data-title", JSON.stringify(dados_registro, null, 2));
+                spanRegistro.classList.add("registro");
+                tdRegistro.appendChild(spanRegistro);
+                tr.appendChild(tdRegistro);
+
+                const tdCampos = document.createElement("td");
+                tdCampos.innerHTML = campos.map(campo => `<span class='campo' data-title='${JSON.stringify(campo, null, 2)}'>${campo.nome}<small>${campo.numero}</small></span>`).join(", ");
+                tr.appendChild(tdCampos);
+
+                const tbody = document.querySelector(`#container-${tipo} tbody`);
+                tbody.appendChild(tr);
+            }
+        }
+
+    </script>
+</body>
+
+</html>

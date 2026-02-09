@@ -1,3 +1,6 @@
+[![pylint](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pylint.yml/badge.svg?branch=rush)](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pylint.yml)
+[![pytest](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pytest.yml/badge.svg?branch=rush)](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pytest.yml)
+
 # Editor de Escriturações para o SPED
 
 Objetivos iniciais do projeto:

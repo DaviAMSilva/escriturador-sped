@@ -1,4 +1,4 @@
-from typing import *
+from pathlib import Path
 
 from .constantes import EFD_ENCODING, EFD_NEWLINE
 
@@ -11,31 +11,29 @@ from .constantes import EFD_ENCODING, EFD_NEWLINE
 
 
 
-def remover_assinatura_escrituracao(escrituracao_texto: str) -> None:
-    escrituracao_texto = escrituracao_texto.splitlines()
-    for i, linha in enumerate(escrituracao_texto):
+def remover_assinatura_escrituracao(escrituracao_texto: str):
+    escrituracao_linhas = escrituracao_texto.splitlines()
+    for i, linha in enumerate(escrituracao_linhas):
         campos = linha.split("|")
         if len(campos) > 1 and campos[1] == "9999":
             # A escrituração contém o número de linhas e as linhas restantes são descartadas
             # AVISO: Isso pode gerar um situação em que um arquivo que venha a conter qualquer
             # texto após o registro seja considerado válido apesar de não estar correto.
-            return ("\n".join(escrituracao_texto[:i + 1])) + "\n"
+            return ("\n".join(escrituracao_linhas[:i + 1])) + "\n"
+
+    raise ValueError("Registro |9999| de fechamento não encontrado")
 
 
 
-def abrir_escrituracao(nome_arquivo: str, remover_assinatura: bool = True) -> str:
-    with open(nome_arquivo, "r", encoding=EFD_ENCODING) as arquivo:
-        escrituracao_texto = arquivo.read()
+def abrir_escrituracao(arquivo: str | Path) -> str:
+    with open(arquivo, "r", encoding=EFD_ENCODING) as entrada:
+        escrituracao_texto = entrada.read()
 
-    # Decide se a assinatura deve ser removida. Como o propósito principal é validação
-    # de estrutura a assinatura é removida por padrão na abertura do arquivo
-    if remover_assinatura:
-        return remover_assinatura_escrituracao(escrituracao_texto)
-    else:
-        return escrituracao_texto
+    # Como o propósito é validação de estrutura a assinatura é removida por padrão na abertura do arquivo
+    return remover_assinatura_escrituracao(escrituracao_texto)
 
 
 
-def salvar_escrituracao(nome_arquivo: str, escrituracao_texto: str) -> None:
-    with open(nome_arquivo, "w", encoding=EFD_ENCODING, newline=EFD_NEWLINE) as output:
-        output.write(escrituracao_texto)
+def salvar_escrituracao(arquivo: str | Path, texto: str) -> None:
+    with open(arquivo, "w", encoding=EFD_ENCODING, newline=EFD_NEWLINE) as saida:
+        saida.write(texto)

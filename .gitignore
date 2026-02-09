@@ -1,8 +1,7 @@
-extra/
+.prof/
 .vscode
-
-# Gerado usando tabelas/conversor_tabelas.py
-src/editor_sped/data/*
+extra/
+sped_extractor/
 
 # Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
 # Essa configuração permite arquivos numerados, mas ignora arquivos com

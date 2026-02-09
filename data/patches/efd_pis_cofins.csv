@@ -1,0 +1,5 @@
+"A170","101","02","NUM_ITEM","Número sequencial do item no documento fiscal","N","004","-","S"
+"C100","108","06","COD_SIT","Código da situação do documento fiscal, conforme a Tabela 4.1.2","N","002*","-","S"
+"C170","118","02","NUM_ITEM","Número sequencial do item no documento fiscal","N","003","-","S"
+"C199","146","03","NUM_DOC_IMP","Número do documento de Importação.","C","015","-","S"
+"D205","206","02","CST_COFINS","Código da Situação Tributária referente a COFINS.","N","002*","-","S"
