@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
 
-from .campo import Alfanumerico, Numerico
+from .campo import Alfanumerico, Chave, Numerico
 
 if TYPE_CHECKING:
     from .registro import Registro
@@ -32,7 +32,7 @@ class ListaRegistro(list["Registro"]):
     @overload
     def __getitem__(self, chave: str | slice | None) -> "ListaRegistro": ...
 
-    def __getitem__(self, chave: str | int | SupportsIndex | slice | None):
+    def __getitem__(self, chave: Chave | SupportsIndex | slice | None):
         if isinstance(chave, (SupportsIndex, int)):
             return super().__getitem__(chave)
 
@@ -54,10 +54,10 @@ class ListaRegistro(list["Registro"]):
     def buscar(
         self,
         nome: str | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
@@ -87,10 +87,10 @@ class ListaRegistro(list["Registro"]):
     def primeiro(
         self,
         nome: str | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":

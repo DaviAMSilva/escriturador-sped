@@ -3,7 +3,7 @@ from typing import Any, Callable, Iterable, Never, Self, overload
 from ..constantes import EFD_ORDEM_BLOCOS
 from ..efd_info import EFD_INFO
 from ..types import EfdTipo
-from .campo import Alfanumerico, Campo, Numerico, Numerico0
+from .campo import Alfanumerico, Campo, Chave, Numerico, Numerico0
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -32,7 +32,7 @@ class Registro(ContemRegistros):
 
 
 
-    def __init__(self, campos: str | dict[str | int, Alfanumerico | Numerico], pai: "Registro | None", efd_tipo: EfdTipo) -> None:
+    def __init__(self, campos: str | dict[Chave, Alfanumerico | Numerico], pai: "Registro | None", efd_tipo: EfdTipo) -> None:
         info_registros = EFD_INFO[efd_tipo]["registros"]
 
         # Caso STR
@@ -103,18 +103,18 @@ class Registro(ContemRegistros):
 
 
     @overload
-    def __getitem__(self, chave: str | int) -> Campo: ...
+    def __getitem__(self, chave: Chave) -> Campo: ...
 
     @overload
     def __getitem__(self, chave: slice) -> TuplaCampo: ...
 
-    def __getitem__(self, chave: str | int | slice):
+    def __getitem__(self, chave: Chave | slice):
         return self.campos[chave]
 
-    def __setitem__(self, chave: str | int, valor: Alfanumerico | Numerico):
+    def __setitem__(self, chave: Chave, valor: Alfanumerico | Numerico):
         self.campos[chave].valor = valor
 
-    def __contains__(self, chave: str | int | Campo):
+    def __contains__(self, chave: Chave | Campo):
         return chave in self.campos
 
 
@@ -149,16 +149,16 @@ class Registro(ContemRegistros):
 
 
 
-    def valores(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
+    def valores(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
         return self.campos.valores(valores)
 
-    def valores_c(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
+    def valores_c(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
         return self.campos.valores_c(valores)
 
-    def valores_n(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
+    def valores_n(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
         return self.campos.valores_n(valores)
 
-    def valores_n0(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico0]:
+    def valores_n0(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico0]:
         return self.campos.valores_n0(valores)
 
 
@@ -166,10 +166,10 @@ class Registro(ContemRegistros):
     def teste(
         self,
         nome: str | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None
     ) -> bool:
         if nome is not None and nome != self.nome:
@@ -179,7 +179,7 @@ class Registro(ContemRegistros):
             return False
 
         if campos is not None or campos_c is not None or campos_n is not None:
-            campos_todos: list[tuple[dict[str | int, Any], str]] = [
+            campos_todos: list[tuple[dict[Chave, Any], str]] = [
                 (campos or {}, ""),
                 (campos_c or {}, Campo.ALFANUMERICO),
                 (campos_n or {}, Campo.NUMERICO)
@@ -250,9 +250,9 @@ class Registro(ContemRegistros):
         *,
         nome: str | None = ...,
         filtro: Callable[["Registro"], bool] | None = ...,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = ...,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = ...,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = ...
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = ...,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = ...,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = ...
     ) -> Self: ...
 
     def remover(
@@ -261,9 +261,9 @@ class Registro(ContemRegistros):
         *,
         nome: str | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None
     ) -> Self:
         if registros:
             if nome or filtro or campos or campos_c or campos_n:

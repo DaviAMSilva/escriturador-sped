@@ -10,6 +10,8 @@ from ..types import EfdTipo
 
 
 
+Chave = str | int
+
 Alfanumerico = str
 Numerico = int | float | None
 Numerico0 = int | float

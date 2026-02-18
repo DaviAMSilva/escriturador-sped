@@ -1,6 +1,6 @@
 from typing import Iterable, Self, SupportsIndex, overload
 
-from .campo import Alfanumerico, Campo, Numerico, Numerico0
+from .campo import Alfanumerico, Campo, Numerico, Numerico0, Chave
 
 
 
@@ -33,12 +33,12 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
     @overload
-    def __getitem__(self, chave: str | int | SupportsIndex) -> "Campo": ...
+    def __getitem__(self, chave: Chave | SupportsIndex) -> "Campo": ...
 
     @overload
     def __getitem__(self, chave: slice) -> "TuplaCampo": ...
 
-    def __getitem__(self, chave: str | int | SupportsIndex | slice):
+    def __getitem__(self, chave: Chave | SupportsIndex | slice):
         try:
             if isinstance(chave, int):
                 if chave == 0:
@@ -74,7 +74,7 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
 
-    def valores(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
+    def valores(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
         if isinstance(valores, dict):
             for campo, valor in valores.items():
                 if campo in self:
@@ -84,15 +84,15 @@ class TuplaCampo(tuple["Campo", ...]):
 
         return {campo.nome: campo.valor for campo in self}
 
-    def valores_c(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
+    def valores_c(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
         self.valores(valores)
         return {campo.nome: campo.valor_c for campo in self}
 
-    def valores_n(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
+    def valores_n(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
         self.valores(valores)
         return {campo.nome: campo.valor_n for campo in self}
 
-    def valores_n0(self, valores: dict[str | int, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico0]:
+    def valores_n0(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico0]:
         self.valores(valores)
         return {campo.nome: campo.valor_n0 for campo in self}
 
