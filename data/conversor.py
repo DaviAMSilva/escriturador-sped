@@ -5,7 +5,7 @@ import os
 from typing import Literal
 
 from editor_sped.constantes import EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS, EFD_TIPOS
-from editor_sped.types import EfdInfo, EfdInfoRegistro
+from editor_sped.efd_info import EfdInfo, EfdInfoRegistro
 
 
 
