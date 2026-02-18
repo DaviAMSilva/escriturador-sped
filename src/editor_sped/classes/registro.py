@@ -57,7 +57,7 @@ class Registro(ContemRegistros):
                 )
 
             self.campos = TuplaCampo(
-                Campo(valor, registro_nome, i, efd_tipo)
+                Campo(i, valor, registro_nome, efd_tipo)
                 for i, valor in enumerate(campos_textos, 1)
             )
 
@@ -85,9 +85,9 @@ class Registro(ContemRegistros):
 
             self.campos = TuplaCampo(
                 Campo(
+                    campo_info["numero"],
                     campos.get(campo_info["nome"], campos.get(campo_info["numero"])),
                     registro_nome,
-                    campo_info["numero"],
                     efd_tipo
                 )
                 for campo_info in info_registro["campos"]

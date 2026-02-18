@@ -73,17 +73,34 @@ class Campo:
 
 
 
-    def __init__(self, valor: Alfanumerico | Numerico, nome_registro: str, numero: int, efd_tipo: EfdTipo) -> None:
-        info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro.upper()]["campos"][numero - 1]
+    def __init__(self, chave: Chave, valor: Alfanumerico | Numerico, nome_registro: str, efd_tipo: EfdTipo) -> None:
+        campos_info = EFD_INFO[efd_tipo]["registros"][nome_registro.upper()]["campos"]
+
+        # Descobrindo o campo_info correto
+        if isinstance(chave, int):
+            # Caso for o número, verificar que é maior que 0
+            if chave <= 0:
+                raise ValueError("Os campos de um registro têm a numeração iniciada pelo número 1")
+
+            campo_info = campos_info[chave - 1]
+        elif isinstance(chave, str):
+            # Caso for o nome, encontrar o campo_info com esse nome
+            for campo_info in campos_info:
+                if campo_info["nome"] == chave:
+                    break
+            else:
+                raise ValueError(f"Campo não encontrado pelo nome ({chave})")
+        else:
+            raise TypeError(f"Tipo inválido para parâmetro 'chave' ({chave})")
 
         # fmt: off
-        self.nome          = info_campos["nome"]
-        self.descricao     = info_campos["descricao"]
-        self.decimal       = info_campos["decimal"]
-        self.obrigatorio   = info_campos["obrigatorio"]
-        self.tamanho       = info_campos["tamanho"]
-        self.tamanho_exato = info_campos["tamanho_exato"]
-        self.tipo          = info_campos["tipo"]
+        self.nome          = campo_info["nome"]
+        self.descricao     = campo_info["descricao"]
+        self.decimal       = campo_info["decimal"]
+        self.obrigatorio   = campo_info["obrigatorio"]
+        self.tamanho       = campo_info["tamanho"]
+        self.tamanho_exato = campo_info["tamanho_exato"]
+        self.tipo          = campo_info["tipo"]
         # fmt: on
 
         self._valor_alfanumerico: Alfanumerico = ""
@@ -98,7 +115,7 @@ class Campo:
         return self.texto()
 
     def __repr__(self) -> str:
-        return f"Campo({self.nome!r}, {self.tipo!r}, {self.valor!r})"
+        return f"Campo[{self.tipo!r}]({self.nome!r}: {self.valor!r})"
 
 
 

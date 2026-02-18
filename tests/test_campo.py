@@ -26,7 +26,7 @@ def test_campo_atribuicao():
     # fmt: on
 
     for registro_nome, numero_campo, valor, valor_c, valor_n in casos_de_teste:
-        c = Campo(None, registro_nome, numero_campo, EFD_ICMS_IPI)
+        c = Campo(numero_campo, None, registro_nome, EFD_ICMS_IPI)
 
         c.valor = valor
 
@@ -38,8 +38,8 @@ def test_campo_atribuicao():
 
 
 def test_campo_erro():
-    c1 = Campo(None, "9999", 1, EFD_ICMS_IPI)
-    c2 = Campo(None, "9999", 2, EFD_ICMS_IPI)
+    c1 = Campo(1, None, "9999", EFD_ICMS_IPI)
+    c2 = Campo(2, None, "9999", EFD_ICMS_IPI)
 
 
     c1.valor = True

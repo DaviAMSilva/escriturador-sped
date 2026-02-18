@@ -3,6 +3,8 @@ from importlib.resources import files
 from typing import Literal, TypedDict
 
 
+CampoTipo = Literal["C", "N"]
+
 EfdTipo = Literal["efd_icms_ipi", "efd_pis_cofins"]
 EfdInfo = dict[EfdTipo, "EfdInfoTipo"]
 
@@ -38,7 +40,7 @@ class EfdInfoCampo(TypedDict):
     tamanho: int
     tamanho_exato: bool
     decimal: int | None
-    tipo: Literal["C", "N"]
+    tipo: CampoTipo
 
 
 try:

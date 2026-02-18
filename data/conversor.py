@@ -2,10 +2,9 @@ import argparse
 import csv
 import json
 import os
-from typing import Literal
 
 from editor_sped.constantes import EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS, EFD_TIPOS
-from editor_sped.efd_info import EfdInfo, EfdInfoRegistro
+from editor_sped.efd_info import CampoTipo, EfdInfo, EfdInfoRegistro
 
 
 
@@ -198,7 +197,7 @@ def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
 
             # Testa se o tipo de campo é um dos valores válidos
             assert linha_campos["Tipo"] in ("C", "N"), f"Tipo inesperado: {linha_campos['Tipo']}"
-            tipo_campo: Literal["C", "N"] = linha_campos["Tipo"]
+            tipo_campo: CampoTipo = linha_campos["Tipo"]
             tamanho_campo: int
 
             # Calculando o tamanho baseado nas regras
