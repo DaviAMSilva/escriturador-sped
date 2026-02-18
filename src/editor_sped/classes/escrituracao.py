@@ -1,12 +1,10 @@
-import json
 from abc import ABC
 from collections import Counter
 from pathlib import Path
 from typing import Self
 
-from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS
-from ..efd_info import EFD_INFO
-from ..types import EfdTipo
+from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS, EFD_TIPOS
+from ..efd_info import EFD_INFO, EfdTipo
 from ..utilidades import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 from .bloco import Bloco
 from .registro import Registro
@@ -23,6 +21,15 @@ from .registro_lista import ListaRegistro
 
 
 class Escrituracao(ContemRegistros, ABC):
+    # Tipos de campo
+    EFD_ICMS_IPI = EFD_ICMS_IPI
+    EFD_PIS_COFINS = EFD_PIS_COFINS
+
+    EFD_TIPOS = EFD_TIPOS
+    EFD_TIPO = None
+
+
+
     @classmethod
     def abrir(cls, arquivo: str | Path) -> Self:
         # Isso é estranho, mas funciona pois as subclasses usam apenas um parâmetro
@@ -34,7 +41,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
     def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
-        super().__init__(nome, ListaRegistro(), efd_tipo)
+        super().__init__(nome.upper(), ListaRegistro(), efd_tipo)
 
         self.blocos: dict[str, Bloco] = {}
 
@@ -65,11 +72,7 @@ class Escrituracao(ContemRegistros, ABC):
         return f"Escrituracao {self.nome}: {self.tamanho} linhas"
 
     def __repr__(self) -> str:
-        return f"Escrituracao({repr(self.nome)}, tamanho={repr(self.tamanho)})"
-
-
-    def json(self, *args, indent=4, ensure_ascii=False, **kwargs) -> str:
-        return json.dumps(self, indent=indent, ensure_ascii=ensure_ascii, default=lambda obj: obj.serialize(), *args, **kwargs)
+        return f"Escrituracao({self.nome!r}, tamanho={self.tamanho!r})"
 
 
 
@@ -95,7 +98,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Preenchendo as informações dos blocos
-        for bloco_info in EFD_INFO[self.efd_tipo]["blocos"]:
+        for info_bloco in EFD_INFO[self.efd_tipo]["blocos"]:
             registro_bloco_abertura: Registro | None = None
             registro_bloco_fechamento: Registro | None = None
 
@@ -104,25 +107,51 @@ class Escrituracao(ContemRegistros, ABC):
             # Encontrando os registros de abertura e fechamento na lista de registros
             # Esse método encontra apenas os blocos presentes na escrituração atual,
             # não levando em consideração as condições de obrigatoriedade de blocos
-            for escrituracao_registro in self.abertura.filhos:
-                if escrituracao_registro.nome == bloco_info["abertura"]:
-                    registro_bloco_abertura = escrituracao_registro
+            for registros in self.abertura.filhos:
+                if registros.nome == info_bloco["abertura"]:
+                    registro_bloco_abertura = registros
                     break
 
-            for escrituracao_registro in self.abertura.filhos:
-                if escrituracao_registro.nome == bloco_info["fechamento"]:
-                    registro_bloco_fechamento = escrituracao_registro
+            for registros in self.abertura.filhos:
+                if registros.nome == info_bloco["fechamento"]:
+                    registro_bloco_fechamento = registros
                     break
 
             if registro_bloco_abertura and registro_bloco_fechamento:
                 # Criando o bloco com os blocos de abertura e fechamento
-                self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
+                self.blocos[info_bloco["nome"]] = Bloco(info_bloco["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
                 raise TypeError(
                     f"Apenas um dos registros de abertura |{registro_bloco_abertura.nome if registro_bloco_abertura else None}|"
                     f" ou fechamento |{registro_bloco_fechamento.nome if registro_bloco_fechamento else None}| existe"
                 )
+
+
+
+    def adicionar(self, nome_bloco: str) -> Self:
+        nome_bloco = nome_bloco.upper()
+
+        if nome_bloco not in self.blocos and nome_bloco in EFD_ORDEM_BLOCOS[self.efd_tipo]:
+            self.blocos[nome_bloco] = Bloco(
+                nome_bloco,
+                Registro(f"|{nome_bloco}001|1|", self.efd_tipo, pai=self.abertura),
+                Registro(f"|{nome_bloco}990|2|", self.efd_tipo, pai=self.abertura),
+                self.efd_tipo
+            )
+
+        return self
+
+
+
+    def remover(self, nome_bloco: str) -> Self:
+        nome_bloco = nome_bloco.upper()
+
+        if nome_bloco in self.blocos:
+            self.abertura.remover(self.blocos[nome_bloco].filhos)
+            del self.blocos[nome_bloco]
+
+        return self
 
 
 
@@ -142,17 +171,12 @@ class Escrituracao(ContemRegistros, ABC):
             bloco = self.blocos.get(nome, None)
 
             if bloco:
+                # Se o bloco estiver vazio o valor da abertura é definido como 1
                 bloco.abertura[2].valor_c = 0 if bloco.tamanho > 2 else 1
                 bloco.fechamento[2].valor_c = bloco.tamanho
             else:
-                novo_abertura = Registro(f"|{nome}001|1|", self.abertura, self.efd_tipo)
-                novo_fechamento = Registro(f"|{nome}990|2|", self.abertura, self.efd_tipo)
-
-                novo_bloco = Bloco(nome, novo_abertura, novo_fechamento, self.efd_tipo)
-                self.blocos[nome] = novo_bloco
-
-                self.abertura.filhos.append(novo_abertura)
-                self.abertura.filhos.append(novo_fechamento)
+                # Criando um novo bloco vazio se não existir
+                self.adicionar(nome)
 
         # Ordenar os blocos é obrigatório
         self.abertura.filhos.sort(key=lambda r: Registro.ordem(r.nome, r.efd_tipo))
@@ -172,9 +196,9 @@ class Escrituracao(ContemRegistros, ABC):
         registros_9900_remover = []
 
         for registro_9900 in registros_9900:
-            registro_nome = registro_9900["REG_BLC"].valor_c
-            if registro_nome in registros_contagem:
-                registro_9900["QTD_REG_BLC"].valor_c = registros_contagem[registro_nome]
+            nome_registro = registro_9900["REG_BLC"].valor_c
+            if nome_registro in registros_contagem:
+                registro_9900["QTD_REG_BLC"].valor_c = registros_contagem[nome_registro]
             else:
                 registros_9900_remover.append(registro_9900)
 
@@ -183,10 +207,9 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Adicionando novos registros 9900 que não existiam antes
-        for registro_nome in registros_contagem:
-            if registro_nome not in registros_9900_blc:
-                novo_registro_9900 = Registro(f"|9900|{registro_nome}|{registros_contagem[registro_nome]}|", registro_9001, self.efd_tipo)
-                registro_9001.filhos.append(novo_registro_9900)
+        for nome_registro in registros_contagem:
+            if nome_registro not in registros_9900_blc:
+                Registro(f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", self.efd_tipo, pai=registro_9001)
 
 
 
@@ -195,8 +218,7 @@ class Escrituracao(ContemRegistros, ABC):
             registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
             registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
         except ValueError:
-            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", registro_9001, self.efd_tipo)
-            registro_9001.filhos.append(novo_registro_9900_9900)
+            Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.efd_tipo, pai=registro_9001)
 
 
 
@@ -214,6 +236,8 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 class EscrituracaoICMSIPI(Escrituracao):
+    EFD_TIPO = Escrituracao.EFD_ICMS_IPI
+
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
             super().__init__(escrituracao_texto, "EFD_ICMS_IPI", EFD_ICMS_IPI)
@@ -226,6 +250,8 @@ class EscrituracaoICMSIPI(Escrituracao):
 
 
 class EscrituracaoPISCOFINS(Escrituracao):
+    EFD_TIPO = Escrituracao.EFD_PIS_COFINS
+
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
             super().__init__(escrituracao_texto, "EFD_PIS_COFINS", EFD_PIS_COFINS)

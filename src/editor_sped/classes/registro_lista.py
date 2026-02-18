@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
 
-from .campo import Alfanumerico, Numerico
+from .campo import Alfanumerico, Chave, Numerico
 
 if TYPE_CHECKING:
     from .registro import Registro
@@ -32,7 +32,7 @@ class ListaRegistro(list["Registro"]):
     @overload
     def __getitem__(self, chave: str | slice | None) -> "ListaRegistro": ...
 
-    def __getitem__(self, chave: str | int | SupportsIndex | slice | None):
+    def __getitem__(self, chave: Chave | SupportsIndex | slice | None):
         if isinstance(chave, (SupportsIndex, int)):
             return super().__getitem__(chave)
 
@@ -40,7 +40,7 @@ class ListaRegistro(list["Registro"]):
             return ListaRegistro(super().__getitem__(chave))
 
         if isinstance(chave, str) or chave is None:
-            return self.pesquisar(chave)
+            return self.buscar(chave)
 
         raise TypeError(f"Valor inválido ({chave})")
 
@@ -51,18 +51,21 @@ class ListaRegistro(list["Registro"]):
 
 
 
-    def pesquisar(
+    def buscar(
         self,
         nome: str | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
     ) -> "ListaRegistro":
         encontrados = ListaRegistro()
+
+        if nome:
+            nome = nome.upper()
 
         for filho in self:
             valido = filho.teste(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro)
@@ -74,7 +77,7 @@ class ListaRegistro(list["Registro"]):
                 encontrados.append(filho)
 
             if recursivo and filho.filhos:
-                encontrados.extend(filho.filhos.pesquisar(
+                encontrados.extend(filho.filhos.buscar(
                     nome, campos, campos_c=campos_c, campos_n=campos_n,
                     filtro=filtro, recursivo=recursivo, primeiro=primeiro
                 ))
@@ -87,14 +90,14 @@ class ListaRegistro(list["Registro"]):
     def primeiro(
         self,
         nome: str | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":
-        encontrado = self.pesquisar(
+        encontrado = self.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True
         )

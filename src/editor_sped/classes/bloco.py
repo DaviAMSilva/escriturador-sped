@@ -1,4 +1,4 @@
-from ..types import EfdTipo
+from ..efd_info import EfdTipo
 from .registro import Registro
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -17,15 +17,15 @@ class Bloco(ContemRegistros):
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
 
-        super().__init__(nome, ListaRegistro([self.abertura, self.fechamento]), efd_tipo)
+        super().__init__(nome.upper(), ListaRegistro([self.abertura, self.fechamento]), efd_tipo)
 
 
 
     def __getitem__(self, chave: str) -> ListaRegistro:
-        return self.filhos.pesquisar(chave)
+        return self.filhos.buscar(chave)
 
     def __contains__(self, chave: str):
-        return bool(self.filhos.pesquisar(chave, primeiro=True))
+        return bool(self.filhos.buscar(chave, primeiro=True))
 
 
 
@@ -33,7 +33,7 @@ class Bloco(ContemRegistros):
         return f"Bloco {self.nome}: {self.tamanho} linhas"
 
     def __repr__(self) -> str:
-        return f"Bloco({repr(self.nome)}, tamanho={repr(self.tamanho)})"
+        return f"Bloco({self.nome!r}, tamanho={self.tamanho!r})"
 
 
 

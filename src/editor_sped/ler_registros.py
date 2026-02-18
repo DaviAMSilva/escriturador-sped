@@ -1,9 +1,9 @@
 from typing import Iterable
-from ..constantes import EFD_MAIOR_NIVEL
-from ..efd_info import EFD_INFO
-from ..types import EfdTipo
-from .registro import Registro
-from .registro_lista import ListaRegistro
+
+from .classes.registro import Registro
+from .classes.registro_lista import ListaRegistro
+from .constantes import EFD_MAIOR_NIVEL
+from .efd_info import EFD_INFO, EfdTipo
 
 
 
@@ -60,7 +60,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
 
 
         # Criando o objeto registro em si
-        ultimos_registros[nivel_atual] = Registro(registro_atual, None, efd_tipo)
+        ultimos_registros[nivel_atual] = Registro(registro_atual, efd_tipo)
 
 
 
@@ -72,7 +72,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
             if nivel_atual - 1 >= 0 and ultimos_registros_registro_anterior is not None:
                 # Verificamos se existe um registro pai com nome válido
                 if EFD_INFO[efd_tipo]["registros"][ultimos_registros_registro_atual.nome]["pai"] != ultimos_registros_registro_anterior.nome:
-                    raise SyntaxError(f"{repr(ultimos_registros_registro_atual)} não é um filho válido de {repr(ultimos_registros_registro_anterior)}")
+                    raise SyntaxError(f"{ultimos_registros_registro_atual!r} não é um filho válido de {ultimos_registros_registro_anterior!r}")
 
                 # Se existir e for válido:
                 # Adicionamos o registro atual como filho do registro acima dele (nível - 1)

@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator
 
-from .campo import Alfanumerico, Numerico
-
-from ..types import EfdTipo
+from ..efd_info import EfdTipo
+from .campo import Alfanumerico, Chave, Numerico
 from .registro_lista import ListaRegistro
 
 if TYPE_CHECKING:
@@ -34,16 +33,13 @@ class ContemRegistros(ABC):
     def __len__(self) -> int:
         return self.tamanho
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator["Registro"]:
         return iter(self.filhos)
 
 
 
     @abstractmethod
     def texto(self) -> str: ...
-
-    def serialize(self) -> dict:
-        return {"nome": self.nome, "filhos": self.filhos}
 
 
 
@@ -53,22 +49,22 @@ class ContemRegistros(ABC):
 
     @property
     def registros(self) -> ListaRegistro:
-        return self.pesquisar()
+        return self.buscar()
 
 
 
-    def pesquisar(
+    def buscar(
         self,
         nome: str | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
     ) -> "ListaRegistro":
-        return self.filhos.pesquisar(
+        return self.filhos.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=primeiro
         )
@@ -76,14 +72,14 @@ class ContemRegistros(ABC):
     def primeiro(
         self,
         nome: str | None = None,
-        campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
         *,
-        campos_c: dict[str | int, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[str | int, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
+        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":
-        encontrado = self.filhos.pesquisar(
+        encontrado = self.filhos.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True
         )

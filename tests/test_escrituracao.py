@@ -32,9 +32,8 @@ def test_blocos(arquivo: str, tamanho_total: int, tamanho_blocos: dict[str, int]
     assert len(escrituracao.blocos) == 10
 
     assert isinstance(escrituracao.texto(), str)
-    assert isinstance(escrituracao.json(), str)
 
-    for bloco_nome, bloco in escrituracao.blocos.items():
+    for nome_bloco, bloco in escrituracao.blocos.items():
         assert isinstance(bloco.abertura, Registro)
         assert isinstance(bloco.fechamento, Registro)
 
@@ -49,4 +48,4 @@ def test_blocos(arquivo: str, tamanho_total: int, tamanho_blocos: dict[str, int]
 
         assert len(bloco.filhos) == 2
 
-        assert bloco.tamanho == tamanho_blocos[bloco_nome]
+        assert bloco.tamanho == tamanho_blocos[nome_bloco]

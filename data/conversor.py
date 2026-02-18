@@ -2,10 +2,9 @@ import argparse
 import csv
 import json
 import os
-from typing import Literal
 
 from editor_sped.constantes import EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS, EFD_TIPOS
-from editor_sped.types import EfdInfo, EfdInfoRegistro
+from editor_sped.efd_info import CampoTipo, EfdInfo, EfdInfoRegistro
 
 
 
@@ -70,13 +69,13 @@ def conversor():
         }
 
         # Adicionando informações sobre blocos
-        for i, bloco_nome in enumerate(EFD_ORDEM_BLOCOS[efd_tipo]):
+        for i, nome_bloco in enumerate(EFD_ORDEM_BLOCOS[efd_tipo]):
             efd_info[efd_tipo]["blocos"].append({
                 "numero": i + 1,
-                "nome": bloco_nome,
-                "descricao": f"Bloco {bloco_nome}",
-                "abertura": f"{bloco_nome}001",
-                "fechamento": f"{bloco_nome}990"
+                "nome": nome_bloco,
+                "descricao": f"Bloco {nome_bloco}",
+                "abertura": f"{nome_bloco}001",
+                "fechamento": f"{nome_bloco}990"
             })
 
         efd_info[efd_tipo]["registros"] = objeto_registros
@@ -184,7 +183,7 @@ def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
             assert len(linha_campos) == len(COLUNAS["campos"][efd_tipo]), ("campos", efd_tipo, linha_campos)
             assert all(campo is not None for campo in linha_campos.values())
 
-            registro_nome = linha_campos["Register"]
+            nome_registro = linha_campos["Register"]
 
             # NOTE: Os campos "Entr" e "Saídas" podem ser usados para identificar a obrigatoriedade geral de um campo apenas quando ambos forem "O"
             campo_obrigatorio = linha_campos["Obrig"] == "O" or (
@@ -198,7 +197,7 @@ def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
 
             # Testa se o tipo de campo é um dos valores válidos
             assert linha_campos["Tipo"] in ("C", "N"), f"Tipo inesperado: {linha_campos['Tipo']}"
-            tipo_campo: Literal["C", "N"] = linha_campos["Tipo"]
+            tipo_campo: CampoTipo = linha_campos["Tipo"]
             tamanho_campo: int
 
             # Calculando o tamanho baseado nas regras
@@ -212,7 +211,7 @@ def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
 
 
 
-            objeto_registros[registro_nome]["campos"].append({
+            objeto_registros[nome_registro]["campos"].append({
                 "numero": int(linha_campos["Nº"]),
                 "nome": linha_campos["Campo"].replace(" ", "").replace("*", ""),
                 "descricao": linha_campos["Descrição"].strip(),
@@ -226,7 +225,7 @@ def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
 
 
             # Ordenando os campos para ter certeza da ordem correta
-            objeto_registros[registro_nome]["campos"].sort(key=lambda x: x["numero"])
+            objeto_registros[nome_registro]["campos"].sort(key=lambda x: x["numero"])
 
 
 
