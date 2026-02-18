@@ -43,7 +43,8 @@ class Campo:
             return ""
 
         if decimal:
-            resultado = f"{valor:.{decimal}f}"
+            # Números decimais tem casas decimais extras removidas
+            resultado = f"{valor:.{decimal}f}".rstrip("0").rstrip(".")
             return resultado.replace(".", ",") if "." in resultado else resultado
 
         # Abaixo dessa linhas apenas números inteiros fazem sentido
@@ -137,44 +138,30 @@ class Campo:
     @valor.setter
     def valor(self, valor: Alfanumerico | Numerico) -> None:
         # Como o mais comum é valor ser str, testa-se somente str primeiro
-        if valor is not None and not isinstance(valor, str):
-            if not isinstance(valor, (int, float)):
-                raise TypeError(f"O valor para o campo {self!r} deve ser str, int, float ou None")
+        if not isinstance(valor, str):
+            if not isinstance(valor, (int, float)) and valor is not None:
+                raise TypeError(f"O valor para um campo deve ser do tipo str, int, float ou None ({valor})")
 
 
 
         # A maioria dos campos é numérico, então testamos esse tipo primeiro
         if self.tipo == Campo.NUMERICO:
-            # Os casos "" e "0" são tão comuns que merecem tratamento especial
-            if valor == "":
-                self._valor_numerico = None
-                self._valor_alfanumerico = ""
-                return
+            # Convertermos o valor para numérico para normalizar o valor de comparação
+            valor_numerico = Campo.numerico(valor, self.decimal)
 
-            if valor == "0":
+            # 0 e "" são os dois valores mais abundantes, então é mais eficiente filtra-los
+            if valor_numerico == 0 and not self.tamanho_exato:
                 self._valor_numerico = 0
                 self._valor_alfanumerico = "0"
                 return
 
-            # Todos os outros casos numéricos
-            try:
-                # Remover vírgulas apenas se presente
-                if isinstance(valor, str) and "," in valor:
-                    valor = valor.replace(",", ".")
+            if valor_numerico is None:
+                self._valor_numerico = None
+                self._valor_alfanumerico = ""
+                return
 
-                if valor is None:
-                    novo_valor = None
-                elif self.decimal:
-                    novo_valor = round(float(valor), self.decimal)
-                else:
-                    novo_valor = int(valor)
-            except (ValueError, OverflowError) as e:
-                if self.decimal:
-                    raise ValueError(f"Não foi possível converter valor para float ({valor})") from e
-                raise ValueError(f"Não foi possível converter valor para int ({valor})") from e
-
-            self._valor_numerico = novo_valor
-            self._valor_alfanumerico = Campo.alfanumerico(novo_valor, self.decimal, self.tamanho, self.tamanho_exato)
+            self._valor_numerico = valor_numerico
+            self._valor_alfanumerico = Campo.alfanumerico(valor_numerico, self.decimal, self.tamanho, self.tamanho_exato)
             return
 
 
