@@ -74,19 +74,19 @@ class Campo:
 
 
     def __init__(self, chave: Chave, valor: Alfanumerico | Numerico, nome_registro: str, efd_tipo: EfdTipo) -> None:
-        campos_info = EFD_INFO[efd_tipo]["registros"][nome_registro.upper()]["campos"]
+        info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro.upper()]["campos"]
 
-        # Descobrindo o campo_info correto
+        # Descobrindo o info_campo correto
         if isinstance(chave, int):
             # Caso for o número, verificar que é maior que 0
             if chave <= 0:
                 raise ValueError("Os campos de um registro têm a numeração iniciada pelo número 1")
 
-            campo_info = campos_info[chave - 1]
+            info_campo = info_campos[chave - 1]
         elif isinstance(chave, str):
-            # Caso for o nome, encontrar o campo_info com esse nome
-            for campo_info in campos_info:
-                if campo_info["nome"] == chave:
+            # Caso for o nome, encontrar o info_campo com esse nome
+            for info_campo in info_campos:
+                if info_campo["nome"] == chave:
                     break
             else:
                 raise ValueError(f"Campo não encontrado pelo nome ({chave})")
@@ -94,13 +94,13 @@ class Campo:
             raise TypeError(f"Tipo inválido para parâmetro 'chave' ({chave})")
 
         # fmt: off
-        self.nome          = campo_info["nome"]
-        self.descricao     = campo_info["descricao"]
-        self.decimal       = campo_info["decimal"]
-        self.obrigatorio   = campo_info["obrigatorio"]
-        self.tamanho       = campo_info["tamanho"]
-        self.tamanho_exato = campo_info["tamanho_exato"]
-        self.tipo          = campo_info["tipo"]
+        self.nome          = info_campo["nome"]
+        self.descricao     = info_campo["descricao"]
+        self.decimal       = info_campo["decimal"]
+        self.obrigatorio   = info_campo["obrigatorio"]
+        self.tamanho       = info_campo["tamanho"]
+        self.tamanho_exato = info_campo["tamanho_exato"]
+        self.tipo          = info_campo["tipo"]
         # fmt: on
 
         self._valor_alfanumerico: Alfanumerico = ""

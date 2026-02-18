@@ -25,8 +25,8 @@ def test_campo_atribuicao():
     ]
     # fmt: on
 
-    for registro_nome, numero_campo, valor, valor_c, valor_n in casos_de_teste:
-        c = Campo(numero_campo, None, registro_nome, EFD_ICMS_IPI)
+    for nome_registro, numero_campo, valor, valor_c, valor_n in casos_de_teste:
+        c = Campo(numero_campo, None, nome_registro, EFD_ICMS_IPI)
 
         c.valor = valor
 

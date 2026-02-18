@@ -39,15 +39,15 @@ class Registro(ContemRegistros):
         # Caso TEXTO
         # Exemplo: '|NOME|VALOR|'
         if isinstance(campos, str):
-            campos_textos = campos.split("|")[1:-1]
-            registro_nome = campos_textos[0].upper()
-            info_registro = info_registros[registro_nome]
+            textos_campos = campos.split("|")[1:-1]
+            nome_registro = textos_campos[0].upper()
+            info_registro = info_registros[nome_registro]
 
-            super().__init__(registro_nome, ListaRegistro(), efd_tipo)
+            super().__init__(nome_registro, ListaRegistro(), efd_tipo)
 
-            campos_info = info_registro["campos"]
-            esperado = len(campos_info)
-            recebido = len(campos_textos)
+            info_campos = info_registro["campos"]
+            esperado = len(info_campos)
+            recebido = len(textos_campos)
 
             if recebido != esperado:
                 raise SyntaxError(
@@ -57,8 +57,8 @@ class Registro(ContemRegistros):
                 )
 
             self.campos = TuplaCampo(
-                Campo(i, valor, registro_nome, efd_tipo)
-                for i, valor in enumerate(campos_textos, 1)
+                Campo(i, valor, nome_registro, efd_tipo)
+                for i, valor in enumerate(textos_campos, 1)
             )
 
 
@@ -66,31 +66,31 @@ class Registro(ContemRegistros):
         # Caso DICIONÁRIO
         # Exemplo: {'REG': 'NOME', 2: 'VALOR'}
         elif isinstance(campos, dict):
-            registro_nome = None
+            nome_registro = None
 
             reg = campos.get("REG")  # REG é um campo obrigatório
             if reg in info_registros and isinstance(reg, str):
-                registro_nome = reg.upper()
+                nome_registro = reg.upper()
             else:
                 reg = campos.get(1)  # 1 (REG) é um campo obrigatório
                 if reg in info_registros and isinstance(reg, str):
-                    registro_nome = reg.upper()
+                    nome_registro = reg.upper()
 
-            if not registro_nome:
+            if not nome_registro:
                 raise ValueError("Pelo menos um nome de registro válido com chave 'REG' ou 1 deve existir")
 
-            info_registro = info_registros[registro_nome]
+            info_registro = info_registros[nome_registro]
 
-            super().__init__(registro_nome, ListaRegistro(), efd_tipo)
+            super().__init__(nome_registro, ListaRegistro(), efd_tipo)
 
             self.campos = TuplaCampo(
                 Campo(
-                    campo_info["numero"],
-                    campos.get(campo_info["nome"], campos.get(campo_info["numero"])),
-                    registro_nome,
+                    info_campo["numero"],
+                    campos.get(info_campo["nome"], campos.get(info_campo["numero"])),
+                    nome_registro,
                     efd_tipo
                 )
-                for campo_info in info_registro["campos"]
+                for info_campo in info_registro["campos"]
             )
         else:
             raise TypeError(f"Tipo inválido para parâmetro 'campos' ({campos})")
@@ -193,9 +193,9 @@ class Registro(ContemRegistros):
             ]
 
             for campos_atual, atributo in campos_todos:
-                for campo_nome, campo_valor in campos_atual.items():
+                for nome_campo, valor_campo in campos_atual.items():
                     try:
-                        campo = self[campo_nome]
+                        campo = self[nome_campo]
                     except KeyError:
                         continue
 
@@ -206,11 +206,11 @@ class Registro(ContemRegistros):
                     else:
                         valor_teste = campo.valor
 
-                    if isinstance(campo_valor, Iterable) and not isinstance(campo_valor, str):
-                        if valor_teste not in campo_valor:
+                    if isinstance(valor_campo, Iterable) and not isinstance(valor_campo, str):
+                        if valor_teste not in valor_campo:
                             return False
                     else:
-                        if valor_teste != campo_valor:
+                        if valor_teste != valor_campo:
                             return False
 
         return True

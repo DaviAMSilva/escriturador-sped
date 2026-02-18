@@ -98,7 +98,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Preenchendo as informações dos blocos
-        for bloco_info in EFD_INFO[self.efd_tipo]["blocos"]:
+        for info_bloco in EFD_INFO[self.efd_tipo]["blocos"]:
             registro_bloco_abertura: Registro | None = None
             registro_bloco_fechamento: Registro | None = None
 
@@ -107,19 +107,19 @@ class Escrituracao(ContemRegistros, ABC):
             # Encontrando os registros de abertura e fechamento na lista de registros
             # Esse método encontra apenas os blocos presentes na escrituração atual,
             # não levando em consideração as condições de obrigatoriedade de blocos
-            for escrituracao_registro in self.abertura.filhos:
-                if escrituracao_registro.nome == bloco_info["abertura"]:
-                    registro_bloco_abertura = escrituracao_registro
+            for registros in self.abertura.filhos:
+                if registros.nome == info_bloco["abertura"]:
+                    registro_bloco_abertura = registros
                     break
 
-            for escrituracao_registro in self.abertura.filhos:
-                if escrituracao_registro.nome == bloco_info["fechamento"]:
-                    registro_bloco_fechamento = escrituracao_registro
+            for registros in self.abertura.filhos:
+                if registros.nome == info_bloco["fechamento"]:
+                    registro_bloco_fechamento = registros
                     break
 
             if registro_bloco_abertura and registro_bloco_fechamento:
                 # Criando o bloco com os blocos de abertura e fechamento
-                self.blocos[bloco_info["nome"]] = Bloco(bloco_info["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
+                self.blocos[info_bloco["nome"]] = Bloco(info_bloco["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
                 raise TypeError(
@@ -196,9 +196,9 @@ class Escrituracao(ContemRegistros, ABC):
         registros_9900_remover = []
 
         for registro_9900 in registros_9900:
-            registro_nome = registro_9900["REG_BLC"].valor_c
-            if registro_nome in registros_contagem:
-                registro_9900["QTD_REG_BLC"].valor_c = registros_contagem[registro_nome]
+            nome_registro = registro_9900["REG_BLC"].valor_c
+            if nome_registro in registros_contagem:
+                registro_9900["QTD_REG_BLC"].valor_c = registros_contagem[nome_registro]
             else:
                 registros_9900_remover.append(registro_9900)
 
@@ -207,9 +207,9 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Adicionando novos registros 9900 que não existiam antes
-        for registro_nome in registros_contagem:
-            if registro_nome not in registros_9900_blc:
-                Registro(f"|9900|{registro_nome}|{registros_contagem[registro_nome]}|", self.efd_tipo, pai=registro_9001)
+        for nome_registro in registros_contagem:
+            if nome_registro not in registros_9900_blc:
+                Registro(f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", self.efd_tipo, pai=registro_9001)
 
 
 
