@@ -129,6 +129,32 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
+    def adicionar(self, nome_bloco: str) -> Self:
+        nome_bloco = nome_bloco.upper()
+
+        if nome_bloco not in self.blocos and nome_bloco in EFD_ORDEM_BLOCOS[self.efd_tipo]:
+            self.blocos[nome_bloco] = Bloco(
+                nome_bloco,
+                Registro(f"|{nome_bloco}001|1|", self.efd_tipo, pai=self.abertura),
+                Registro(f"|{nome_bloco}990|2|", self.efd_tipo, pai=self.abertura),
+                self.efd_tipo
+            )
+
+        return self
+
+
+
+    def remover(self, nome_bloco: str) -> Self:
+        nome_bloco = nome_bloco.upper()
+
+        if nome_bloco in self.blocos:
+            self.abertura.remover(self.blocos[nome_bloco].filhos)
+            del self.blocos[nome_bloco]
+
+        return self
+
+
+
     def totalizar(self, ordenar_9900=False) -> None:
         # A totalização dos registros e dos blocos dependem um do outro
         # por isso, é necessário realizar a totalização dessa forma
@@ -145,14 +171,12 @@ class Escrituracao(ContemRegistros, ABC):
             bloco = self.blocos.get(nome, None)
 
             if bloco:
+                # Se o bloco estiver vazio o valor da abertura é definido como 1
                 bloco.abertura[2].valor_c = 0 if bloco.tamanho > 2 else 1
                 bloco.fechamento[2].valor_c = bloco.tamanho
             else:
-                novo_abertura = Registro(f"|{nome}001|1|", self.efd_tipo, pai=self.abertura)
-                novo_fechamento = Registro(f"|{nome}990|2|", self.efd_tipo, pai=self.abertura)
-
-                novo_bloco = Bloco(nome, novo_abertura, novo_fechamento, self.efd_tipo)
-                self.blocos[nome] = novo_bloco
+                # Criando um novo bloco vazio se não existir
+                self.adicionar(nome)
 
         # Ordenar os blocos é obrigatório
         self.abertura.filhos.sort(key=lambda r: Registro.ordem(r.nome, r.efd_tipo))
