@@ -1,4 +1,4 @@
-from ..types import EfdTipo
+from ..efd_info import EfdTipo
 from .registro import Registro
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro

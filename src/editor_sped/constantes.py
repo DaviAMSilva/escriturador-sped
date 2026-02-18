@@ -4,6 +4,10 @@ EFD_PIS_COFINS = "efd_pis_cofins"
 
 EFD_TIPOS = EFD_ICMS_IPI, EFD_PIS_COFINS
 
+# Tipos de campo
+ALFANUMERICO = "C"
+NUMERICO = "N"
+
 # Os manuais forçam a codificação ISO 8859-1 (Latin-1) e o uso de CRLF para as escriturações
 EFD_ENCODING = "ISO-8859-1"
 EFD_NEWLINE = "\r\n"

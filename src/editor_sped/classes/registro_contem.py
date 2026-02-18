@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator
 
-from ..types import EfdTipo
+from ..efd_info import EfdTipo
 from .campo import Alfanumerico, Chave, Numerico
 from .registro_lista import ListaRegistro
 

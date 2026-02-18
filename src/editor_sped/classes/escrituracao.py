@@ -3,9 +3,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Self
 
-from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS
-from ..efd_info import EFD_INFO
-from ..types import EfdTipo
+from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS, EFD_TIPOS
+from ..efd_info import EFD_INFO, EfdTipo
 from ..utilidades import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 from .bloco import Bloco
 from .registro import Registro
@@ -22,6 +21,15 @@ from .registro_lista import ListaRegistro
 
 
 class Escrituracao(ContemRegistros, ABC):
+    # Tipos de campo
+    EFD_ICMS_IPI = EFD_ICMS_IPI
+    EFD_PIS_COFINS = EFD_PIS_COFINS
+
+    EFD_TIPOS = EFD_TIPOS
+    EFD_TIPO = None
+
+
+
     @classmethod
     def abrir(cls, arquivo: str | Path) -> Self:
         # Isso é estranho, mas funciona pois as subclasses usam apenas um parâmetro
@@ -209,6 +217,8 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 class EscrituracaoICMSIPI(Escrituracao):
+    EFD_TIPO = Escrituracao.EFD_ICMS_IPI
+
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
             super().__init__(escrituracao_texto, "EFD_ICMS_IPI", EFD_ICMS_IPI)
@@ -221,6 +231,8 @@ class EscrituracaoICMSIPI(Escrituracao):
 
 
 class EscrituracaoPISCOFINS(Escrituracao):
+    EFD_TIPO = Escrituracao.EFD_PIS_COFINS
+
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
             super().__init__(escrituracao_texto, "EFD_PIS_COFINS", EFD_PIS_COFINS)

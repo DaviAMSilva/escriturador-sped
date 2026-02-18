@@ -1,8 +1,7 @@
 from typing import Any, Callable, Iterable, Never, Self, overload
 
 from ..constantes import EFD_ORDEM_BLOCOS
-from ..efd_info import EFD_INFO
-from ..types import EfdTipo
+from ..efd_info import EFD_INFO, EfdTipo
 from .campo import Alfanumerico, Campo, Chave, Numerico, Numerico0
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros

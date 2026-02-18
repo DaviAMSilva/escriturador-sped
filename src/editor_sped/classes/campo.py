@@ -1,5 +1,5 @@
-from ..efd_info import EFD_INFO
-from ..types import EfdTipo
+from ..constantes import ALFANUMERICO, NUMERICO
+from ..efd_info import EFD_INFO, EfdTipo
 
 
 
@@ -27,8 +27,8 @@ Numerico0 = int | float
 
 class Campo:
     # Tipos de campo
-    ALFANUMERICO = "C"
-    NUMERICO = "N"
+    ALFANUMERICO = ALFANUMERICO
+    NUMERICO = NUMERICO
 
 
 
