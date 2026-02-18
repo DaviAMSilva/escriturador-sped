@@ -1,4 +1,3 @@
-import json
 from abc import ABC
 from collections import Counter
 from pathlib import Path
@@ -66,10 +65,6 @@ class Escrituracao(ContemRegistros, ABC):
 
     def __repr__(self) -> str:
         return f"Escrituracao({repr(self.nome)}, tamanho={repr(self.tamanho)})"
-
-
-    def json(self, *args, indent=4, ensure_ascii=False, **kwargs) -> str:
-        return json.dumps(self, indent=indent, ensure_ascii=ensure_ascii, default=lambda obj: obj.serialize(), *args, **kwargs)
 
 
 

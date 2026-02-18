@@ -41,9 +41,6 @@ class ContemRegistros(ABC):
     @abstractmethod
     def texto(self) -> str: ...
 
-    def serialize(self) -> dict:
-        return {"nome": self.nome, "filhos": self.filhos}
-
 
 
     @property

@@ -133,10 +133,6 @@ class Registro(ContemRegistros):
             f"{''.join([f.texto() for f in self.filhos])}"
         )
 
-    def serialize(self) -> dict:
-        s = super().serialize()
-        return {"nome": s["nome"], "campos": f"|{'|'.join([str(c) for c in self.campos])}|", "filhos": s["filhos"]}
-
 
 
     @property

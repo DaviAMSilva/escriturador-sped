@@ -102,9 +102,6 @@ class Campo:
 
 
 
-    def serialize(self) -> str:
-        return self.texto()
-
     def texto(self) -> str:
         return self._valor_alfanumerico
 
