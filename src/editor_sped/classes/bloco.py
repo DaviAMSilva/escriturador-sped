@@ -22,10 +22,10 @@ class Bloco(ContemRegistros):
 
 
     def __getitem__(self, chave: str) -> ListaRegistro:
-        return self.filhos.pesquisar(chave)
+        return self.filhos.buscar(chave)
 
     def __contains__(self, chave: str):
-        return bool(self.filhos.pesquisar(chave, primeiro=True))
+        return bool(self.filhos.buscar(chave, primeiro=True))
 
 
 

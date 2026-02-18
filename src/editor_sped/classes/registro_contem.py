@@ -53,11 +53,11 @@ class ContemRegistros(ABC):
 
     @property
     def registros(self) -> ListaRegistro:
-        return self.pesquisar()
+        return self.buscar()
 
 
 
-    def pesquisar(
+    def buscar(
         self,
         nome: str | None = None,
         campos: dict[str | int, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
@@ -68,7 +68,7 @@ class ContemRegistros(ABC):
         recursivo=True,
         primeiro=False
     ) -> "ListaRegistro":
-        return self.filhos.pesquisar(
+        return self.filhos.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=primeiro
         )
@@ -83,7 +83,7 @@ class ContemRegistros(ABC):
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":
-        encontrado = self.filhos.pesquisar(
+        encontrado = self.filhos.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True
         )
