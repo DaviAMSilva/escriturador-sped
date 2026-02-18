@@ -26,7 +26,7 @@ class Registro(ContemRegistros):
 
     @staticmethod
     def ler(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
-        from .registro_ler import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
+        from ..ler_registros import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
         return ler_registros(registros, efd_tipo)
 
 

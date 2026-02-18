@@ -1,9 +1,9 @@
 from typing import Iterable
 
-from ..constantes import EFD_MAIOR_NIVEL
-from ..efd_info import EFD_INFO, EfdTipo
-from .registro import Registro
-from .registro_lista import ListaRegistro
+from .classes.registro import Registro
+from .classes.registro_lista import ListaRegistro
+from .constantes import EFD_MAIOR_NIVEL
+from .efd_info import EFD_INFO, EfdTipo
 
 
 
