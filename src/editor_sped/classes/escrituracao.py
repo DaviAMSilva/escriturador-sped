@@ -148,14 +148,11 @@ class Escrituracao(ContemRegistros, ABC):
                 bloco.abertura[2].valor_c = 0 if bloco.tamanho > 2 else 1
                 bloco.fechamento[2].valor_c = bloco.tamanho
             else:
-                novo_abertura = Registro(f"|{nome}001|1|", self.abertura, self.efd_tipo)
-                novo_fechamento = Registro(f"|{nome}990|2|", self.abertura, self.efd_tipo)
+                novo_abertura = Registro(f"|{nome}001|1|", self.efd_tipo, pai=self.abertura)
+                novo_fechamento = Registro(f"|{nome}990|2|", self.efd_tipo, pai=self.abertura)
 
                 novo_bloco = Bloco(nome, novo_abertura, novo_fechamento, self.efd_tipo)
                 self.blocos[nome] = novo_bloco
-
-                self.abertura.filhos.append(novo_abertura)
-                self.abertura.filhos.append(novo_fechamento)
 
         # Ordenar os blocos é obrigatório
         self.abertura.filhos.sort(key=lambda r: Registro.ordem(r.nome, r.efd_tipo))
@@ -188,8 +185,7 @@ class Escrituracao(ContemRegistros, ABC):
         # Adicionando novos registros 9900 que não existiam antes
         for registro_nome in registros_contagem:
             if registro_nome not in registros_9900_blc:
-                novo_registro_9900 = Registro(f"|9900|{registro_nome}|{registros_contagem[registro_nome]}|", registro_9001, self.efd_tipo)
-                registro_9001.filhos.append(novo_registro_9900)
+                Registro(f"|9900|{registro_nome}|{registros_contagem[registro_nome]}|", self.efd_tipo, pai=registro_9001)
 
 
 
@@ -198,8 +194,7 @@ class Escrituracao(ContemRegistros, ABC):
             registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
             registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
         except ValueError:
-            novo_registro_9900_9900 = Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", registro_9001, self.efd_tipo)
-            registro_9001.filhos.append(novo_registro_9900_9900)
+            Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.efd_tipo, pai=registro_9001)
 
 
 

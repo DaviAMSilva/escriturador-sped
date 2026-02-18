@@ -60,7 +60,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
 
 
         # Criando o objeto registro em si
-        ultimos_registros[nivel_atual] = Registro(registro_atual, None, efd_tipo)
+        ultimos_registros[nivel_atual] = Registro(registro_atual, efd_tipo)
 
 
 

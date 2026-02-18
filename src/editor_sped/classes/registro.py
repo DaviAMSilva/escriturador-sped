@@ -31,10 +31,12 @@ class Registro(ContemRegistros):
 
 
 
-    def __init__(self, campos: str | dict[Chave, Alfanumerico | Numerico], pai: "Registro | None", efd_tipo: EfdTipo) -> None:
+    def __init__(self, campos: str | dict[Chave, Alfanumerico | Numerico], efd_tipo: EfdTipo, *, pai: "Registro | None" = None) -> None:
         info_registros = EFD_INFO[efd_tipo]["registros"]
 
-        # Caso STR
+
+
+        # Caso TEXTO
         # Exemplo: '|NOME|VALOR|'
         if isinstance(campos, str):
             campos_textos = campos.split("|")[1:-1]
@@ -58,6 +60,9 @@ class Registro(ContemRegistros):
                 Campo(valor, registro_nome, i, efd_tipo)
                 for i, valor in enumerate(campos_textos, 1)
             )
+
+
+
         # Caso DICIONÁRIO
         # Exemplo: {'REG': 'NOME', 2: 'VALOR'}
         elif isinstance(campos, dict):
@@ -90,6 +95,8 @@ class Registro(ContemRegistros):
         else:
             raise TypeError(f"Tipo inválido para parâmetro 'campos' ({campos})")
 
+
+
         # fmt: off
         self.descricao   = info_registro["descricao"]
         self.nivel       = info_registro["nivel"]
@@ -97,7 +104,12 @@ class Registro(ContemRegistros):
         self.unico       = info_registro["unico"]
         # fmt: on
 
+
+
+        # Configurando a associação pai/filho
         self.pai = pai
+        if pai:
+            pai.adicionar(self)
 
 
 
