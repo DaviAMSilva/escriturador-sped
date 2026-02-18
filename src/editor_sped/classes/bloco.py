@@ -33,7 +33,7 @@ class Bloco(ContemRegistros):
         return f"Bloco {self.nome}: {self.tamanho} linhas"
 
     def __repr__(self) -> str:
-        return f"Bloco({repr(self.nome)}, tamanho={repr(self.tamanho)})"
+        return f"Bloco({self.nome!r}, tamanho={self.tamanho!r})"
 
 
 

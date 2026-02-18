@@ -98,7 +98,7 @@ class Campo:
         return self.texto()
 
     def __repr__(self) -> str:
-        return f"Campo({repr(self.nome)}, {repr(self.tipo)}, {repr(self.valor)})"
+        return f"Campo({self.nome!r}, {self.tipo!r}, {self.valor!r})"
 
 
 
@@ -122,7 +122,7 @@ class Campo:
         # Como o mais comum é valor ser str, testa-se somente str primeiro
         if valor is not None and not isinstance(valor, str):
             if not isinstance(valor, (int, float)):
-                raise TypeError(f"O valor para o campo {repr(self)} deve ser str, int, float ou None")
+                raise TypeError(f"O valor para o campo {self!r} deve ser str, int, float ou None")
 
 
 

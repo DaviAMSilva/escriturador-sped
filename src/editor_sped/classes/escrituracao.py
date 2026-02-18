@@ -72,7 +72,7 @@ class Escrituracao(ContemRegistros, ABC):
         return f"Escrituracao {self.nome}: {self.tamanho} linhas"
 
     def __repr__(self) -> str:
-        return f"Escrituracao({repr(self.nome)}, tamanho={repr(self.tamanho)})"
+        return f"Escrituracao({self.nome!r}, tamanho={self.tamanho!r})"
 
 
 

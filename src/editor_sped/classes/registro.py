@@ -122,7 +122,7 @@ class Registro(ContemRegistros):
         return self.linha
 
     def __repr__(self) -> str:
-        return f"Registro({repr(self.linha)})"
+        return f"Registro({self.linha!r})"
 
 
 
@@ -208,10 +208,10 @@ class Registro(ContemRegistros):
     def adicionar(self, registros: "Registro | ListaRegistro | Iterable[Registro]") -> Self:
         for novo_registro in [registros] if isinstance(registros, Registro) else registros:
             if not isinstance(novo_registro, Registro):
-                raise TypeError(f"Item não é um registro ({repr(novo_registro)})")
+                raise TypeError(f"Item não é um registro ({novo_registro!r})")
 
             if novo_registro.nome not in EFD_INFO[self.efd_tipo]["registros"][self.nome]["filhos"]:
-                raise ValueError(f"O registro {repr(novo_registro)} não é um filho válido de {repr(self)}")
+                raise ValueError(f"O registro {novo_registro!r} não é um filho válido de {self!r}")
 
             if novo_registro.pai is not None:
                 novo_registro.pai.remover(novo_registro)
