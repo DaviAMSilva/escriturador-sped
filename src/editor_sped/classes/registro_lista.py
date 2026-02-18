@@ -64,6 +64,9 @@ class ListaRegistro(list["Registro"]):
     ) -> "ListaRegistro":
         encontrados = ListaRegistro()
 
+        if nome:
+            nome = nome.upper()
+
         for filho in self:
             valido = filho.teste(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro)
 

@@ -23,7 +23,7 @@ class Registro(ContemRegistros):
         # Exemplos:
         # 0100 ->    0 + 100 =  100
         # C500 -> 2000 + 500 = 2500
-        return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0]) * 1000 + int(nome[1:4])
+        return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0].upper()) * 1000 + int(nome[1:4])
 
     @staticmethod
     def ler(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
@@ -39,7 +39,7 @@ class Registro(ContemRegistros):
         # Exemplo: '|NOME|VALOR|'
         if isinstance(campos, str):
             campos_textos = campos.split("|")[1:-1]
-            registro_nome = campos_textos[0]
+            registro_nome = campos_textos[0].upper()
             info_registro = info_registros[registro_nome]
 
             super().__init__(registro_nome, ListaRegistro(), efd_tipo)
@@ -65,12 +65,12 @@ class Registro(ContemRegistros):
             registro_nome = None
 
             reg = campos.get("REG")  # REG é um campo obrigatório
-            if reg in info_registros:
-                registro_nome = reg
+            if reg in info_registros and isinstance(reg, str):
+                registro_nome = reg.upper()
             else:
                 reg = campos.get(1)  # 1 (REG) é um campo obrigatório
-                if reg in info_registros:
-                    registro_nome = reg
+                if reg in info_registros and isinstance(reg, str):
+                    registro_nome = reg.upper()
 
             if not registro_nome:
                 raise ValueError("Pelo menos um nome de registro válido com chave 'REG' ou 1 deve existir")
@@ -272,6 +272,9 @@ class Registro(ContemRegistros):
                     self.filhos[i].pai = None  # type: ignore
                     del self.filhos[i]
         elif nome or filtro or campos or campos_c or campos_n:
+            if nome:
+                nome = nome.upper()
+
             for i in range(len(self.filhos) - 1, -1, -1):
                 if self.filhos[i].teste(nome, campos, campos_c=campos_c, campos_n=campos_n, filtro=filtro):
                     self.filhos[i].pai = None  # type: ignore

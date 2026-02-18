@@ -33,7 +33,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
     def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
-        super().__init__(nome, ListaRegistro(), efd_tipo)
+        super().__init__(nome.upper(), ListaRegistro(), efd_tipo)
 
         self.blocos: dict[str, Bloco] = {}
 

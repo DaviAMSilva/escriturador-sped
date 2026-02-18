@@ -74,7 +74,7 @@ class Campo:
 
 
     def __init__(self, valor: Alfanumerico | Numerico, nome_registro: str, numero: int, efd_tipo: EfdTipo) -> None:
-        info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro]["campos"][numero - 1]
+        info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro.upper()]["campos"][numero - 1]
 
         # fmt: off
         self.nome          = info_campos["nome"]

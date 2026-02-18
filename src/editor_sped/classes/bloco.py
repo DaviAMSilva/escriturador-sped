@@ -17,7 +17,7 @@ class Bloco(ContemRegistros):
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
 
-        super().__init__(nome, ListaRegistro([self.abertura, self.fechamento]), efd_tipo)
+        super().__init__(nome.upper(), ListaRegistro([self.abertura, self.fechamento]), efd_tipo)
 
 
 
