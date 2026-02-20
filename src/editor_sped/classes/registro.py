@@ -32,9 +32,12 @@ class Registro(ContemRegistros):
 
 
     def __init__(self, campos: str | dict[Chave, Alfanumerico | Numerico], efd_tipo: EfdTipo, *, pai: "Registro | None" = None) -> None:
+        if pai is not None and not isinstance(pai, Registro):
+            raise TypeError(f"Tipo inválido para parâmetro 'pai' ({pai})")
+
+
+
         info_registros = EFD_INFO[efd_tipo]["registros"]
-
-
 
         # Caso TEXTO
         # Exemplo: '|NOME|VALOR|'
