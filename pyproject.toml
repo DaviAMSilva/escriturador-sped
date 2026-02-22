@@ -16,7 +16,7 @@ license = { text = "MIT" }
 keywords = [ "sped", "fiscal", "efd-fiscal", "contribuicoes", "efd-contribuicoes", "brasil", "receita-federal", "text-processing" ]
 
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Financial and Insurance Industry",
     "License :: OSI Approved :: MIT License",
