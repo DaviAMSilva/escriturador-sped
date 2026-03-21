@@ -205,7 +205,7 @@
                 tr.appendChild(tdRegistro);
 
                 const tdCampos = document.createElement("td");
-                tdCampos.innerHTML = campos.map(campo => `<span class='campo' data-title='${JSON.stringify(campo, null, 2)}'>${campo.nome}<small>${campo.numero}</small></span>`).join(", ");
+                tdCampos.innerHTML = "|" + campos.map(campo => `<span class='campo' data-title='${JSON.stringify(campo, null, 2)}'>${campo.nome}<small>${campo.numero}</small></span>`).join("<wbr>|") + "|";
                 tr.appendChild(tdCampos);
 
                 const tbody = document.querySelector(`#container-${tipo} tbody`);
