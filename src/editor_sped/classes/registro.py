@@ -110,7 +110,7 @@ class Registro(ContemRegistros):
 
 
         # Configurando a associação pai/filho
-        self.pai = pai
+        self.pai: Registro = pai # type: ignore
         if pai:
             pai.adicionar(self)
 
