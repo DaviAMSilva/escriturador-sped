@@ -1,4 +1,5 @@
 import re
+from collections import Counter
 
 from data.conversor import EFD_MAIOR_NIVEL, conversor
 from editor_sped import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS, Campo
@@ -72,6 +73,10 @@ def verificar_registro(efd_registros, nome, registro, campos):
     assert isinstance(registro["campos"], list)
     assert len(registro["campos"]) >= 2
     assert len(registro["campos"]) == campos
+
+    # Campos duplicados
+    contagem = Counter(campo["nome"] for campo in registro["campos"]).most_common()
+    assert contagem[0][1] == 1, f"Campo duplicado: {contagem[0][0]} presente {contagem[0][1]} vezes no registro {nome}"
 
     # Pai e filhos
     assert isinstance(registro["filhos"], list)
