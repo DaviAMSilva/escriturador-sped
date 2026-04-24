@@ -19,6 +19,9 @@ class TuplaCampo(tuple["Campo", ...]):
             if not isinstance(campo, Campo):
                 raise TypeError(f"Item diferente de Campo em inicialização de TuplaCampo ({campo})")
 
+            if campo.nome in self.dicionario:
+                raise ValueError(f"Campo duplicado ({campo!r} e {self.dicionario[campo.nome]!r})")
+
             self.dicionario[campo.nome] = campo
 
     @overload
