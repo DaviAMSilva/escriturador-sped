@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Visualizador Registros SPED</title>
+    <title>Visualizador de Registros - Editor SPED</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="efd_info.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: sans-serif;
             margin: 20px;
             line-height: 1.6;
             overflow-x: hidden;
@@ -51,10 +51,16 @@
             text-align: center;
         }
 
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         .registro {
             cursor: pointer;
             color: #007BFF;
             position: relative;
+            scroll-margin-top: 2em;
         }
 
         .registro:hover::after {
@@ -75,6 +81,7 @@
             cursor: pointer;
             color: #28A745;
             position: relative;
+            scroll-margin-top: 2em;
         }
 
         .campo:hover::after {
@@ -151,28 +158,6 @@
         </div>
     </div>
     <script>
-        function toggleVisibility() {
-            const selectedValue = document.getElementById("efd_tipo").value;
-            document.getElementById("container-efd_icms_ipi").style.display = selectedValue === "efd_icms_ipi" ? "block" : "none";
-            document.getElementById("container-efd_pis_cofins").style.display = selectedValue === "efd_pis_cofins" ? "block" : "none";
-        }
-        toggleVisibility();
-
-
-
-        // Testa se o arquivo foi carregado corretamente
-        if (typeof EFD_INFO === "undefined") {
-            console.error("Erro ao carregar o arquivo efd_info.json:", new Error("EFD_INFO is undefined"));
-            const warningMessage = "O arquivo efd_info.json não foi encontrado. Tenha certeza que o arquivo foi gerado corretamente.";
-            const warningElement = document.createElement("div");
-            warningElement.style.color = "red";
-            warningElement.textContent = warningMessage;
-            document.body.appendChild(warningElement);
-            throw new Error(warningMessage);
-        }
-
-
-
         const EFD_ORDEM_BLOCOS = {
             "efd_icms_ipi": ["0", "B", "C", "D", "E", "G", "H", "K", "1", "9"],
             "efd_pis_cofins": ["0", "A", "C", "D", "F", "I", "M", "P", "1", "9"]
@@ -180,39 +165,80 @@
 
 
 
+        function toggleVisibility() {
+            const valorAtual = document.getElementById("efd_tipo").value;
+            document.getElementById("container-efd_icms_ipi").style.display = valorAtual === "efd_icms_ipi" ? "block" : "none";
+            document.getElementById("container-efd_pis_cofins").style.display = valorAtual === "efd_pis_cofins" ? "block" : "none";
+        }
+        toggleVisibility();
 
-        const tipos = ["efd_icms_ipi", "efd_pis_cofins"];
 
-        for (const tipo of tipos) {
+
+        // Testa se o arquivo foi carregado corretamente
+        if (typeof EFD_INFO === "undefined") {
+            const mensagemAviso = "O arquivo efd_info.json não foi encontrado. Tenha certeza que o arquivo foi gerado corretamente.";
+            const elementoAviso = document.createElement("div");
+            elementoAviso.style.color = "red";
+            elementoAviso.textContent = mensagemAviso;
+            document.body.appendChild(elementoAviso);
+            throw new Error("Erro ao carregar o arquivo efd_info.json (EFD_INFO é undefined)");
+        }
+
+
+
+        for (const tipo of Object.keys(EFD_ORDEM_BLOCOS)) {
             const registros = EFD_INFO[tipo].registros;
 
             const registros_ordenados = Object.keys(registros).sort((a, b) => {
-                const chaveA = EFD_ORDEM_BLOCOS[tipo].indexOf(a[0]) * 1000 + parseInt(a.slice(1, 4), 10);
-                const chaveB = EFD_ORDEM_BLOCOS[tipo].indexOf(b[0]) * 1000 + parseInt(b.slice(1, 4), 10);
+                const chaveA = EFD_ORDEM_BLOCOS[tipo].indexOf(a[0]) * 1000 + parseInt(a.slice(1, 4));
+                const chaveB = EFD_ORDEM_BLOCOS[tipo].indexOf(b[0]) * 1000 + parseInt(b.slice(1, 4));
                 return chaveA - chaveB;
             });
 
-            for (const nome of registros_ordenados) {
-                const { campos, ...dados_registro } = registros[nome];
+            for (const nome_registro of registros_ordenados) {
+                const { campos, ...dados_registro } = registros[nome_registro];
 
-                const tr = document.createElement("tr");
+                const trLinha = document.createElement("tr");
                 const tdRegistro = document.createElement("td");
-                const spanRegistro = document.createElement("span");
-                spanRegistro.textContent = nome;
-                spanRegistro.setAttribute("data-title", JSON.stringify(dados_registro, null, 2));
-                spanRegistro.classList.add("registro");
-                tdRegistro.appendChild(spanRegistro);
-                tr.appendChild(tdRegistro);
+                const aRegistro = document.createElement("a");
+
+                aRegistro.id = nome_registro;
+                aRegistro.href = `#${nome_registro}`;
+                aRegistro.textContent = nome_registro;
+                aRegistro.setAttribute("data-title", JSON.stringify(dados_registro, null, 2));
+                aRegistro.classList.add("registro");
+                tdRegistro.appendChild(aRegistro);
+
+                trLinha.appendChild(tdRegistro);
 
                 const tdCampos = document.createElement("td");
-                tdCampos.innerHTML = "|" + campos.map(campo => `<span class='campo' data-title='${JSON.stringify(campo, null, 2)}'>${campo.nome}<small>${campo.numero}</small></span>`).join("<wbr>|") + "|";
-                tr.appendChild(tdCampos);
+                const spanLinhaCampos = document.createElement('span');
+                campos.forEach(campo => {
+                    const numeroFormatado = String(campo.numero).padStart(2, "0");
 
-                const tbody = document.querySelector(`#container-${tipo} tbody`);
-                tbody.appendChild(tr);
+                    const spanCampo = document.createElement('span');
+                    spanCampo.id = `${nome_registro}-${numeroFormatado}`;
+                    spanCampo.className = 'campo';
+                    spanCampo.setAttribute('data-title', JSON.stringify(campo, null, 2));
+                    spanCampo.innerHTML = `${campo.nome}`;
+
+                    const spanCampoNumero = document.createElement("small");
+                    spanCampoNumero.innerHTML = `<a href='#${nome_registro}-${numeroFormatado}'>${numeroFormatado}</a>`
+                    spanCampo.appendChild(spanCampoNumero);
+
+                    spanLinhaCampos.appendChild(document.createElement("wbr"));
+                    spanLinhaCampos.appendChild(document.createTextNode('|'));
+                    spanLinhaCampos.appendChild(spanCampo);
+
+                    tdCampos.appendChild(spanLinhaCampos);
+                });
+                spanLinhaCampos.appendChild(document.createTextNode('|'));
+
+                trLinha.appendChild(tdCampos);
+
+                document.querySelector(`#container-${tipo} tbody`).appendChild(trLinha);
             }
         }
-
     </script>
 </body>
 
