@@ -30,9 +30,10 @@ class ListaRegistro(list["Registro"]):
     def __getitem__(self, chave: int | SupportsIndex) -> "Registro": ...
 
     @overload
-    def __getitem__(self, chave: str | slice | None) -> "ListaRegistro": ...
+    def __getitem__(self, chave: str | tuple[str, dict[Chave, Alfanumerico | Numerico |
+                    Iterable[Alfanumerico | Numerico]]] | slice | None) -> "ListaRegistro": ...
 
-    def __getitem__(self, chave: Chave | SupportsIndex | slice | None):
+    def __getitem__(self, chave: str | tuple[str, dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]]] | int | SupportsIndex | slice | None):
         if isinstance(chave, (SupportsIndex, int)):
             return super().__getitem__(chave)
 
@@ -41,6 +42,11 @@ class ListaRegistro(list["Registro"]):
 
         if isinstance(chave, str) or chave is None:
             return self.buscar(chave)
+
+        if isinstance(chave, tuple) and len(chave) == 2 and \
+            (isinstance(chave[0], str) or chave[0] is None) and \
+                (isinstance(chave[1], dict) or chave[1] is None):
+            return self.buscar(*chave)
 
         raise TypeError(f"Valor inválido ({chave})")
 
