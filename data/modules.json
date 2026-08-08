@@ -1,14 +1,14 @@
 {
     "efd_icms_ipi": [
-        20,
-        "2026-02-11",
-        "http://sped.rfb.gov.br/arquivo/download/8112",
-        "3.2.2-1"
+        "021",
+        "2026-05-06",
+        "https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/efd-icms-ipi/guia%20pratico/@@display-file/file",
+        "3.2.3"
     ],
     "efd_pis_cofins": [
-        6,
+        "006",
         "2021-06-18",
-        "http://sped.rfb.gov.br/arquivo/download/5836",
+        "https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/efd-contribuicoes/manuais/guia_pratico_efd_contribuicoes_versao_1_35-18_06_2021.pdf/@@display-file/file",
         "1.35-4"
     ]
 }
