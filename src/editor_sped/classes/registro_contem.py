@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator
 
+from ..constantes import Chave, Valor, ValorC, ValorN
 from ..efd_info import EfdTipo
-from .campo import Alfanumerico, Chave, Numerico
 from .registro_lista import ListaRegistro
 
 if TYPE_CHECKING:
     from .registro import Registro
+
 
 
 
@@ -56,10 +57,10 @@ class ContemRegistros(ABC):
     def buscar(
         self,
         nome: str | None = None,
-        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Valor | Iterable[Valor]] | None = None,
         *,
-        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
+        campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
@@ -72,10 +73,10 @@ class ContemRegistros(ABC):
     def primeiro(
         self,
         nome: str | None = None,
-        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Valor | Iterable[Valor]] | None = None,
         *,
-        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
+        campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":

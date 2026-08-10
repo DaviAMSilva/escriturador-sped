@@ -1,3 +1,5 @@
+from typing import TypeVar
+
 # Tipos de escriturações
 EFD_ICMS_IPI = "efd_icms_ipi"
 EFD_PIS_COFINS = "efd_pis_cofins"
@@ -20,3 +22,14 @@ EFD_ORDEM_BLOCOS = {
     EFD_ICMS_IPI: ["0", "B", "C", "D", "E", "G", "H", "K", "1", "9"],
     EFD_PIS_COFINS: ["0", "A", "C", "D", "F", "I", "M", "P", "1", "9"]
 }
+
+# Tipos para pesquisa e criação
+type Chave = str | int
+ChaveT = TypeVar("ChaveT", bound=Chave)
+# pylint: disable=invalid-name
+type ValorC = str
+type ValorN = int | float | None
+type ValorN0 = int | float
+type Valor = ValorC | ValorN
+type Valor0 = ValorC | ValorN0
+# pylint: enable=invalid-name

@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, overload
+from typing import TYPE_CHECKING, Callable, Iterable, Mapping, SupportsIndex, overload
 
-from .campo import Alfanumerico, Chave, Numerico
+from ..constantes import Chave, ChaveT, Valor, ValorC, ValorN
 
 if TYPE_CHECKING:
     from .registro import Registro
@@ -30,10 +30,9 @@ class ListaRegistro(list["Registro"]):
     def __getitem__(self, chave: int | SupportsIndex) -> "Registro": ...
 
     @overload
-    def __getitem__(self, chave: str | tuple[str, dict[Chave, Alfanumerico | Numerico |
-                    Iterable[Alfanumerico | Numerico]]] | slice | None) -> "ListaRegistro": ...
+    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]] | slice | None) -> "ListaRegistro": ...
 
-    def __getitem__(self, chave: str | tuple[str, dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]]] | int | SupportsIndex | slice | None):
+    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]] | int | SupportsIndex | slice | None):
         if isinstance(chave, (SupportsIndex, int)):
             return super().__getitem__(chave)
 
@@ -43,10 +42,11 @@ class ListaRegistro(list["Registro"]):
         if isinstance(chave, str) or chave is None:
             return self.buscar(chave)
 
-        if isinstance(chave, tuple) and len(chave) == 2 and \
-            (isinstance(chave[0], str) or chave[0] is None) and \
-                (isinstance(chave[1], dict) or chave[1] is None):
-            return self.buscar(*chave)
+        if isinstance(chave, tuple) and len(chave) == 2:
+            if (isinstance(chave[0], str) or chave[0] is None) and (isinstance(chave[1], dict) or chave[1] is None):
+                return self.buscar(chave[0], chave[1])
+
+            raise TypeError(f"Tupla com valores inválidos ({chave})")
 
         raise TypeError(f"Valor inválido ({chave})")
 
@@ -60,10 +60,10 @@ class ListaRegistro(list["Registro"]):
     def buscar(
         self,
         nome: str | None = None,
-        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Valor | Iterable[Valor]] | None = None,
         *,
-        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
+        campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
@@ -96,10 +96,10 @@ class ListaRegistro(list["Registro"]):
     def primeiro(
         self,
         nome: str | None = None,
-        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Valor | Iterable[Valor]] | None = None,
         *,
-        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
+        campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":

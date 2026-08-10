@@ -1,8 +1,8 @@
 from typing import Any, Callable, Iterable, Never, Self, overload
 
-from ..constantes import EFD_ORDEM_BLOCOS
+from ..constantes import EFD_ORDEM_BLOCOS, Chave, Valor, ValorC, ValorN, ValorN0
 from ..efd_info import EFD_INFO, EfdTipo
-from .campo import Alfanumerico, Campo, Chave, Numerico, Numerico0
+from .campo import Campo
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -31,7 +31,7 @@ class Registro(ContemRegistros):
 
 
 
-    def __init__(self, campos: str | dict[Chave, Alfanumerico | Numerico], efd_tipo: EfdTipo, *, pai: "Registro | None" = None) -> None:
+    def __init__(self, campos: str | dict[Chave, Valor], efd_tipo: EfdTipo, *, pai: "Registro | None" = None) -> None:
         if pai is not None and not isinstance(pai, Registro):
             raise TypeError(f"Tipo inválido para parâmetro 'pai' ({pai})")
 
@@ -125,7 +125,7 @@ class Registro(ContemRegistros):
     def __getitem__(self, chave: Chave | slice):
         return self.campos[chave]
 
-    def __setitem__(self, chave: Chave, valor: Alfanumerico | Numerico):
+    def __setitem__(self, chave: Chave, valor: Valor):
         self.campos[chave].valor = valor
 
     def __contains__(self, chave: Chave | Campo):
@@ -159,16 +159,16 @@ class Registro(ContemRegistros):
 
 
 
-    def valores(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
+    def valores(self, valores: dict[Chave, Valor] | None = None) -> dict[str, Valor]:
         return self.campos.valores(valores)
 
-    def valores_c(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
+    def valores_c(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorC]:
         return self.campos.valores_c(valores)
 
-    def valores_n(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
+    def valores_n(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN]:
         return self.campos.valores_n(valores)
 
-    def valores_n0(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico0]:
+    def valores_n0(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN0]:
         return self.campos.valores_n0(valores)
 
 
@@ -176,10 +176,10 @@ class Registro(ContemRegistros):
     def teste(
         self,
         nome: str | None = None,
-        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
+        campos: dict[Chave, Valor | Iterable[Valor]] | None = None,
         *,
-        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None,
+        campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
+        campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None
     ) -> bool:
         if nome is not None and nome != self.nome:
@@ -260,9 +260,9 @@ class Registro(ContemRegistros):
         *,
         nome: str | None = ...,
         filtro: Callable[["Registro"], bool] | None = ...,
-        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = ...,
-        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = ...,
-        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = ...
+        campos: dict[Chave, Valor | Iterable[Valor]] | None = ...,
+        campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = ...,
+        campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = ...
     ) -> Self: ...
 
     def remover(
@@ -271,9 +271,9 @@ class Registro(ContemRegistros):
         *,
         nome: str | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
-        campos: dict[Chave, Alfanumerico | Numerico | Iterable[Alfanumerico | Numerico]] | None = None,
-        campos_c: dict[Chave, Alfanumerico | Iterable[Alfanumerico]] | None = None,
-        campos_n: dict[Chave, Numerico | Iterable[Numerico]] | None = None
+        campos: dict[Chave, Valor | Iterable[Valor]] | None = None,
+        campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
+        campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None
     ) -> Self:
         if registros:
             if nome or filtro or campos or campos_c or campos_n:

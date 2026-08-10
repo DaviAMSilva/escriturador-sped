@@ -1,20 +1,5 @@
-from ..constantes import ALFANUMERICO, NUMERICO
+from ..constantes import ALFANUMERICO, NUMERICO, Chave, Valor, ValorC, ValorN, ValorN0
 from ..efd_info import EFD_INFO, EfdTipo
-
-
-
-
-
-
-
-
-
-
-Chave = str | int
-
-Alfanumerico = str
-Numerico = int | float | None
-Numerico0 = int | float
 
 
 
@@ -33,7 +18,7 @@ class Campo:
 
 
     @staticmethod
-    def alfanumerico(valor: Alfanumerico | Numerico, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> Alfanumerico:
+    def alfanumerico(valor: Valor, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> ValorC:
         if isinstance(valor, str):
             if len(valor) > tamanho:
                 return valor[:tamanho]
@@ -57,7 +42,7 @@ class Campo:
         return str(valor)
 
     @staticmethod
-    def numerico(valor: Alfanumerico | Numerico, decimal: int | None) -> Numerico:
+    def numerico(valor: Valor, decimal: int | None) -> ValorN:
         if valor in ("", None):
             return None
 
@@ -74,7 +59,7 @@ class Campo:
 
 
 
-    def __init__(self, chave: Chave, valor: Alfanumerico | Numerico, nome_registro: str, efd_tipo: EfdTipo) -> None:
+    def __init__(self, chave: Chave, valor: Valor, nome_registro: str, efd_tipo: EfdTipo) -> None:
         info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro.upper()]["campos"]
 
         # Descobrindo o info_campo correto
@@ -104,8 +89,8 @@ class Campo:
         self.tipo          = info_campo["tipo"]
         # fmt: on
 
-        self._valor_alfanumerico: Alfanumerico = ""
-        self._valor_numerico: Numerico = None
+        self._valor_alfanumerico: ValorC = ""
+        self._valor_numerico: ValorN = None
 
         # Converte o valor passado para os valores interno corretos
         self.valor = valor
@@ -126,7 +111,7 @@ class Campo:
 
 
     @property
-    def valor(self) -> Alfanumerico | Numerico:
+    def valor(self) -> Valor:
         if self.tipo == Campo.ALFANUMERICO:
             return self.valor_c
 
@@ -136,7 +121,7 @@ class Campo:
         raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
 
     @valor.setter
-    def valor(self, valor: Alfanumerico | Numerico) -> None:
+    def valor(self, valor: Valor) -> None:
         # Como o mais comum é valor ser str, testa-se somente str primeiro
         if not isinstance(valor, str):
             if not isinstance(valor, (int, float)) and valor is not None:
@@ -183,17 +168,17 @@ class Campo:
 
 
     @property
-    def valor_c(self) -> Alfanumerico:
+    def valor_c(self) -> ValorC:
         return self._valor_alfanumerico
 
     @valor_c.setter
-    def valor_c(self, valor: Alfanumerico | Numerico) -> None:
+    def valor_c(self, valor: Valor) -> None:
         self.valor = valor
 
 
 
     @property
-    def valor_n(self) -> Numerico:
+    def valor_n(self) -> ValorN:
         if self._valor_numerico is None:
             return None
 
@@ -203,13 +188,13 @@ class Campo:
         return int(self._valor_numerico)
 
     @valor_n.setter
-    def valor_n(self, valor: Alfanumerico | Numerico) -> None:
+    def valor_n(self, valor: Valor) -> None:
         self.valor = valor
 
 
 
     @property
-    def valor_n0(self) -> Numerico0:
+    def valor_n0(self) -> ValorN0:
         if self._valor_numerico is None:
             return 0
 
@@ -219,5 +204,5 @@ class Campo:
         return int(self._valor_numerico)
 
     @valor_n0.setter
-    def valor_n0(self, valor: Alfanumerico | Numerico) -> None:
+    def valor_n0(self, valor: Valor) -> None:
         self.valor = valor
