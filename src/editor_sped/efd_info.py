@@ -5,7 +5,7 @@ from typing import Literal, TypedDict
 
 CampoTipo = Literal["C", "N"]
 
-EfdTipo = Literal["efd_icms_ipi", "efd_pis_cofins"]
+EfdTipo = Literal["contribuicoes", "icms_ipi"]
 EfdInfo = dict[EfdTipo, "EfdInfoTipo"]
 
 
@@ -43,9 +43,11 @@ class EfdInfoCampo(TypedDict):
     tipo: CampoTipo
 
 
-try:
-    # FIXME
-    with files("editor_sped.modulos").joinpath("efd_info.json").open("r", encoding="utf-8") as efd_info_arquivo:
-        EFD_INFO: EfdInfo = json.loads(efd_info_arquivo.read())
-except FileNotFoundError:
-    EFD_INFO: EfdInfo = {}
+# try:
+#     # FIXME
+#     with files("editor_sped.efd").joinpath("efd_info.json").open("r", encoding="utf-8") as efd_info_arquivo:
+#         EFD_INFO: EfdInfo = json.loads(efd_info_arquivo.read())
+# except FileNotFoundError:
+#     EFD_INFO: EfdInfo = {}
+
+EFD_INFO: EfdInfo = {}

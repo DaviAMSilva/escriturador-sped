@@ -2,9 +2,11 @@ import argparse
 import csv
 import json
 import os
+from glob import glob
+from pathlib import Path
 
-from editor_sped.constantes import EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS, EFD_TIPOS
-from editor_sped.efd_info import CampoTipo, EfdInfo, EfdInfoRegistro
+from editor_sped.constantes import EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS
+from editor_sped.efd_info import CampoTipo, EfdInfoRegistro, EfdInfoTipo, EfdTipo
 
 
 
@@ -16,21 +18,20 @@ from editor_sped.efd_info import CampoTipo, EfdInfo, EfdInfoRegistro
 
 
 # Constantes específicas do conversor de tabelas
-EFD_INFO_PASTA_DATA = "src/editor_sped/data/"
-EFD_INFO_PASTA_VISUALIZADOR = "src/editor_sped/visualizador/"
-EFD_INFO_ARQUIVO = "efd_info.{}"
+EFD_INFO_PASTA_MODULOS = "src/editor_sped/modulos/"
+EFD_INFO_ARQUIVO = "leiaute.{}"
 
 EFD_JSON_INDENTACAO = 4
 
 # Nomes das colunas esperadas para cada arquivo e cada módulo
 COLUNAS = {
-    "registros": {
-        "efd_icms_ipi": ["block", "code", "required", "in_required", "out_required", "level", "card", "spec_required", "spec_in", "spec_out", "desc"],
-        "efd_pis_cofins": ["block", "code", "required", "level", "card", "spec_required", "desc"]
+    "contribuicoes": {
+        "campos": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"],
+        "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
     },
-    "campos": {
-        "efd_icms_ipi": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig", "Entr", "Saídas"],
-        "efd_pis_cofins": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"]
+    "icms_ipi": {
+        "campos": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig", "Entr", "Saídas"],
+        "registros": ["block", "code", "required", "in_required", "out_required", "level", "card", "spec_required", "spec_in", "spec_out", "desc"],
     }
 }
 
@@ -43,46 +44,42 @@ COLUNAS = {
 
 
 
-def conversor():
-    efd_info: EfdInfo = {}
-
-
-    for efd_tipo in EFD_TIPOS:
-        arquivo_registros = os.path.join(os.path.dirname(__file__), f"{efd_tipo}", "registers.csv")
-        arquivo_campos = os.path.join(os.path.dirname(__file__), f"{efd_tipo}", "accurate_fields.csv")
+def conversor(efd: EfdTipo, leiaute: str, versao: str) -> EfdInfoTipo:
+    arquivo_registros = os.path.join(os.path.dirname(__file__), "..", "modulos", efd, leiaute, versao, "registros.csv")
+    arquivo_campos = os.path.join(os.path.dirname(__file__), "..", "modulos", efd, leiaute, versao, "campos.csv")
 
 
 
-        # Guarda as informações dos registros para cada arquivo
-        objeto_registros: dict[str, "EfdInfoRegistro"] = {}
+    # Guarda as informações dos registros para cada arquivo
+    objeto_registros: dict[str, EfdInfoRegistro] = {}
 
 
 
-        converter_registros(efd_tipo, arquivo_registros, objeto_registros)
-        converter_campos(efd_tipo, arquivo_campos, objeto_registros)
+    converter_registros(efd, arquivo_registros, objeto_registros)
+    converter_campos(efd, arquivo_campos, objeto_registros)
 
 
 
-        efd_info[efd_tipo] = {
-            "blocos": [],
-            "registros": {}
-        }
+    efd_leiaute: EfdInfoTipo = {
+        "blocos": [],
+        "registros": {}
+    }
 
-        # Adicionando informações sobre blocos
-        for i, nome_bloco in enumerate(EFD_ORDEM_BLOCOS[efd_tipo]):
-            efd_info[efd_tipo]["blocos"].append({
-                "numero": i + 1,
-                "nome": nome_bloco,
-                "descricao": f"Bloco {nome_bloco}",
-                "abertura": f"{nome_bloco}001",
-                "fechamento": f"{nome_bloco}990"
-            })
+    # Adicionando informações sobre blocos
+    for i, nome_bloco in enumerate(EFD_ORDEM_BLOCOS[efd]):
+        efd_leiaute["blocos"].append({
+            "numero": i + 1,
+            "nome": nome_bloco,
+            "descricao": f"Bloco {nome_bloco}",
+            "abertura": f"{nome_bloco}001",
+            "fechamento": f"{nome_bloco}990"
+        })
 
-        efd_info[efd_tipo]["registros"] = objeto_registros
+    efd_leiaute["registros"] = objeto_registros
 
 
 
-    return efd_info
+    return efd_leiaute
 
 
 
@@ -93,15 +90,15 @@ def conversor():
 
 
 
-def converter_registros(efd_tipo, arquivo_registros, objeto_registros):
+def converter_registros(efd_tipo: EfdTipo, arquivo_registros: str, objeto_registros: dict[str, EfdInfoRegistro]) -> None:
     with open(arquivo_registros, encoding="utf-8", newline="") as ar:
         csv_registros = csv.DictReader(ar)
 
-        if csv_registros.fieldnames != COLUNAS["registros"][efd_tipo]:
+        if csv_registros.fieldnames != COLUNAS[efd_tipo]["registros"]:
             raise ValueError(f"Colunas inválidas no arquivo registers.csv do módulo {efd_tipo}")
 
         for linha_registros in csv_registros:
-            assert len(linha_registros) == len(COLUNAS["registros"][efd_tipo]), ("registros", efd_tipo, linha_registros)
+            assert len(linha_registros) == len(COLUNAS[efd_tipo]["registros"]), ("registros", efd_tipo, linha_registros)
             assert all(registro is not None for registro in linha_registros.values())
 
             registro_obrigatorio: bool = linha_registros["spec_required"] in ("O", "S")
@@ -172,15 +169,15 @@ def converter_registros(efd_tipo, arquivo_registros, objeto_registros):
 
 
 
-def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
+def converter_campos(efd_tipo: EfdTipo, arquivo_campos: str, objeto_registros: dict[str, EfdInfoRegistro]):
     with open(arquivo_campos, encoding="utf-8", newline="") as ac:
         csv_campos = csv.DictReader(ac)
 
-        if csv_campos.fieldnames != COLUNAS["campos"][efd_tipo]:
+        if csv_campos.fieldnames != COLUNAS[efd_tipo]["campos"]:
             raise ValueError(f"Colunas inválidas no arquivo accurate_fields do módulo {efd_tipo}")
 
         for linha_campos in csv_campos:
-            assert len(linha_campos) == len(COLUNAS["campos"][efd_tipo]), ("campos", efd_tipo, linha_campos)
+            assert len(linha_campos) == len(COLUNAS[efd_tipo]["campos"]), ("campos", efd_tipo, linha_campos)
             assert all(campo is not None for campo in linha_campos.values())
 
             nome_registro = linha_campos["Register"]
@@ -234,21 +231,20 @@ def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
 
 
 
-def main(leiaute: str, versao: str, formatado: bool = False):
-    efd_info_main = conversor()
+def main(formatado: bool = False):
+    for caminho in glob("*/*/*/", root_dir="modulos"):
+        efd: EfdTipo
+        efd, leiaute, versao = Path(caminho).parts # type: ignore
 
-    if not os.path.exists(EFD_INFO_PASTA_DATA):
-        os.mkdir(EFD_INFO_PASTA_DATA)
+        efd_info = conversor(efd, leiaute, versao)
 
-    if not os.path.exists(EFD_INFO_PASTA_VISUALIZADOR):
-        os.mkdir(EFD_INFO_PASTA_VISUALIZADOR)
 
-    with open(os.path.join(EFD_INFO_PASTA_DATA, EFD_INFO_ARQUIVO.format("json")), "w", encoding="utf-8") as arquivo_convertido:
-        arquivo_convertido.write(json.dumps(efd_info_main, indent=EFD_JSON_INDENTACAO if formatado else None, ensure_ascii=False))
+        caminho_modulo = os.path.join(EFD_INFO_PASTA_MODULOS, efd, leiaute, versao)
+        if not os.path.exists(caminho_modulo):
+            os.makedirs(caminho_modulo)
 
-    # Salvando como arquivo js para ser carregado no navegador
-    with open(os.path.join(EFD_INFO_PASTA_VISUALIZADOR, EFD_INFO_ARQUIVO.format("js")), "w", encoding="utf-8") as arquivo_convertido:
-        arquivo_convertido.write("window.EFD_INFO=" + json.dumps(efd_info_main, ensure_ascii=False))
+        with open(os.path.join(caminho_modulo, EFD_INFO_ARQUIVO.format("json")), "w", encoding="utf-8") as arquivo_convertido:
+            arquivo_convertido.write(json.dumps(efd_info, indent=EFD_JSON_INDENTACAO if formatado else None, ensure_ascii=False))
 
 
 

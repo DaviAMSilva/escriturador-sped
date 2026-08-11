@@ -1,7 +1,6 @@
 # pylint: disable=import-outside-toplevel,unused-argument,import-error
 
 import os
-import shutil
 
 from invoke.context import Context
 from invoke.tasks import task
@@ -45,9 +44,8 @@ def install(c: Context, dev: bool = True, jupyter: bool = False):
 
 @task
 def conversor(c: Context, formatado: bool = False):
-    from modulos.conversor import main
-    main("", "", formatado)
-    shutil.copy(os.path.join("data", "modulos.json"), os.path.join("src", "editor_sped", "data", "modulos.json"))
+    from scripts.conversor import main
+    main(formatado)
 
 
 @task
@@ -63,7 +61,7 @@ def all(c: Context):  # pylint: disable=redefined-builtin
 
 @task
 def lint(c: Context):
-    c.run(f"{PYTHON} -m pylint src tests tasks.py modulos/conversor.py")
+    c.run(f"{PYTHON} -m pylint src tests scripts tasks.py")
 
 
 @task

@@ -1,8 +1,8 @@
 from typing import TypeVar
 
 # Tipos de escriturações
-EFD_ICMS_IPI = "efd_icms_ipi"
-EFD_PIS_COFINS = "efd_pis_cofins"
+EFD_ICMS_IPI = "icms_ipi"
+EFD_PIS_COFINS = "contribuicoes"
 
 EFD_TIPOS = EFD_ICMS_IPI, EFD_PIS_COFINS
 
