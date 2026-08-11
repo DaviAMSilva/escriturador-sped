@@ -1,6 +1,7 @@
 from typing import Iterable, Self, SupportsIndex, overload
 
-from .campo import Alfanumerico, Campo, Numerico, Numerico0, Chave
+from ..constantes import Chave, Valor, ValorC, ValorN, ValorN0
+from .campo import Campo
 
 
 
@@ -18,6 +19,9 @@ class TuplaCampo(tuple["Campo", ...]):
         for campo in self:
             if not isinstance(campo, Campo):
                 raise TypeError(f"Item diferente de Campo em inicialização de TuplaCampo ({campo})")
+
+            if campo.nome in self.dicionario:
+                raise ValueError(f"Campo duplicado ({campo!r} e {self.dicionario[campo.nome]!r})")
 
             self.dicionario[campo.nome] = campo
 
@@ -74,7 +78,7 @@ class TuplaCampo(tuple["Campo", ...]):
 
 
 
-    def valores(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico | Numerico]:
+    def valores(self, valores: dict[Chave, Valor] | None = None) -> dict[str, Valor]:
         if isinstance(valores, dict):
             for campo, valor in valores.items():
                 if campo in self:
@@ -84,15 +88,15 @@ class TuplaCampo(tuple["Campo", ...]):
 
         return {campo.nome: campo.valor for campo in self}
 
-    def valores_c(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Alfanumerico]:
+    def valores_c(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorC]:
         self.valores(valores)
         return {campo.nome: campo.valor_c for campo in self}
 
-    def valores_n(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico]:
+    def valores_n(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN]:
         self.valores(valores)
         return {campo.nome: campo.valor_n for campo in self}
 
-    def valores_n0(self, valores: dict[Chave, Alfanumerico | Numerico] | None = None) -> dict[str, Numerico0]:
+    def valores_n0(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN0]:
         self.valores(valores)
         return {campo.nome: campo.valor_n0 for campo in self}
 

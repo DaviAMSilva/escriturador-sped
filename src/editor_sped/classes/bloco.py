@@ -1,3 +1,6 @@
+from typing import Iterable, Mapping
+
+from ..constantes import ChaveT, Valor
 from ..efd_info import EfdTipo
 from .registro import Registro
 from .registro_contem import ContemRegistros
@@ -21,8 +24,17 @@ class Bloco(ContemRegistros):
 
 
 
-    def __getitem__(self, chave: str) -> ListaRegistro:
-        return self.filhos.buscar(chave)
+    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]]) -> ListaRegistro:
+        if isinstance(chave, str):
+            return self.filhos.buscar(chave)
+
+        if isinstance(chave, tuple) and len(chave) == 2:
+            if (isinstance(chave[0], str) or chave[0] is None) and (isinstance(chave[1], dict) or chave[1] is None):
+                return self.buscar(chave[0], chave[1])
+
+            raise TypeError(f"Tupla com valores inválidos ({chave})")
+
+        raise TypeError(f"Valor inválido ({chave})")
 
     def __contains__(self, chave: str):
         return bool(self.filhos.buscar(chave, primeiro=True))

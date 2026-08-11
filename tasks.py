@@ -19,8 +19,12 @@ with open(os.path.join("data", "modules.json"), "r", encoding="utf-8") as module
     MODULES.update(modules_data)
 
 
+# Mude para usar uma versão diferente
+PYTHON = "python"
+
+
 @task
-def venv(c: Context, python: str = "python", pasta: str = "venv"):
+def venv(c: Context, python: str = PYTHON, pasta: str = "venv"):
     if not os.path.exists(f"{pasta}"):
         c.run(f"{python} -m venv {pasta}")
 
@@ -36,7 +40,7 @@ def venv(c: Context, python: str = "python", pasta: str = "venv"):
 
 @task
 def install(c: Context, dev: bool = True, jupyter: bool = False):
-    cmd = ["pip", "install", "-e", "."]
+    cmd = [PYTHON, "-m", "pip", "install", "-e", "."]
     extras = []
 
     if dev:
@@ -57,8 +61,8 @@ def se_install(c: Context):
     if not os.path.exists("sped_extractor"):
         c.run("git clone https://github.com/akretion/sped-extractor.git sped_extractor")
 
-    c.run("pip install requests")  # Requerimento não declarado no sped-extractor
-    c.run("pip install -e sped_extractor")
+    c.run(f"{PYTHON} -m pip install requests")  # Requerimento não declarado no sped-extractor
+    c.run(f"{PYTHON} -m pip install -e sped_extractor")
 
 
 @task
@@ -137,12 +141,12 @@ def all(c: Context):  # pylint: disable=redefined-builtin
 
 @task
 def lint(c: Context):
-    c.run("pylint src tests tasks.py data/conversor.py")
+    c.run(f"{PYTHON} -m pylint src tests tasks.py data/conversor.py")
 
 
 @task
 def test(c: Context, coverage: bool = False, profile: bool = False, profile_svg: bool = False):
-    cmd = ["pytest", "tests", "--pstats-dir", ".prof"]
+    cmd = [f"{PYTHON} -m pytest", "tests", "--pstats-dir", ".prof"]
 
     if coverage:
         cmd += ["--cov=src", "--cov-report=term-missing"]
