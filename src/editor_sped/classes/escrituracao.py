@@ -25,8 +25,8 @@ class Escrituracao(ContemRegistros, ABC):
     EFD_ICMS_IPI = EFD_ICMS_IPI
     EFD_PIS_COFINS = EFD_PIS_COFINS
 
-    EFD_TIPOS = MODULOS_NOMES
-    EFD_TIPO = None
+    MODULOS_NOMES = MODULOS_NOMES
+    MODULO = None
 
 
 
@@ -236,7 +236,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 class EscrituracaoICMSIPI(Escrituracao):
-    EFD_TIPO = Escrituracao.EFD_ICMS_IPI
+    MODULO = Escrituracao.EFD_ICMS_IPI
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
@@ -250,7 +250,7 @@ class EscrituracaoICMSIPI(Escrituracao):
 
 
 class EscrituracaoPISCOFINS(Escrituracao):
-    EFD_TIPO = Escrituracao.EFD_PIS_COFINS
+    MODULO = Escrituracao.EFD_PIS_COFINS
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
