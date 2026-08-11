@@ -24,12 +24,12 @@ EFD_ORDEM_BLOCOS = {
 }
 
 # Tipos para pesquisa e criação
-type Chave = str | int
+Chave = str | int
 ChaveT = TypeVar("ChaveT", bound=Chave)
 # pylint: disable=invalid-name
-type ValorC = str
-type ValorN = int | float | None
-type ValorN0 = int | float
-type Valor = ValorC | ValorN
-type Valor0 = ValorC | ValorN0
+ValorC = str
+ValorN = int | float | None
+ValorN0 = int | float
+Valor = ValorC | ValorN
+Valor0 = ValorC | ValorN0
 # pylint: enable=invalid-name
