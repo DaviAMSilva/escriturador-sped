@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable, Iterable, Mapping, SupportsIndex, overload
 
-from ..constantes import Chave, ChaveT, Valor, ValorC, ValorN
+from ..tipos import Chave, ChaveT, Valor, ValorC, ValorN
 
 if TYPE_CHECKING:
     from .registro import Registro

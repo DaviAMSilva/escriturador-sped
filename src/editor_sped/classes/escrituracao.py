@@ -3,8 +3,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Self
 
-from ..constantes import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS, EFD_TIPOS
-from ..efd_info import EFD_INFO, EfdTipo
+from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
+from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
 from ..utilidades import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 from .bloco import Bloco
 from .registro import Registro
@@ -25,7 +25,7 @@ class Escrituracao(ContemRegistros, ABC):
     EFD_ICMS_IPI = EFD_ICMS_IPI
     EFD_PIS_COFINS = EFD_PIS_COFINS
 
-    EFD_TIPOS = EFD_TIPOS
+    EFD_TIPOS = MODULOS_NOMES
     EFD_TIPO = None
 
 
@@ -40,8 +40,8 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
-    def __init__(self, escrituracao_texto: str, nome: str, efd_tipo: EfdTipo) -> None:
-        super().__init__(nome.upper(), ListaRegistro(), efd_tipo)
+    def __init__(self, escrituracao_texto: str, nome: str, modulo: ModuloT) -> None:
+        super().__init__(nome.upper(), ListaRegistro(), modulo)
 
         self.blocos: dict[str, Bloco] = {}
 
@@ -82,7 +82,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
     def _ler_escrituracao(self, escrituracao_texto: str) -> None:
-        registros_raizes = Registro.ler(escrituracao_texto, self.efd_tipo)
+        registros_raizes = Registro.ler(escrituracao_texto, self.modulo)
 
 
 
@@ -98,7 +98,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
         # Preenchendo as informações dos blocos
-        for info_bloco in EFD_INFO[self.efd_tipo]["blocos"]:
+        for info_bloco in MODULOS[self.modulo]["blocos"]:
             registro_bloco_abertura: Registro | None = None
             registro_bloco_fechamento: Registro | None = None
 
@@ -119,7 +119,7 @@ class Escrituracao(ContemRegistros, ABC):
 
             if registro_bloco_abertura and registro_bloco_fechamento:
                 # Criando o bloco com os blocos de abertura e fechamento
-                self.blocos[info_bloco["nome"]] = Bloco(info_bloco["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.efd_tipo)
+                self.blocos[info_bloco["nome"]] = Bloco(info_bloco["nome"], registro_bloco_abertura, registro_bloco_fechamento, self.modulo)
             elif registro_bloco_abertura is not None or registro_bloco_fechamento is not None:
                 # Apenas um dos registros de abertura ou fechamento existe
                 raise TypeError(
@@ -132,12 +132,12 @@ class Escrituracao(ContemRegistros, ABC):
     def adicionar(self, nome_bloco: str) -> Self:
         nome_bloco = nome_bloco.upper()
 
-        if nome_bloco not in self.blocos and nome_bloco in EFD_ORDEM_BLOCOS[self.efd_tipo]:
+        if nome_bloco not in self.blocos and nome_bloco in ORDEM_BLOCOS[self.modulo]:
             self.blocos[nome_bloco] = Bloco(
                 nome_bloco,
-                Registro(f"|{nome_bloco}001|1|", self.efd_tipo, pai=self.abertura),
-                Registro(f"|{nome_bloco}990|2|", self.efd_tipo, pai=self.abertura),
-                self.efd_tipo
+                Registro(f"|{nome_bloco}001|1|", self.modulo, pai=self.abertura),
+                Registro(f"|{nome_bloco}990|2|", self.modulo, pai=self.abertura),
+                self.modulo
             )
 
         return self
@@ -167,7 +167,7 @@ class Escrituracao(ContemRegistros, ABC):
         self.fechamento[2].valor_c = self.tamanho
 
     def totalizar_blocos(self) -> None:
-        for nome in EFD_ORDEM_BLOCOS[self.efd_tipo]:
+        for nome in ORDEM_BLOCOS[self.modulo]:
             bloco = self.blocos.get(nome, None)
 
             if bloco:
@@ -179,7 +179,7 @@ class Escrituracao(ContemRegistros, ABC):
                 self.adicionar(nome)
 
         # Ordenar os blocos é obrigatório
-        self.abertura.filhos.sort(key=lambda r: Registro.ordem(r.nome, r.efd_tipo))
+        self.abertura.filhos.sort(key=lambda r: Registro.ordem(r.nome, r.modulo))
 
     def totalizar_registros(self, ordenar_9900=False) -> None:
         # Encontrando todos os nomes de registros presentes na escrituração
@@ -209,7 +209,7 @@ class Escrituracao(ContemRegistros, ABC):
         # Adicionando novos registros 9900 que não existiam antes
         for nome_registro in registros_contagem:
             if nome_registro not in registros_9900_blc:
-                Registro(f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", self.efd_tipo, pai=registro_9001)
+                Registro(f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", self.modulo, pai=registro_9001)
 
 
 
@@ -218,13 +218,13 @@ class Escrituracao(ContemRegistros, ABC):
             registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
             registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
         except ValueError:
-            Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.efd_tipo, pai=registro_9001)
+            Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.modulo, pai=registro_9001)
 
 
 
         if ordenar_9900:
             # Ordenando os registros 9900 de acordo com o registro que ele totaliza
-            registro_9001.filhos.sort(key=lambda r: Registro.ordem(r["REG_BLC"].valor_c, self.efd_tipo))
+            registro_9001.filhos.sort(key=lambda r: Registro.ordem(r["REG_BLC"].valor_c, self.modulo))
 
 
 

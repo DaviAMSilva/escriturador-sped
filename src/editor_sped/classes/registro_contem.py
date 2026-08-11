@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator
 
-from ..constantes import Chave, Valor, ValorC, ValorN
-from ..efd_info import EfdTipo
+from ..modulos import ModuloT
+from ..tipos import Chave, Valor, ValorC, ValorN
 from .registro_lista import ListaRegistro
 
 if TYPE_CHECKING:
@@ -18,10 +18,10 @@ if TYPE_CHECKING:
 
 
 class ContemRegistros(ABC):
-    def __init__(self, nome: str, filhos: ListaRegistro, efd_tipo: EfdTipo) -> None:
+    def __init__(self, nome: str, filhos: ListaRegistro, modulo: ModuloT) -> None:
         self.nome: str = nome
         self.filhos: ListaRegistro = filhos
-        self.efd_tipo: EfdTipo = efd_tipo
+        self.modulo: ModuloT = modulo
 
 
 

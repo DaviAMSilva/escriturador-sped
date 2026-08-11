@@ -4,9 +4,10 @@ import json
 import os
 from glob import glob
 from pathlib import Path
+from typing import Literal
 
-from editor_sped.constantes import EFD_MAIOR_NIVEL, EFD_ORDEM_BLOCOS
-from editor_sped.efd_info import CampoTipo, EfdInfoRegistro, EfdInfoTipo, EfdTipo
+from editor_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
+from editor_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
 
 
@@ -18,18 +19,18 @@ from editor_sped.efd_info import CampoTipo, EfdInfoRegistro, EfdInfoTipo, EfdTip
 
 
 # Constantes específicas do conversor de tabelas
-EFD_INFO_PASTA_MODULOS = "src/editor_sped/modulos/"
-EFD_INFO_ARQUIVO = "leiaute.{}"
+PASTA_MODULOS = "src/editor_sped/modulos/"
+ARQUIVO_NOME = "leiaute.{}"
+JSON_INDENTACAO = 4
 
-EFD_JSON_INDENTACAO = 4
 
 # Nomes das colunas esperadas para cada arquivo e cada módulo
-COLUNAS = {
-    "contribuicoes": {
+COLUNAS: dict[ModuloT, dict[Literal["campos", "registros"], list[str]]] = {
+    "efd_pis_cofins": {
         "campos": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"],
         "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
     },
-    "icms_ipi": {
+    "efd_icms_ipi": {
         "campos": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig", "Entr", "Saídas"],
         "registros": ["block", "code", "required", "in_required", "out_required", "level", "card", "spec_required", "spec_in", "spec_out", "desc"],
     }
@@ -44,30 +45,30 @@ COLUNAS = {
 
 
 
-def conversor(efd: EfdTipo, leiaute: str, versao: str) -> EfdInfoTipo:
-    arquivo_registros = os.path.join(os.path.dirname(__file__), "..", "modulos", efd, leiaute, versao, "registros.csv")
-    arquivo_campos = os.path.join(os.path.dirname(__file__), "..", "modulos", efd, leiaute, versao, "campos.csv")
+def conversor(modulo: ModuloT, leiaute: str, versao: str) -> LeiauteT:
+    arquivo_registros = os.path.join(os.path.dirname(__file__), "..", "modulos", modulo, leiaute, versao, "registros.csv")
+    arquivo_campos = os.path.join(os.path.dirname(__file__), "..", "modulos", modulo, leiaute, versao, "campos.csv")
 
 
 
     # Guarda as informações dos registros para cada arquivo
-    objeto_registros: dict[str, EfdInfoRegistro] = {}
+    objeto_registros: dict[str, RegistroT] = {}
 
 
 
-    converter_registros(efd, arquivo_registros, objeto_registros)
-    converter_campos(efd, arquivo_campos, objeto_registros)
+    converter_registros(modulo, arquivo_registros, objeto_registros)
+    converter_campos(modulo, arquivo_campos, objeto_registros)
 
 
 
-    efd_leiaute: EfdInfoTipo = {
+    leiaute_retorno: LeiauteT = {
         "blocos": [],
         "registros": {}
     }
 
     # Adicionando informações sobre blocos
-    for i, nome_bloco in enumerate(EFD_ORDEM_BLOCOS[efd]):
-        efd_leiaute["blocos"].append({
+    for i, nome_bloco in enumerate(ORDEM_BLOCOS[modulo]):
+        leiaute_retorno["blocos"].append({
             "numero": i + 1,
             "nome": nome_bloco,
             "descricao": f"Bloco {nome_bloco}",
@@ -75,30 +76,30 @@ def conversor(efd: EfdTipo, leiaute: str, versao: str) -> EfdInfoTipo:
             "fechamento": f"{nome_bloco}990"
         })
 
-    efd_leiaute["registros"] = objeto_registros
+    leiaute_retorno["registros"] = objeto_registros
 
 
 
-    return efd_leiaute
-
-
-
-
+    return leiaute_retorno
 
 
 
 
 
 
-def converter_registros(efd_tipo: EfdTipo, arquivo_registros: str, objeto_registros: dict[str, EfdInfoRegistro]) -> None:
+
+
+
+
+def converter_registros(modulo: ModuloT, arquivo_registros: str, objeto_registros: dict[str, RegistroT]) -> None:
     with open(arquivo_registros, encoding="utf-8", newline="") as ar:
         csv_registros = csv.DictReader(ar)
 
-        if csv_registros.fieldnames != COLUNAS[efd_tipo]["registros"]:
-            raise ValueError(f"Colunas inválidas no arquivo registers.csv do módulo {efd_tipo}")
+        if csv_registros.fieldnames != COLUNAS[modulo]["registros"]:
+            raise ValueError(f"Colunas inválidas no arquivo registers.csv do módulo {modulo}")
 
         for linha_registros in csv_registros:
-            assert len(linha_registros) == len(COLUNAS[efd_tipo]["registros"]), ("registros", efd_tipo, linha_registros)
+            assert len(linha_registros) == len(COLUNAS[modulo]["registros"]), ("registros", modulo, linha_registros)
             assert all(registro is not None for registro in linha_registros.values())
 
             registro_obrigatorio: bool = linha_registros["spec_required"] in ("O", "S")
@@ -129,8 +130,8 @@ def converter_registros(efd_tipo: EfdTipo, arquivo_registros: str, objeto_regist
     # Ordena os registros conforme a ordem definida pelos manuais, independentemente da ordem de inserção original
     itens_ordenados = sorted(
         objeto_registros.items(),
-        key=lambda registro, efd_tipo=efd_tipo:
-        EFD_ORDEM_BLOCOS[efd_tipo].index(registro[0][0]) * 1000 + int(registro[0][1:4])
+        key=lambda registro, modulo=modulo:
+        ORDEM_BLOCOS[modulo].index(registro[0][0]) * 1000 + int(registro[0][1:4])
     )
 
     objeto_registros.clear()
@@ -138,7 +139,7 @@ def converter_registros(efd_tipo: EfdTipo, arquivo_registros: str, objeto_regist
 
 
 
-    ultimos_registros: list[str | None] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
+    ultimos_registros: list[str | None] = [None for _ in range(MAIOR_NIVEL + 1)]
     ultimos_registros[0] = "0000"
     nivel_anterior = -1
 
@@ -169,15 +170,15 @@ def converter_registros(efd_tipo: EfdTipo, arquivo_registros: str, objeto_regist
 
 
 
-def converter_campos(efd_tipo: EfdTipo, arquivo_campos: str, objeto_registros: dict[str, EfdInfoRegistro]):
+def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dict[str, RegistroT]):
     with open(arquivo_campos, encoding="utf-8", newline="") as ac:
         csv_campos = csv.DictReader(ac)
 
-        if csv_campos.fieldnames != COLUNAS[efd_tipo]["campos"]:
-            raise ValueError(f"Colunas inválidas no arquivo accurate_fields do módulo {efd_tipo}")
+        if csv_campos.fieldnames != COLUNAS[modulo]["campos"]:
+            raise ValueError(f"Colunas inválidas no arquivo accurate_fields do módulo {modulo}")
 
         for linha_campos in csv_campos:
-            assert len(linha_campos) == len(COLUNAS[efd_tipo]["campos"]), ("campos", efd_tipo, linha_campos)
+            assert len(linha_campos) == len(COLUNAS[modulo]["campos"]), ("campos", modulo, linha_campos)
             assert all(campo is not None for campo in linha_campos.values())
 
             nome_registro = linha_campos["Register"]
@@ -194,7 +195,7 @@ def converter_campos(efd_tipo: EfdTipo, arquivo_campos: str, objeto_registros: d
 
             # Testa se o tipo de campo é um dos valores válidos
             assert linha_campos["Tipo"] in ("C", "N"), f"Tipo inesperado: {linha_campos['Tipo']}"
-            tipo_campo: CampoTipo = linha_campos["Tipo"]
+            tipo_campo: CampoTipoT = linha_campos["Tipo"]
             tamanho_campo: int
 
             # Calculando o tamanho baseado nas regras
@@ -233,18 +234,19 @@ def converter_campos(efd_tipo: EfdTipo, arquivo_campos: str, objeto_registros: d
 
 def main(formatado: bool = False):
     for caminho in glob("*/*/*/", root_dir="modulos"):
-        efd: EfdTipo
-        efd, leiaute, versao = Path(caminho).parts # type: ignore
-
-        efd_info = conversor(efd, leiaute, versao)
+        modulo: ModuloT
+        modulo, leiaute, versao = Path(caminho).parts # type: ignore
 
 
-        caminho_modulo = os.path.join(EFD_INFO_PASTA_MODULOS, efd, leiaute, versao)
+        leiaute_salvar = conversor(modulo, leiaute, versao)
+
+
+        caminho_modulo = os.path.join(PASTA_MODULOS, modulo, leiaute, versao)
         if not os.path.exists(caminho_modulo):
             os.makedirs(caminho_modulo)
 
-        with open(os.path.join(caminho_modulo, EFD_INFO_ARQUIVO.format("json")), "w", encoding="utf-8") as arquivo_convertido:
-            arquivo_convertido.write(json.dumps(efd_info, indent=EFD_JSON_INDENTACAO if formatado else None, ensure_ascii=False))
+        with open(os.path.join(caminho_modulo, ARQUIVO_NOME.format("json")), "w", encoding="utf-8") as arquivo_convertido:
+            arquivo_convertido.write(json.dumps(leiaute_salvar, indent=JSON_INDENTACAO if formatado else None, ensure_ascii=False))
 
 
 

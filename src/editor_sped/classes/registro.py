@@ -1,7 +1,8 @@
 from typing import Any, Callable, Iterable, Never, Self, overload
 
-from ..constantes import EFD_ORDEM_BLOCOS, Chave, Valor, ValorC, ValorN, ValorN0
-from ..efd_info import EFD_INFO, EfdTipo
+from ..constantes import ORDEM_BLOCOS
+from ..modulos import MODULOS, ModuloT
+from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
 from .campo import Campo
 from .campo_tupla import TuplaCampo
 from .registro_contem import ContemRegistros
@@ -18,26 +19,26 @@ from .registro_lista import ListaRegistro
 
 class Registro(ContemRegistros):
     @staticmethod
-    def ordem(nome: str, efd_tipo: EfdTipo) -> int:
+    def ordem(nome: str, modulo: ModuloT) -> int:
         # Exemplos:
         # 0100 ->    0 + 100 =  100
         # C500 -> 2000 + 500 = 2500
-        return EFD_ORDEM_BLOCOS[efd_tipo].index(nome[0].upper()) * 1000 + int(nome[1:4])
+        return ORDEM_BLOCOS[modulo].index(nome[0].upper()) * 1000 + int(nome[1:4])
 
     @staticmethod
-    def ler(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
+    def ler(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro:
         from ..ler_registros import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
-        return ler_registros(registros, efd_tipo)
+        return ler_registros(registros, modulo)
 
 
 
-    def __init__(self, campos: str | dict[Chave, Valor], efd_tipo: EfdTipo, *, pai: "Registro | None" = None) -> None:
+    def __init__(self, campos: str | dict[Chave, Valor], modulo: ModuloT, *, pai: "Registro | None" = None) -> None:
         if pai is not None and not isinstance(pai, Registro):
             raise TypeError(f"Tipo inválido para parâmetro 'pai' ({pai})")
 
 
 
-        info_registros = EFD_INFO[efd_tipo]["registros"]
+        info_registros = MODULOS[modulo]["registros"]
 
         # Caso TEXTO
         # Exemplo: '|NOME|VALOR|'
@@ -46,7 +47,7 @@ class Registro(ContemRegistros):
             nome_registro = textos_campos[0].upper()
             info_registro = info_registros[nome_registro]
 
-            super().__init__(nome_registro, ListaRegistro(), efd_tipo)
+            super().__init__(nome_registro, ListaRegistro(), modulo)
 
             info_campos = info_registro["campos"]
             esperado = len(info_campos)
@@ -59,7 +60,7 @@ class Registro(ContemRegistros):
                 )
 
             self.campos = TuplaCampo(
-                Campo(i, valor, nome_registro, efd_tipo)
+                Campo(i, valor, nome_registro, modulo)
                 for i, valor in enumerate(textos_campos, 1)
             )
 
@@ -83,14 +84,14 @@ class Registro(ContemRegistros):
 
             info_registro = info_registros[nome_registro]
 
-            super().__init__(nome_registro, ListaRegistro(), efd_tipo)
+            super().__init__(nome_registro, ListaRegistro(), modulo)
 
             self.campos = TuplaCampo(
                 Campo(
                     info_campo["numero"],
                     campos.get(info_campo["nome"], campos.get(info_campo["numero"])),
                     nome_registro,
-                    efd_tipo
+                    modulo
                 )
                 for info_campo in info_registro["campos"]
             )
@@ -224,14 +225,14 @@ class Registro(ContemRegistros):
             if not isinstance(novo_registro, Registro):
                 raise TypeError(f"Item não é um registro ({novo_registro!r})")
 
-            if novo_registro.nome not in EFD_INFO[self.efd_tipo]["registros"][self.nome]["filhos"]:
+            if novo_registro.nome not in MODULOS[self.modulo]["registros"][self.nome]["filhos"]:
                 raise ValueError(f"O registro {novo_registro!r} não é um filho válido de {self!r}")
 
             if novo_registro.pai is not None:
                 novo_registro.pai.remover(novo_registro)
 
             for i, filho in enumerate(self.filhos):
-                if Registro.ordem(novo_registro.nome, self.efd_tipo) < Registro.ordem(filho.nome, self.efd_tipo):
+                if Registro.ordem(novo_registro.nome, self.modulo) < Registro.ordem(filho.nome, self.modulo):
                     novo_registro.pai = self
                     self.filhos.insert(i, novo_registro)
                     break

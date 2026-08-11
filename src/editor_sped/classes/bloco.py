@@ -1,7 +1,7 @@
 from typing import Iterable, Mapping
 
-from ..constantes import ChaveT, Valor
-from ..efd_info import EfdTipo
+from ..modulos import ModuloT
+from ..tipos import ChaveT, Valor
 from .registro import Registro
 from .registro_contem import ContemRegistros
 from .registro_lista import ListaRegistro
@@ -16,11 +16,11 @@ from .registro_lista import ListaRegistro
 
 
 class Bloco(ContemRegistros):
-    def __init__(self, nome: str, registro_abertura: Registro, registro_fechamento: Registro, efd_tipo: EfdTipo) -> None:
+    def __init__(self, nome: str, registro_abertura: Registro, registro_fechamento: Registro, modulo: ModuloT) -> None:
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
 
-        super().__init__(nome.upper(), ListaRegistro([self.abertura, self.fechamento]), efd_tipo)
+        super().__init__(nome.upper(), ListaRegistro([self.abertura, self.fechamento]), modulo)
 
 
 

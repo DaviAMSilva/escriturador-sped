@@ -2,8 +2,8 @@ from typing import Iterable
 
 from .classes.registro import Registro
 from .classes.registro_lista import ListaRegistro
-from .constantes import EFD_MAIOR_NIVEL
-from .efd_info import EFD_INFO, EfdTipo
+from .constantes import MAIOR_NIVEL
+from .modulos import ModuloT, MODULOS
 
 
 
@@ -14,7 +14,7 @@ from .efd_info import EFD_INFO, EfdTipo
 
 
 
-def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaRegistro:
+def ler_registros(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro:
     if not registros or not isinstance(registros, (str, Iterable)):
         raise TypeError(f"Tipo inválido para parâmetro 'registros' ({registros})")
 
@@ -25,7 +25,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
     nivel_anterior = -1
 
     # Lista do último registro visitado em cada nível
-    ultimos_registros: list[Registro | None] = [None for _ in range(EFD_MAIOR_NIVEL + 1)]
+    ultimos_registros: list[Registro | None] = [None for _ in range(MAIOR_NIVEL + 1)]
 
     # Para a lista atual de registros é usado para os registros que estão na raiz e não têm pais
     registros_raiz = ListaRegistro()
@@ -47,7 +47,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
 
         try:
             # Pega o nome do registro e encontra o seu nível dentro da tabela
-            nivel_atual = EFD_INFO[efd_tipo]["registros"][registro_atual_campos[1]]["nivel"]
+            nivel_atual = MODULOS[modulo]["registros"][registro_atual_campos[1]]["nivel"]
         except KeyError as e:
             # O registro não existe ou a linha foi mal-formatada
             raise KeyError(f"Linha inválida, registro não encontrado ({registro_atual})") from e
@@ -60,7 +60,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
 
 
         # Criando o objeto registro em si
-        ultimos_registros[nivel_atual] = Registro(registro_atual, efd_tipo)
+        ultimos_registros[nivel_atual] = Registro(registro_atual, modulo)
 
 
 
@@ -71,7 +71,7 @@ def ler_registros(registros: str | Iterable[str], efd_tipo: EfdTipo) -> ListaReg
             # Verificamos se existe um registro pai com nível válido
             if nivel_atual - 1 >= 0 and ultimos_registros_registro_anterior is not None:
                 # Verificamos se existe um registro pai com nome válido
-                if EFD_INFO[efd_tipo]["registros"][ultimos_registros_registro_atual.nome]["pai"] != ultimos_registros_registro_anterior.nome:
+                if MODULOS[modulo]["registros"][ultimos_registros_registro_atual.nome]["pai"] != ultimos_registros_registro_anterior.nome:
                     raise SyntaxError(f"{ultimos_registros_registro_atual!r} não é um filho válido de {ultimos_registros_registro_anterior!r}")
 
                 # Se existir e for válido:

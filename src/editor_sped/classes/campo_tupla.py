@@ -1,6 +1,6 @@
 from typing import Iterable, Self, SupportsIndex, overload
 
-from ..constantes import Chave, Valor, ValorC, ValorN, ValorN0
+from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
 from .campo import Campo
 
 

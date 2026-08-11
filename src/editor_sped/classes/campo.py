@@ -1,5 +1,6 @@
-from ..constantes import ALFANUMERICO, NUMERICO, Chave, Valor, ValorC, ValorN, ValorN0
-from ..efd_info import EFD_INFO, EfdTipo
+from ..constantes import ALFANUMERICO, NUMERICO
+from ..modulos import MODULOS, ModuloT
+from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
 
 
 
@@ -59,8 +60,8 @@ class Campo:
 
 
 
-    def __init__(self, chave: Chave, valor: Valor, nome_registro: str, efd_tipo: EfdTipo) -> None:
-        info_campos = EFD_INFO[efd_tipo]["registros"][nome_registro.upper()]["campos"]
+    def __init__(self, chave: Chave, valor: Valor, nome_registro: str, modulo: ModuloT) -> None:
+        info_campos = MODULOS[modulo]["registros"][nome_registro.upper()]["campos"]
 
         # Descobrindo o info_campo correto
         if isinstance(chave, int):
