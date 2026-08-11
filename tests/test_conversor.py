@@ -1,7 +1,7 @@
 import re
 from collections import Counter
 
-from data.conversor import EFD_MAIOR_NIVEL, conversor
+from modulos.conversor import EFD_MAIOR_NIVEL, conversor
 from editor_sped import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS, Campo
 
 from .constantes import REGISTROS_EFD_ICMS_IPI, REGISTROS_EFD_PIS_COFINS

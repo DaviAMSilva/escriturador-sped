@@ -234,7 +234,7 @@ def converter_campos(efd_tipo, arquivo_campos, objeto_registros):
 
 
 
-def main(formatado=False):
+def main(leiaute: str, versao: str, formatado: bool = False):
     efd_info_main = conversor()
 
     if not os.path.exists(EFD_INFO_PASTA_DATA):

@@ -44,7 +44,8 @@ class EfdInfoCampo(TypedDict):
 
 
 try:
-    with files("editor_sped.data").joinpath("efd_info.json").open("r", encoding="utf-8") as efd_info_arquivo:
+    # FIXME
+    with files("editor_sped.modulos").joinpath("efd_info.json").open("r", encoding="utf-8") as efd_info_arquivo:
         EFD_INFO: EfdInfo = json.loads(efd_info_arquivo.read())
 except FileNotFoundError:
     EFD_INFO: EfdInfo = {}
