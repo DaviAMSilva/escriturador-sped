@@ -2,15 +2,15 @@
 .vscode
 extra/
 
-src/editor_sped/modulos/
+src/editor_sped/modulos/*
 !src/editor_sped/modulos/__init__.py
 
 # Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
 # Essa configuração permite arquivos numerados, mas ignora arquivos com
 # sufixo maiores que podem ser utilizados para testes com arquivos privados
 exemplos/*
-!exemplos/efd_pis_cofins_?.txt
-!exemplos/efd_icms_ipi_?.txt
+!exemplos/contribuicoes_?.txt
+!exemplos/icms_ipi_?.txt
 
 
 

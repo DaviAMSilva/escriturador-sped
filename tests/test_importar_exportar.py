@@ -59,7 +59,7 @@ def comparar_campos(efd_tipo: EfdTipo, campos1: list[str], campos2: list[str], n
             raise ValueError(f"Tipo de campo desconhecido: {tipo1}")
 
 
-@pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
+@pytest.mark.parametrize("arquivo", glob.glob("*.txt", root_dir="exemplos/"))
 def test_importar_exportar(arquivo: str):
     escrituracao_texto = cache.texto(arquivo)
     escrituracao = cache.escrituracao(arquivo)

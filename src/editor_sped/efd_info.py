@@ -1,6 +1,7 @@
 import json
 from importlib.resources import files
 from typing import Literal, TypedDict
+from .modulos import MODULOS_PADROES
 
 
 CampoTipo = Literal["C", "N"]
@@ -43,11 +44,16 @@ class EfdInfoCampo(TypedDict):
     tipo: CampoTipo
 
 
-# try:
-#     # FIXME
-#     with files("editor_sped.efd").joinpath("efd_info.json").open("r", encoding="utf-8") as efd_info_arquivo:
-#         EFD_INFO: EfdInfo = json.loads(efd_info_arquivo.read())
-# except FileNotFoundError:
-#     EFD_INFO: EfdInfo = {}
+# Usado para escolher qual versão a ser carregada
+def carregar_modulos(efd: EfdTipo, leiaute: str, versao: str):
+    with files("editor_sped.modulos").joinpath(efd, leiaute, versao, "leiaute.json").open("r", encoding="utf-8") as efd_info_arquivo:
+        EFD_INFO[efd] = json.loads(efd_info_arquivo.read())
+
 
 EFD_INFO: EfdInfo = {}
+
+try:
+    for e, (l, v) in MODULOS_PADROES.items():
+        carregar_modulos(e, l, v)
+except FileNotFoundError:
+    EFD_INFO = {}

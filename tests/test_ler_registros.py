@@ -8,7 +8,7 @@ from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 from .cache import cache
 
 
-@pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
+@pytest.mark.parametrize("arquivo", glob.glob("*.txt", root_dir="exemplos/"))
 def test_ler_registros(arquivo: str):
     registros_texto = cache.texto(arquivo)
 
