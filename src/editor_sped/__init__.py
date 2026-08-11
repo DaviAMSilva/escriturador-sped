@@ -4,4 +4,4 @@ from .efd_info import EFD_INFO, CampoTipo, EfdInfo, EfdInfoBloco, EfdInfoCampo, 
 from .ler_registros import ler_registros
 from .utilidades import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
