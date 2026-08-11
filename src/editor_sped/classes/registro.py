@@ -54,9 +54,8 @@ class Registro(ContemRegistros):
 
             if recebido != esperado:
                 raise SyntaxError(
-                    "A quantidade de campos é diferente da esperada "
-                    f"({recebido} ao invés de {esperado} no registro {self.nome})"
-                    ". É provável que o tipo da escrituração esteja incorreto" if self.nome == "0000" else ""
+                    f"A quantidade de campos é diferente da esperada ({recebido} ao invés de {esperado} no registro {self.nome})."
+                    f"{' É provável que o tipo da escrituração esteja incorreto' if self.nome == '0000' else ''}"
                 )
 
             self.campos = TuplaCampo(
@@ -110,7 +109,7 @@ class Registro(ContemRegistros):
 
 
         # Configurando a associação pai/filho
-        self.pai: Registro = pai # type: ignore
+        self.pai: Registro = pai  # type: ignore
         if pai:
             pai.adicionar(self)
 
