@@ -1,10 +1,10 @@
 from typing import Iterable, Mapping
 
+from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import ModuloT
 from ..tipos import ChaveT, Valor
+from .componente import Componente
 from .registro import Registro
-from .registro_contem import ContemRegistros
-from .registro_lista import ListaRegistro
 
 
 
@@ -15,7 +15,7 @@ from .registro_lista import ListaRegistro
 
 
 
-class Bloco(ContemRegistros):
+class Bloco(Componente):
     def __init__(self, nome: str, registro_abertura: Registro, registro_fechamento: Registro, modulo: ModuloT) -> None:
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento

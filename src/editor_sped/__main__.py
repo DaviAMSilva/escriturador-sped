@@ -1,9 +1,8 @@
 from collections import defaultdict
 from importlib.resources import as_file, files
 
-from editor_sped.modulos import ModuloT, MODULOS_PADROES
-
 from . import __version__
+from .modulos import MODULOS_PADROES, ModuloT
 
 
 print(f"Módulos disponíveis no Editor de SPED ({__version__}):")

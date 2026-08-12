@@ -1,12 +1,12 @@
 from typing import Any, Callable, Iterable, Never, Self, overload
 
 from ..constantes import ORDEM_BLOCOS
+from ..estruturas.lista_registro import ListaRegistro
+from ..estruturas.tupla_campo import TuplaCampo
 from ..modulos import MODULOS, ModuloT
 from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
 from .campo import Campo
-from .campo_tupla import TuplaCampo
-from .registro_contem import ContemRegistros
-from .registro_lista import ListaRegistro
+from .componente import Componente
 
 
 
@@ -17,7 +17,7 @@ from .registro_lista import ListaRegistro
 
 
 
-class Registro(ContemRegistros):
+class Registro(Componente):
     @staticmethod
     def ordem(nome: str, modulo: ModuloT) -> int:
         # Exemplos:
@@ -27,7 +27,7 @@ class Registro(ContemRegistros):
 
     @staticmethod
     def ler(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro:
-        from ..ler_registros import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
+        from ..leitura import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
         return ler_registros(registros, modulo)
 
 

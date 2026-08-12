@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Callable, Iterable, Mapping, SupportsIndex, ov
 from ..tipos import Chave, ChaveT, Valor, ValorC, ValorN
 
 if TYPE_CHECKING:
-    from .registro import Registro
+    from ..classes.registro import Registro
 
 
 

@@ -1,9 +1,9 @@
 from typing import Iterable
 
 from .classes.registro import Registro
-from .classes.registro_lista import ListaRegistro
 from .constantes import MAIOR_NIVEL
-from .modulos import ModuloT, MODULOS
+from .estruturas.lista_registro import ListaRegistro
+from .modulos import MODULOS, ModuloT
 
 
 

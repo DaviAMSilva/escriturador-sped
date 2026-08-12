@@ -1,8 +1,8 @@
 import os
 
-from editor_sped.classes.escrituracao import Escrituracao, EfdIcmsIpi, EfdPisCofins
+from editor_sped.arquivos import abrir_escrituracao
+from editor_sped.classes.escrituracao import EfdIcmsIpi, EfdPisCofins, Escrituracao
 from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
-from editor_sped.utilidades import abrir_escrituracao
 
 
 class Cache():

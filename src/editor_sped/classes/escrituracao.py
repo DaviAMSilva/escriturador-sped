@@ -3,13 +3,13 @@ from collections import Counter
 from pathlib import Path
 from typing import Self
 
+from ..arquivos import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
+from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
-from ..utilidades import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 from .bloco import Bloco
+from .componente import Componente
 from .registro import Registro
-from .registro_contem import ContemRegistros
-from .registro_lista import ListaRegistro
 
 
 
@@ -20,7 +20,7 @@ from .registro_lista import ListaRegistro
 
 
 
-class Escrituracao(ContemRegistros, ABC):
+class Escrituracao(Componente, ABC):
     # Tipos de campo
     EFD_ICMS_IPI = EFD_ICMS_IPI
     EFD_PIS_COFINS = EFD_PIS_COFINS

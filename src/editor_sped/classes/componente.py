@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator
 
+from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import ModuloT
 from ..tipos import Chave, Valor, ValorC, ValorN
-from .registro_lista import ListaRegistro
 
 if TYPE_CHECKING:
     from .registro import Registro
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 
-class ContemRegistros(ABC):
+class Componente(ABC):
     def __init__(self, nome: str, filhos: ListaRegistro, modulo: ModuloT) -> None:
         self.nome: str = nome
         self.filhos: ListaRegistro = filhos
