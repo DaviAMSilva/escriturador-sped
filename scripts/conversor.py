@@ -27,11 +27,11 @@ JSON_INDENTACAO = 4
 # Nomes das colunas esperadas para cada arquivo e cada módulo
 COLUNAS: dict[ModuloT, dict[Literal["campos", "registros"], list[str]]] = {
     "efd_pis_cofins": {
-        "campos": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"],
+        "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"],
         "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
     },
     "efd_icms_ipi": {
-        "campos": ["Register", "Page", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig", "Entr", "Saídas"],
+        "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig", "Entr", "Saídas"],
         "registros": ["block", "code", "required", "in_required", "out_required", "level", "card", "spec_required", "spec_in", "spec_out", "desc"],
     }
 }
@@ -175,7 +175,7 @@ def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dic
         csv_campos = csv.DictReader(ac)
 
         if csv_campos.fieldnames != COLUNAS[modulo]["campos"]:
-            raise ValueError(f"Colunas inválidas no arquivo accurate_fields do módulo {modulo}")
+            raise ValueError(f"Colunas inválidas no arquivo de campos do módulo {modulo}")
 
         for linha_campos in csv_campos:
             assert len(linha_campos) == len(COLUNAS[modulo]["campos"]), ("campos", modulo, linha_campos)
