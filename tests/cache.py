@@ -1,6 +1,6 @@
 import os
 
-from editor_sped.classes.escrituracao import Escrituracao, EscrituracaoICMSIPI, EscrituracaoPISCOFINS
+from editor_sped.classes.escrituracao import Escrituracao, EfdIcmsIpi, EfdPisCofins
 from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 from editor_sped.utilidades import abrir_escrituracao
 
@@ -19,9 +19,9 @@ class Cache():
     def escrituracao(self, arquivo: str) -> Escrituracao:
         if arquivo not in self.escrituracoes:
             if EFD_ICMS_IPI in arquivo:
-                self.escrituracoes[arquivo] = EscrituracaoICMSIPI(self.texto(arquivo))
+                self.escrituracoes[arquivo] = EfdIcmsIpi(self.texto(arquivo))
             if EFD_PIS_COFINS in arquivo:
-                self.escrituracoes[arquivo] = EscrituracaoPISCOFINS(self.texto(arquivo))
+                self.escrituracoes[arquivo] = EfdPisCofins(self.texto(arquivo))
 
         return self.escrituracoes[arquivo]
 

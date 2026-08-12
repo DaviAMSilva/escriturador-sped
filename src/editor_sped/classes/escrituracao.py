@@ -69,10 +69,10 @@ class Escrituracao(ContemRegistros, ABC):
 
 
     def __str__(self) -> str:
-        return f"Escrituracao {self.nome}: {self.tamanho} linhas"
+        return f"{self.__class__.__name__}: {self.tamanho} linhas"
 
     def __repr__(self) -> str:
-        return f"Escrituracao({self.nome!r}, tamanho={self.tamanho!r})"
+        return f"{self.__class__.__name__}(tamanho={self.tamanho!r})"
 
 
 
@@ -235,7 +235,7 @@ class Escrituracao(ContemRegistros, ABC):
 
 
 
-class EscrituracaoICMSIPI(Escrituracao):
+class EfdIcmsIpi(Escrituracao):
     MODULO = Escrituracao.EFD_ICMS_IPI
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
@@ -249,7 +249,7 @@ class EscrituracaoICMSIPI(Escrituracao):
 
 
 
-class EscrituracaoPISCOFINS(Escrituracao):
+class EfdPisCofins(Escrituracao):
     MODULO = Escrituracao.EFD_PIS_COFINS
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
