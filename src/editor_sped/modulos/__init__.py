@@ -15,7 +15,7 @@ MODULOS_NOMES: tuple[ModuloT, ...] = tuple(MODULOS_PADROES.keys())
 
 # Usado para escolher qual versão a ser carregada
 def carregar_modulos(modulo: ModuloT, leiaute: str, versao: str):
-    with files("editor_sped.modulos").joinpath(modulo, leiaute, versao, "leiaute.json").open("r", encoding="utf-8") as arquivo_modulo:
+    with files("editor_sped.modulos").joinpath(modulo, leiaute, versao.replace(".", "_"), "leiaute.json").open("r", encoding="utf-8") as arquivo_modulo:
         MODULOS[modulo] = json.loads(arquivo_modulo.read())
 
 

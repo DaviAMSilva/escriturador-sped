@@ -20,7 +20,6 @@ from editor_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
 # Constantes específicas do conversor de tabelas
 PASTA_MODULOS = "src/editor_sped/modulos/"
-ARQUIVO_NOME = "leiaute.{}"
 JSON_INDENTACAO = 4
 
 
@@ -238,14 +237,14 @@ def main(formatado: bool = False):
         modulo, leiaute, versao = Path(caminho).parts # type: ignore
 
 
-        leiaute_salvar = conversor(modulo, leiaute, versao)
+        leiaute_salvar = conversor(modulo, leiaute, versao.replace(".", "_"))
 
 
-        caminho_modulo = os.path.join(PASTA_MODULOS, modulo, leiaute, versao)
+        caminho_modulo = os.path.join(PASTA_MODULOS, modulo, leiaute, versao.replace(".", "_"))
         if not os.path.exists(caminho_modulo):
             os.makedirs(caminho_modulo)
 
-        with open(os.path.join(caminho_modulo, ARQUIVO_NOME.format("json")), "w", encoding="utf-8") as arquivo_convertido:
+        with open(os.path.join(caminho_modulo, "leiaute.json"), "w", encoding="utf-8") as arquivo_convertido:
             arquivo_convertido.write(json.dumps(leiaute_salvar, indent=JSON_INDENTACAO if formatado else None, ensure_ascii=False))
 
 
