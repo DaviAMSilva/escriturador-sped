@@ -53,10 +53,6 @@ DEV = [
     "pytest-profiling",
     "snakeviz",
 ]
-JUPYTER = [
-    "ipykernel",
-    "ipywidgets"
-]
 
 
 [tool.setuptools]
