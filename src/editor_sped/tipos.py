@@ -1,9 +1,11 @@
 from typing import Literal, TypeVar, TypedDict
 
 
-CampoTipoT = Literal["C", "N"]
-ModuloT = Literal["efd_pis_cofins", "efd_icms_ipi"]
-ModulosT = dict[ModuloT, "LeiauteT"]
+# pylint: disable=invalid-name
+type CampoTipoT = Literal["C", "N"]
+type ModuloT = Literal["efd_pis_cofins", "efd_icms_ipi"]
+type ModulosT = dict[ModuloT, "LeiauteT"]
+# pylint: enable=invalid-name
 
 
 class LeiauteT(TypedDict):
@@ -42,12 +44,12 @@ class CampoT(TypedDict):
 
 
 
-Chave = str | int
+type Chave = str | int
 ChaveT = TypeVar("ChaveT", bound=Chave)
 # pylint: disable=invalid-name
-ValorC = str
-ValorN = int | float | None
-ValorN0 = int | float
-Valor = ValorC | ValorN
-Valor0 = ValorC | ValorN0
+type ValorC = str
+type ValorN = int | float | None
+type ValorN0 = int | float
+type Valor = ValorC | ValorN
+type Valor0 = ValorC | ValorN0
 # pylint: enable=invalid-name
