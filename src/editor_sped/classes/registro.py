@@ -1,6 +1,7 @@
+from abc import ABC
 from typing import Any, Callable, Iterable, Never, Self, overload
 
-from ..constantes import ORDEM_BLOCOS
+from ..constantes import EFD_ICMS_IPI, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..estruturas.tupla_campo import TuplaCampo
 from ..modulos import MODULOS, ModuloT
@@ -32,7 +33,7 @@ class Registro(Componente):
 
 
 
-    def __init__(self, campos: str | dict[Chave, Valor], modulo: ModuloT, *, pai: "Registro | None" = None) -> None:
+    def __init__(self, campos: str | dict[Chave, Valor], modulo: ModuloT, pai: "Registro | None" = None) -> None:
         if pai is not None and not isinstance(pai, Registro):
             raise TypeError(f"Tipo inválido para parâmetro 'pai' ({pai})")
 
@@ -300,3 +301,49 @@ class Registro(Componente):
         self.filhos.clear()
 
         return self
+
+
+class CampoAtalho[ValorT]():
+    __slots__ = ("nome",)
+
+    def __set_name__(self, dono, nome: str):
+        self.nome = nome
+
+    def __get__(self, objeto, dono=None) -> ValorT:
+        if objeto is None:
+            return self  # type: ignore
+
+        if self.nome.endswith("_0"):
+            return objeto.campos[self.nome[:-2]].valor_n0
+        return objeto.campos[self.nome].valor
+
+    def __set__(self, obj, value: Valor):
+        obj.campos[self.nome[:-2] if self.nome.endswith("_0") else self.nome].valor = value
+
+
+class RegistroEfdIcmsIpi(Registro, ABC):
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
+        campos = campos if campos is not None else {}
+        if isinstance(campos, dict):
+            campos["REG"] = self.nome
+        super().__init__(campos, EFD_ICMS_IPI, pai)
+
+class Registro0200(RegistroEfdIcmsIpi):
+    nome         = "0200"
+    REG          = CampoAtalho[ValorC]()
+    COD_ITEM     = CampoAtalho[ValorC]()
+    DESCR_ITEM   = CampoAtalho[ValorC]()
+    COD_BARRA    = CampoAtalho[ValorC]()
+    COD_ANT_ITEM = CampoAtalho[ValorC]()
+    UNID_INV     = CampoAtalho[ValorC]()
+    TIPO_ITEM    = CampoAtalho[ValorN]()
+    TIPO_ITEM_0  = CampoAtalho[ValorN0]()
+    COD_NCM      = CampoAtalho[ValorC]()
+    EX_IPI       = CampoAtalho[ValorC]()
+    COD_GEN      = CampoAtalho[ValorN]()
+    COD_GEN_0    = CampoAtalho[ValorN0]()
+    COD_LST      = CampoAtalho[ValorC]()
+    ALIQ_ICMS    = CampoAtalho[ValorN]()
+    ALIQ_ICMS_0  = CampoAtalho[ValorN0]()
+    CEST         = CampoAtalho[ValorN]()
+    CEST_0       = CampoAtalho[ValorN0]()
