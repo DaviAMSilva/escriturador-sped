@@ -6,6 +6,10 @@ from glob import glob
 from pathlib import Path
 from typing import Literal
 
+# Permite importar a biblioteca mesmo sem os módulos gerados
+os.environ["__CONVERSAO__"] = "1"
+
+# pylint: disable=wrong-import-position
 from editor_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
 from editor_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
@@ -17,9 +21,7 @@ from editor_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
 
 
-
-# Constantes específicas do conversor de tabelas
-PASTA_MODULOS = "src/editor_sped/modulos/"
+# Decide a indentação do arquivo JSON se --formatado for usado
 JSON_INDENTACAO = 4
 
 
@@ -234,18 +236,18 @@ def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dic
 def main(formatado: bool = False):
     for caminho in glob("*/*/*/", root_dir="modulos"):
         modulo: ModuloT
-        modulo, leiaute, versao = Path(caminho).parts # type: ignore
+        modulo, leiaute, versao = Path(caminho).parts  # type: ignore
 
 
-        leiaute_salvar = conversor(modulo, leiaute, versao.replace(".", "_"))
+        leiaute_json = conversor(modulo, leiaute, versao.replace(".", "_"))
 
 
-        caminho_modulo = os.path.join(PASTA_MODULOS, modulo, leiaute, versao.replace(".", "_"))
-        if not os.path.exists(caminho_modulo):
-            os.makedirs(caminho_modulo)
+        pasta_destino = os.path.join("src", "editor_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
+        if not os.path.exists(pasta_destino):
+            os.makedirs(pasta_destino)
 
-        with open(os.path.join(caminho_modulo, "leiaute.json"), "w", encoding="utf-8") as arquivo_convertido:
-            arquivo_convertido.write(json.dumps(leiaute_salvar, indent=JSON_INDENTACAO if formatado else None, ensure_ascii=False))
+        with open(os.path.join(pasta_destino, "leiaute.json"), "w", encoding="utf-8") as arquivo_convertido:
+            arquivo_convertido.write(json.dumps(leiaute_json, indent=JSON_INDENTACAO if formatado else None, ensure_ascii=False))
 
 
 

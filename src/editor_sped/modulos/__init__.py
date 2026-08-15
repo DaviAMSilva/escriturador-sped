@@ -1,4 +1,5 @@
 import json
+import os
 from importlib.resources import files
 
 from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
@@ -14,8 +15,10 @@ MODULOS_NOMES: tuple[ModuloT, ...] = tuple(MODULOS_PADROES.keys())
 
 
 # Usado para escolher qual versão a ser carregada
-def carregar_modulos(modulo: ModuloT, leiaute: str, versao: str):
-    with files("editor_sped.modulos").joinpath(modulo, leiaute, versao.replace(".", "_"), "leiaute.json").open("r", encoding="utf-8") as arquivo_modulo:
+def carregar_modulo(modulo: ModuloT, leiaute: str, versao: str):
+    with files("editor_sped.modulos").joinpath(
+        modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}", "leiaute.json"
+    ).open("r", encoding="utf-8") as arquivo_modulo:
         MODULOS[modulo] = json.loads(arquivo_modulo.read())
 
 
@@ -23,8 +26,10 @@ def carregar_modulos(modulo: ModuloT, leiaute: str, versao: str):
 MODULOS: ModulosT = {}
 
 try:
-    for m, (l, v) in MODULOS_PADROES.items():
-        carregar_modulos(m, l, v)
-except FileNotFoundError:
+    for _modulo, (_leiaute, _versao) in MODULOS_PADROES.items():
+        carregar_modulo(_modulo, _leiaute, _versao)
+except FileNotFoundError as e:
+    if not os.environ.get("__CONVERSAO__"):
+        raise FileNotFoundError("Um dos módulos não foi encontrado durante a inicialização. O conversor foi executado?") from e
     MODULOS = {}
 # pylint: enable=invalid-name

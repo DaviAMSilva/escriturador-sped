@@ -49,6 +49,12 @@ def conversor(c: Context, formatado: bool = False):
 
 
 @task
+def atalhos(c: Context):
+    from scripts.atalhos import main
+    main()
+
+
+@task
 def build(c: Context):
     conversor(c)
 
