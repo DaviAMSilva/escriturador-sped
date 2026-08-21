@@ -26,20 +26,8 @@ def venv(c: Context, python: str = PYTHON, pasta: str = "venv"):
 
 
 @task
-def install(c: Context, dev: bool = True, jupyter: bool = False):
-    cmd = [PYTHON, "-m", "pip", "install", "-e", "."]
-    extras = []
-
-    if dev:
-        extras.append("DEV")
-
-    if jupyter:
-        extras.append("JUPYTER")
-
-    if extras:
-        cmd[-1] = f".[{','.join(extras)}]"
-
-    c.run(" ".join(cmd))
+def install(c: Context, dev: bool = True):
+    c.run(f"{PYTHON} -m pip install -e {'.[DEV]' if dev else '.'}")
 
 
 @task
