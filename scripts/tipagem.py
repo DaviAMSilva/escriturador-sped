@@ -40,8 +40,8 @@ def main():
         if not os.path.exists(pasta_destino):
             os.makedirs(pasta_destino)
 
-        with open(os.path.join(pasta_destino, "registros.py"), "w", encoding="utf-8") as arquivo_atalhos:
-            arquivo_atalhos.write(arquivo_conteudo)
+        with open(os.path.join(pasta_destino, "registros.py"), "w", encoding="utf-8") as arquivo_tipagem:
+            arquivo_tipagem.write(arquivo_conteudo)
 
 
 if __name__ == "__main__":

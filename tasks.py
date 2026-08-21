@@ -49,8 +49,8 @@ def conversor(c: Context, formatado: bool = False):
 
 
 @task
-def atalhos(c: Context):
-    from scripts.atalhos import main
+def tipagem(c: Context):
+    from scripts.tipagem import main
     main()
 
 
