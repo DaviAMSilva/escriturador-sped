@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Callable, Iterable, Never, Self, overload
+from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
 from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
@@ -139,6 +139,11 @@ class Registro(Componente):
 
     def __repr__(self) -> str:
         return f"Registro({self.linha!r})"
+
+
+
+    def como[ComoRegistroT: Registro](self, _registro: type[ComoRegistroT]) -> ComoRegistroT:
+        return cast(ComoRegistroT, self)
 
 
 
@@ -317,7 +322,7 @@ class RegistroEfdIcmsIpi(Registro, ABC):
         if isinstance(campos, dict):
             campos["REG"] = self.nome
         if isinstance(campos, str) and not campos.startswith(f"|{self.nome}"):
-            raise ValueError(f"A linha fornecida ({campos!r}) se inicia com um campo diferente do esperado ({self.nome!r})")
+            campos = f"|{self.nome}{campos}"
         super().__init__(campos, EFD_ICMS_IPI, pai)
 
 

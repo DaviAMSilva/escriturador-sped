@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Callable, Iterable, Mapping, SupportsIndex, overload
+from typing import TYPE_CHECKING, Callable, Iterable, Mapping, SupportsIndex, cast, overload
 
 from ..tipos import Chave, ChaveT, Valor, ValorC, ValorN
 
@@ -14,20 +14,20 @@ if TYPE_CHECKING:
 
 
 
-class ListaRegistro(list["Registro"]):
+class ListaRegistro[RegistroT: Registro](list[RegistroT]):
     @overload
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, iteravel: Iterable["Registro"]) -> None: ...
+    def __init__(self, iteravel: Iterable[RegistroT]) -> None: ...
 
-    def __init__(self, iteravel: Iterable["Registro"] = ()) -> None:
+    def __init__(self, iteravel: Iterable[RegistroT] = ()) -> None:
         super().__init__(iteravel)
 
 
 
     @overload
-    def __getitem__(self, chave: int | SupportsIndex) -> "Registro": ...
+    def __getitem__(self, chave: int | SupportsIndex) -> RegistroT: ...
 
     @overload
     def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]] | slice | None) -> "ListaRegistro": ...
@@ -54,6 +54,11 @@ class ListaRegistro(list["Registro"]):
 
     def __repr__(self) -> str:
         return f"ListaRegistro{super().__repr__()}"
+
+
+
+    def como[ComoRegistroT: Registro](self, _registro: type[ComoRegistroT]) -> ListaRegistro[ComoRegistroT]:
+        return cast(ListaRegistro[ComoRegistroT], self)
 
 
 
@@ -102,7 +107,7 @@ class ListaRegistro(list["Registro"]):
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
-    ) -> "Registro":
+    ) -> RegistroT:
         encontrado = self.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True
