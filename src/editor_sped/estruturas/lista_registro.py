@@ -57,7 +57,7 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
 
 
 
-    def como[ComoRegistroT: Registro](self, _registro: type[ComoRegistroT]) -> ListaRegistro[ComoRegistroT]:
+    def como[ComoRegistroT: Registro](self, _registro: type[ComoRegistroT]) -> "ListaRegistro[ComoRegistroT]":
         return cast(ListaRegistro[ComoRegistroT], self)
 
 
