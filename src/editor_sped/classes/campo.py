@@ -214,5 +214,5 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
 
 # Tipagem para tipos de campos específicos
-CampoC = Campo[Literal["C"], ValorC]
-CampoN = Campo[Literal["N"], ValorN]
+type CampoC = Campo[Literal["C"], ValorC]
+type CampoN = Campo[Literal["N"], ValorN]
