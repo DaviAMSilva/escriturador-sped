@@ -40,8 +40,8 @@ class Escrituracao(Componente, ABC):
 
 
 
-    def __init__(self, escrituracao_texto: str, nome: str, modulo: ModuloT) -> None:
-        super().__init__(nome.upper(), ListaRegistro(), modulo)
+    def __init__(self, modulo: ModuloT, escrituracao_texto: str, nome: str) -> None:
+        super().__init__(modulo, nome.upper(), ListaRegistro())
 
         self.blocos: dict[str, Bloco] = {}
 
@@ -135,8 +135,8 @@ class Escrituracao(Componente, ABC):
         if nome_bloco not in self.blocos and nome_bloco in ORDEM_BLOCOS[self.modulo]:
             self.blocos[nome_bloco] = Bloco(
                 nome_bloco,
-                Registro(f"|{nome_bloco}001|1|", self.modulo, self.abertura),
-                Registro(f"|{nome_bloco}990|2|", self.modulo, self.abertura),
+                Registro(self.modulo, f"|{nome_bloco}001|1|", self.abertura),
+                Registro(self.modulo, f"|{nome_bloco}990|2|", self.abertura),
                 self.modulo
             )
 
@@ -209,7 +209,7 @@ class Escrituracao(Componente, ABC):
         # Adicionando novos registros 9900 que não existiam antes
         for nome_registro in registros_contagem:
             if nome_registro not in registros_9900_blc:
-                Registro(f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", self.modulo, registro_9001)
+                Registro(self.modulo, f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", registro_9001)
 
 
 
@@ -218,7 +218,7 @@ class Escrituracao(Componente, ABC):
             registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
             registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
         except ValueError:
-            Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.modulo, registro_9001)
+            Registro(self.modulo, f"|9900|9900|{len(registro_9001.filhos) + 1}|", registro_9001)
 
 
 
@@ -240,9 +240,9 @@ class EfdIcmsIpi(Escrituracao):
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(escrituracao_texto, "EFD_ICMS_IPI", EFD_ICMS_IPI)
+            super().__init__(EFD_ICMS_IPI, escrituracao_texto, "EFD_ICMS_IPI")
         elif escrituracao_texto is None:
-            super().__init__("|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI", EFD_ICMS_IPI)
+            super().__init__(EFD_ICMS_IPI, "|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI")
         else:
             raise TypeError("Texto da escrituração inválido")
 
@@ -254,8 +254,8 @@ class EfdPisCofins(Escrituracao):
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(escrituracao_texto, "EFD_PIS_COFINS", EFD_PIS_COFINS)
+            super().__init__(EFD_PIS_COFINS, escrituracao_texto, "EFD_PIS_COFINS")
         elif escrituracao_texto is None:
-            super().__init__("|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS", EFD_PIS_COFINS)
+            super().__init__(EFD_PIS_COFINS, "|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS")
         else:
             raise TypeError("Texto da escrituração inválido")

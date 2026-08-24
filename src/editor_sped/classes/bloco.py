@@ -20,7 +20,7 @@ class Bloco(Componente):
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
 
-        super().__init__(nome.upper(), ListaRegistro([self.abertura, self.fechamento]), modulo)
+        super().__init__(modulo, nome.upper(), ListaRegistro([self.abertura, self.fechamento]))
 
 
 

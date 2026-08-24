@@ -1,10 +1,9 @@
-from abc import ABC
 from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
 from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..estruturas.tupla_campo import TuplaCampo
-from ..modulos import MODULOS, ModuloT
+from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
 from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
 from .campo import Campo
 from .componente import Componente
@@ -33,9 +32,24 @@ class Registro(Componente):
 
 
 
-    def __init__(self, campos: str | dict[Chave, Valor], modulo: ModuloT, pai: "Registro | None" = None) -> None:
+    def __init__(self, modulo: ModuloT, campos: str | dict[Chave, Valor] | None = None, pai: "Registro | None" = None) -> None:
+        if modulo not in MODULOS_NOMES:
+            raise ValueError(f"Valor inválido para parâmetro 'modulo' ({modulo})")
+
+        if campos is not None and not isinstance(campos, (str, dict)):
+            raise TypeError(f"Tipo inválido para parâmetro 'campos' ({campos})")
+
         if pai is not None and not isinstance(pai, Registro):
             raise TypeError(f"Tipo inválido para parâmetro 'pai' ({pai})")
+
+        campos = campos or {}
+
+        # Lida com o caso de uma subclasse informar o nome diretamente
+        if getattr(self, "nome", None):
+            if isinstance(campos, dict):
+                campos["REG"] = self.nome
+            if isinstance(campos, str) and not campos.startswith(f"|{self.nome}"):
+                raise ValueError(f"A linha fornecida ({campos!r}) se inicia com um campo diferente do esperado ({self.nome!r})")
 
 
 
@@ -48,7 +62,7 @@ class Registro(Componente):
             nome_registro = textos_campos[0].upper()
             info_registro = info_registros[nome_registro]
 
-            super().__init__(nome_registro, ListaRegistro(), modulo)
+            super().__init__(modulo, nome_registro, ListaRegistro())
 
             info_campos = info_registro["campos"]
             esperado = len(info_campos)
@@ -61,7 +75,7 @@ class Registro(Componente):
                 )
 
             self.campos = TuplaCampo(
-                Campo(i, valor, nome_registro, modulo)
+                Campo(modulo, nome_registro, i, valor)
                 for i, valor in enumerate(textos_campos, 1)
             )
 
@@ -85,14 +99,14 @@ class Registro(Componente):
 
             info_registro = info_registros[nome_registro]
 
-            super().__init__(nome_registro, ListaRegistro(), modulo)
+            super().__init__(modulo, nome_registro, ListaRegistro())
 
             self.campos = TuplaCampo(
                 Campo(
-                    info_campo["numero"],
-                    campos.get(info_campo["nome"], campos.get(info_campo["numero"])),
+                    modulo,
                     nome_registro,
-                    modulo
+                    info_campo["numero"],
+                    campos.get(info_campo["nome"], campos.get(info_campo["numero"]))
                 )
                 for info_campo in info_registro["campos"]
             )
@@ -316,24 +330,14 @@ class Registro(Componente):
 
 
 
-class RegistroEfdIcmsIpi(Registro, ABC):
+class RegistroEfdIcmsIpi(Registro):
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
-        campos = campos if campos is not None else {}
-        if isinstance(campos, dict):
-            campos["REG"] = self.nome
-        if isinstance(campos, str) and not campos.startswith(f"|{self.nome}"):
-            campos = f"|{self.nome}{campos}"
-        super().__init__(campos, EFD_ICMS_IPI, pai)
+        super().__init__(EFD_ICMS_IPI, campos, pai)
 
 
-class RegistroEfdPisCofins(Registro, ABC):
+class RegistroEfdPisCofins(Registro):
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
-        campos = campos if campos is not None else {}
-        if isinstance(campos, dict):
-            campos["REG"] = self.nome
-        if isinstance(campos, str) and not campos.startswith(f"|{self.nome}"):
-            raise ValueError(f"A linha fornecida ({campos!r}) se inicia com um campo diferente do esperado ({self.nome!r})")
-        super().__init__(campos, EFD_PIS_COFINS, pai)
+        super().__init__(EFD_PIS_COFINS, campos, pai)
 
 
 
