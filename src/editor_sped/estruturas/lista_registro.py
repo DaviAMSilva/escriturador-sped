@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING, Callable, Iterable, Mapping, SupportsIndex, cast, overload
+from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, cast, overload
 
-from ..tipos import Chave, ChaveT, Valor, ValorC, ValorN
+from ..tipos import Chave, Valor, ValorC, ValorN
 
 if TYPE_CHECKING:
     from ..classes.registro import Registro
@@ -27,28 +27,16 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
 
 
     @overload
-    def __getitem__(self, chave: int | SupportsIndex) -> RegistroT: ...
+    def __getitem__(self, chave: SupportsIndex) -> RegistroT: ...
 
     @overload
-    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]] | slice | None) -> "ListaRegistro": ...
+    def __getitem__(self, chave: slice) -> "ListaRegistro[RegistroT]": ...
 
-    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]] | int | SupportsIndex | slice | None):
-        if isinstance(chave, (SupportsIndex, int)):
-            return super().__getitem__(chave)
-
+    def __getitem__(self, chave: SupportsIndex | slice):
         if isinstance(chave, slice):
-            return ListaRegistro(super().__getitem__(chave))
+            return ListaRegistro[RegistroT](super().__getitem__(chave))
 
-        if isinstance(chave, str) or chave is None:
-            return self.buscar(chave)
-
-        if isinstance(chave, tuple) and len(chave) == 2:
-            if (isinstance(chave[0], str) or chave[0] is None) and (isinstance(chave[1], dict) or chave[1] is None):
-                return self.buscar(chave[0], chave[1])
-
-            raise TypeError(f"Tupla com valores inválidos ({chave})")
-
-        raise TypeError(f"Valor inválido ({chave})")
+        return super().__getitem__(chave)
 
 
 
