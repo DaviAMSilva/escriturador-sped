@@ -164,7 +164,7 @@ class Escrituracao(Componente, ABC):
         self.totalizar_escrituracao()
 
     def totalizar_escrituracao(self) -> None:
-        self.fechamento[2].valor_c = self.tamanho
+        self.fechamento.campos[2].valor_c = self.tamanho
 
     def totalizar_blocos(self) -> None:
         for nome in ORDEM_BLOCOS[self.modulo]:
@@ -172,8 +172,8 @@ class Escrituracao(Componente, ABC):
 
             if bloco:
                 # Se o bloco estiver vazio o valor da abertura é definido como 1
-                bloco.abertura[2].valor_c = 0 if bloco.tamanho > 2 else 1
-                bloco.fechamento[2].valor_c = bloco.tamanho
+                bloco.abertura.campos[2].valor_c = 0 if bloco.tamanho > 2 else 1
+                bloco.fechamento.campos[2].valor_c = bloco.tamanho
             else:
                 # Criando um novo bloco vazio se não existir
                 self.adicionar(nome)
@@ -186,7 +186,7 @@ class Escrituracao(Componente, ABC):
         registro_9001 = self.blocos["9"].abertura
 
         registros_9900 = registro_9001.filhos
-        registros_9900_blc = [registro_9900["REG_BLC"].valor_c for registro_9900 in registros_9900]
+        registros_9900_blc = [registro_9900.REG_BLC.valor_c for registro_9900 in registros_9900]
 
         registros_contagem = Counter(registro.nome for registro in self.registros)
 
@@ -196,9 +196,9 @@ class Escrituracao(Componente, ABC):
         registros_9900_remover = []
 
         for registro_9900 in registros_9900:
-            nome_registro = registro_9900["REG_BLC"].valor_c
+            nome_registro = registro_9900.REG_BLC.valor_c
             if nome_registro in registros_contagem:
-                registro_9900["QTD_REG_BLC"].valor_c = registros_contagem[nome_registro]
+                registro_9900.QTD_REG_BLC.valor_c = registros_contagem[nome_registro]
             else:
                 registros_9900_remover.append(registro_9900)
 
@@ -216,7 +216,7 @@ class Escrituracao(Componente, ABC):
         # Atualizando ou adicionando o Registro |9900|9900|
         try:
             registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
-            registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
+            registro_9900_9900.QTD_REG_BLC.valor = len(registro_9001.filhos)
         except ValueError:
             Registro(self.modulo, f"|9900|9900|{len(registro_9001.filhos) + 1}|", registro_9001)
 
@@ -224,7 +224,7 @@ class Escrituracao(Componente, ABC):
 
         if ordenar_9900:
             # Ordenando os registros 9900 de acordo com o registro que ele totaliza
-            registro_9001.filhos.sort(key=lambda r: Registro.ordem(r["REG_BLC"].valor_c, self.modulo))
+            registro_9001.filhos.sort(key=lambda r: Registro.ordem(r.REG_BLC.valor_c, self.modulo))
 
 
 

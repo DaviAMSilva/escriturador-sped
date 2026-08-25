@@ -4,7 +4,7 @@ from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..estruturas.tupla_campo import TuplaCampo
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
-from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
+from ..tipos import CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
 from .campo import Campo
 from .componente import Componente
 
@@ -130,21 +130,11 @@ class Registro(Componente):
             pai.adicionar(self)
 
 
+    def __getattr__(self, nome: str) -> Campo[CampoTipoT, Valor]:
+        if nome in self.__getattribute__("campos"):
+            return self.__getattribute__("campos")[nome]
 
-    @overload
-    def __getitem__(self, chave: Chave) -> Campo: ...
-
-    @overload
-    def __getitem__(self, chave: slice) -> TuplaCampo: ...
-
-    def __getitem__(self, chave: Chave | slice):
-        return self.campos[chave]
-
-    def __setitem__(self, chave: Chave, valor: Valor):
-        self.campos[chave].valor = valor
-
-    def __contains__(self, chave: Chave | Campo):
-        return chave in self.campos
+        raise AttributeError(f"O campo com nome {nome!r} não existe em {self!r}")
 
 
 
@@ -218,7 +208,7 @@ class Registro(Componente):
             for campos_atual, atributo in campos_todos:
                 for nome_campo, valor_campo in campos_atual.items():
                     try:
-                        campo = self[nome_campo]
+                        campo = self.campos[nome_campo]
                     except KeyError:
                         continue
 
@@ -338,26 +328,3 @@ class RegistroEfdIcmsIpi(Registro):
 class RegistroEfdPisCofins(Registro):
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
         super().__init__(EFD_PIS_COFINS, campos, pai)
-
-
-
-
-
-# Embora contenha o nome DescritorCampo essa classe está mais
-# associada à classe Registro, portanto continuará nesse arquivo
-class DescritorCampo[ValorT]():
-    __slots__ = ("nome",)
-
-    def __set_name__(self, dono, nome: str):
-        self.nome = nome.replace("__", "-")  # pylint: disable=attribute-defined-outside-init
-
-    def __get__(self, registro, dono=None) -> ValorT:
-        if registro is None:
-            return self  # type: ignore
-
-        if self.nome.endswith("_0"):
-            return registro.campos[self.nome[:-2]].valor_n0
-        return registro.campos[self.nome].valor
-
-    def __set__(self, registro, valor: Valor):
-        registro.campos[self.nome[:-2] if self.nome.endswith("_0") else self.nome].valor = valor

@@ -214,5 +214,7 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
 
 # Tipagem para tipos de campos específicos
+# pylint: disable=invalid-name
 type CampoC = Campo[Literal["C"], ValorC]
 type CampoN = Campo[Literal["N"], ValorN]
+# pylint: enable=invalid-name

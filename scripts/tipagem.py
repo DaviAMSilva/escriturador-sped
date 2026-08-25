@@ -18,25 +18,23 @@ def main():
 
         arquivo_conteudo = (
             "# pylint: disable=relative-beyond-top-level,duplicate-code,non-ascii-name,too-many-lines\n"
-            f"from .....classes.registro import DescritorCampo, Registro{MODULOS_CLASSES[modulo]}\n"
-            "from .....tipos import ValorC, ValorN, ValorN0\n"
+            "from .....classes.campo import CampoC, CampoN\n"
+            f"from .....classes.registro import Registro{MODULOS_CLASSES[modulo]}\n"
         )
 
         for nome_registro, info_registro in MODULOS[modulo]["registros"].items():
             # Cabeçalho da classe
             arquivo_conteudo += (
-                f"\nclass Registro{nome_registro}(Registro{MODULOS_CLASSES[modulo]}):\n"
+                f"\n\nclass Registro{nome_registro}(Registro{MODULOS_CLASSES[modulo]}):\n"
                 f"    nome = \"{nome_registro}\"\n"
             )
 
             for campo in info_registro["campos"]:
-                # Hífens ('-') em nomes de campos serão substituídos por dois underlines ('__')
-                arquivo_conteudo += f"    {campo['nome'].replace('-', '__')} = DescritorCampo[Valor{campo['tipo']}]()\n"
-
-                if campo["tipo"] == "N":
-                    arquivo_conteudo += f"    {campo['nome'].replace('-', '__')}_0 = DescritorCampo[Valor{campo['tipo']}0]()\n"
+                # Hifens ('-') em nomes de campos serão substituídos por dois underlines ('__')
+                arquivo_conteudo += f"    {campo['nome'].replace('-', '__')}: Campo{campo['tipo']}\n"
 
         pasta_destino = os.path.join("src", "editor_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
+
         if not os.path.exists(pasta_destino):
             os.makedirs(pasta_destino)
 

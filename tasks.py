@@ -55,7 +55,7 @@ def all(c: Context):  # pylint: disable=redefined-builtin
 
 @task
 def lint(c: Context):
-    c.run(f"{PYTHON} -m pylint src tests scripts tasks.py")
+    c.run(f"{PYTHON} -m pylint --fail-under=9.8 src tests scripts tasks.py")
 
 
 @task

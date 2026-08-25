@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class Componente(ABC):
     def __init__(self, modulo: ModuloT, nome: str, filhos: ListaRegistro) -> None:
         self.nome: str = nome
-        self.filhos: ListaRegistro = filhos
+        self.filhos: ListaRegistro[Registro] = filhos
         self.modulo: ModuloT = modulo
 
 
