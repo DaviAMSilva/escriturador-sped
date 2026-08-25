@@ -45,6 +45,7 @@ def tipagem(c: Context):
 @task
 def build(c: Context):
     conversor(c)
+    tipagem(c)
 
 
 @task
