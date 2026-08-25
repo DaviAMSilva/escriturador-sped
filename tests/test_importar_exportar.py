@@ -3,12 +3,12 @@ from decimal import Decimal, InvalidOperation
 
 import pytest
 
-from editor_sped import EFD_ICMS_IPI, EFD_INFO, EFD_PIS_COFINS, Campo, EfdTipo
+from escriturador_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, MODULOS, Campo, ModuloT
 
 from .cache import cache
 
 
-def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
+def comparar_escrituracoes(texto1: str, texto2: str, modulo: ModuloT):
     lines1 = texto1.splitlines()
     lines2 = texto2.splitlines()
 
@@ -25,13 +25,13 @@ def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
         assert nome1 == nome2
         assert len(campos1) == len(campos2)
 
-        comparar_campos(efd_tipo, campos1, campos2, nome1, nome2)
+        comparar_campos(modulo, campos1, campos2, nome1, nome2)
 
 
-def comparar_campos(efd_tipo: EfdTipo, campos1: list[str], campos2: list[str], nome1: str, nome2: str):
+def comparar_campos(modulo: ModuloT, campos1: list[str], campos2: list[str], nome1: str, nome2: str):
     for i, (campo1, campo2) in enumerate(zip(campos1, campos2)):
-        tipo1 = EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tipo"]
-        tipo2 = EFD_INFO[efd_tipo]["registros"][nome2]["campos"][i]["tipo"]
+        tipo1 = MODULOS[modulo]["registros"][nome1]["campos"][i]["tipo"]
+        tipo2 = MODULOS[modulo]["registros"][nome2]["campos"][i]["tipo"]
 
         assert tipo1 == tipo2
 
@@ -48,7 +48,7 @@ def comparar_campos(efd_tipo: EfdTipo, campos1: list[str], campos2: list[str], n
                 assert valor1 == valor2
 
                 # Valor numérico com tamanho exato
-                if EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tamanho_exato"]:
+                if MODULOS[modulo]["registros"][nome1]["campos"][i]["tamanho_exato"]:
                     assert campo1 == campo2
             except InvalidOperation as e:
                 raise ValueError("Não foi possível converter para decimal") from e
@@ -59,7 +59,7 @@ def comparar_campos(efd_tipo: EfdTipo, campos1: list[str], campos2: list[str], n
             raise ValueError(f"Tipo de campo desconhecido: {tipo1}")
 
 
-@pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
+@pytest.mark.parametrize("arquivo", glob.glob("*.txt", root_dir="exemplos/"))
 def test_importar_exportar(arquivo: str):
     escrituracao_texto = cache.texto(arquivo)
     escrituracao = cache.escrituracao(arquivo)

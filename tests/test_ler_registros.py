@@ -2,13 +2,13 @@ import glob
 
 import pytest
 
-from editor_sped import EFD_TIPOS, Registro
-from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
+from escriturador_sped import MODULOS_NOMES, Registro
+from escriturador_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 
 from .cache import cache
 
 
-@pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
+@pytest.mark.parametrize("arquivo", glob.glob("*.txt", root_dir="exemplos/"))
 def test_ler_registros(arquivo: str):
     registros_texto = cache.texto(arquivo)
 
@@ -33,7 +33,7 @@ def test_ler_registros(arquivo: str):
 
     assert isinstance(primeiro_registro.nome, str)
     assert isinstance(primeiro_registro.descricao, str)
-    assert primeiro_registro.efd_tipo in EFD_TIPOS
+    assert primeiro_registro.modulo in MODULOS_NOMES
 
     assert primeiro_registro.filhos
     assert isinstance(primeiro_registro.filhos, list)
@@ -71,7 +71,7 @@ def test_ler_registros_erro():
     ]
     # fmt: on
 
-    for tipo in EFD_TIPOS:
+    for tipo in MODULOS_NOMES:
         for registros_texto, erro_esperado in casos_de_teste:
             with pytest.raises(erro_esperado):
                 Registro.ler(registros_texto, tipo)

@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.14"]
+        python-version: ["3.12", "3.14"]
 
     steps:
     - uses: actions/checkout@v4
@@ -22,6 +22,6 @@ jobs:
         pip install -e .[DEV]
     - name: Convertendo tabelas
       run: |
-        python data/conversor.py
+        python scripts/conversor.py
     - name: Testar com pytest
       run: pytest

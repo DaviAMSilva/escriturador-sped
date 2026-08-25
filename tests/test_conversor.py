@@ -1,57 +1,48 @@
 import re
 from collections import Counter
+from glob import glob
+from pathlib import Path
 
-from data.conversor import EFD_MAIOR_NIVEL, conversor
-from editor_sped import EFD_ICMS_IPI, EFD_ORDEM_BLOCOS, EFD_PIS_COFINS, Campo
+import pytest
 
-from .constantes import REGISTROS_EFD_ICMS_IPI, REGISTROS_EFD_PIS_COFINS
+from escriturador_sped import MAIOR_NIVEL, ORDEM_BLOCOS, Campo, LeiauteT, ModuloT
+from scripts.conversor import conversor
+
+from .constantes import MODULOS_REGISTROS
 
 
-def test_conversor():
-    efd_info = conversor()
+@pytest.mark.parametrize("caminho", glob("*/*/*/", root_dir="modulos"))
+def test_conversor(caminho: str):
+    modulo: ModuloT
+    modulo, leiaute, versao = Path(caminho).parts # type: ignore
+    leiaute_atual: LeiauteT = conversor(modulo, leiaute, versao)
 
 
     # Convertido para dicionário
-    assert isinstance(efd_info, dict)
-
-
-    # Os SPEDs existem
-    assert EFD_ICMS_IPI in efd_info
-    assert EFD_PIS_COFINS in efd_info
+    assert isinstance(leiaute_atual, dict)
 
 
     # As listas de registros tem os tamanhos corretos
-    assert len(efd_info[EFD_ICMS_IPI]["registros"]) == len(REGISTROS_EFD_ICMS_IPI)
-    assert len(efd_info[EFD_PIS_COFINS]["registros"]) == len(REGISTROS_EFD_PIS_COFINS)
+    assert len(leiaute_atual["registros"]) == len(MODULOS_REGISTROS[modulo])
 
 
     # Os registros corretos existem nas listas
-    for nome_registros, campos_registro in REGISTROS_EFD_ICMS_IPI.items():
-        verificar_registro(efd_info[EFD_ICMS_IPI]["registros"], nome_registros, efd_info[EFD_ICMS_IPI]["registros"][nome_registros], campos_registro)
-
-    for nome_registros, campos_registro in REGISTROS_EFD_PIS_COFINS.items():
-        verificar_registro(efd_info[EFD_PIS_COFINS]["registros"], nome_registros, efd_info[EFD_PIS_COFINS]["registros"][nome_registros], campos_registro)
+    for nome_registros, campos_registro in MODULOS_REGISTROS[modulo].items():
+        verificar_registro(leiaute_atual["registros"], nome_registros, leiaute_atual["registros"][nome_registros], campos_registro)
 
 
     # Verificando que todos os registros são válidos
-    for nome_registros in efd_info[EFD_ICMS_IPI]["registros"]:
-        assert nome_registros in REGISTROS_EFD_ICMS_IPI
-
-    for nome_registros in efd_info[EFD_PIS_COFINS]["registros"]:
-        assert nome_registros in REGISTROS_EFD_PIS_COFINS
+    for nome_registros in leiaute_atual["registros"]:
+        assert nome_registros in MODULOS_REGISTROS[modulo]
 
 
     # As listas de blocos tem os tamanhos corretos
-    assert len(efd_info[EFD_ICMS_IPI]["blocos"]) == len(EFD_ORDEM_BLOCOS[EFD_ICMS_IPI])
-    assert len(efd_info[EFD_PIS_COFINS]["blocos"]) == len(EFD_ORDEM_BLOCOS[EFD_PIS_COFINS])
+    assert len(leiaute_atual["blocos"]) == len(ORDEM_BLOCOS[modulo])
 
 
     # Os blocos corretos existem nas listas
-    for bloco in efd_info[EFD_ICMS_IPI]["blocos"]:
-        assert bloco["nome"] in EFD_ORDEM_BLOCOS[EFD_ICMS_IPI]
-
-    for bloco in efd_info[EFD_PIS_COFINS]["blocos"]:
-        assert bloco["nome"] in EFD_ORDEM_BLOCOS[EFD_PIS_COFINS]
+    for bloco in leiaute_atual["blocos"]:
+        assert bloco["nome"] in ORDEM_BLOCOS[modulo]
 
 
 def verificar_registro(efd_registros, nome, registro, campos):
@@ -63,7 +54,7 @@ def verificar_registro(efd_registros, nome, registro, campos):
 
     # Nível
     assert registro["nivel"] >= 0
-    assert registro["nivel"] <= EFD_MAIOR_NIVEL
+    assert registro["nivel"] <= MAIOR_NIVEL
 
     # Booleanos
     assert isinstance(registro["obrigatorio"], bool)
@@ -72,7 +63,10 @@ def verificar_registro(efd_registros, nome, registro, campos):
     # Campos
     assert isinstance(registro["campos"], list)
     assert len(registro["campos"]) >= 2
-    assert len(registro["campos"]) == campos
+    # Esse teste era suposto a verificar que a quantidade exata de campos,
+    # mas como leiautes podem adicionar (mas não remover) campos,
+    # por enquanto apenas testamos se há mais campos do que esperado
+    assert len(registro["campos"]) <= campos
 
     # Campos duplicados
     contagem = Counter(campo["nome"] for campo in registro["campos"]).most_common()

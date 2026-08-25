@@ -1,7 +1,9 @@
 .prof/
 .vscode
 extra/
-sped_extractor/
+
+src/escriturador_sped/modulos/*
+!src/escriturador_sped/modulos/__init__.py
 
 # Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
 # Essa configuração permite arquivos numerados, mas ignora arquivos com

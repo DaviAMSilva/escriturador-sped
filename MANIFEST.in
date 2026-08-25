@@ -1,4 +1,1 @@
-include src/editor_sped/data/efd_info.json
-include src/editor_sped/data/modules.json
-include src/editor_sped/visualizador/efd_info.js
-include src/editor_sped/visualizador/index.html
+recursive-include src/escriturador_sped/modulos *.json
