@@ -1,1 +1,1 @@
-recursive-include src/editor_sped/modulos *.json
+recursive-include src/escriturador_sped/modulos *.json

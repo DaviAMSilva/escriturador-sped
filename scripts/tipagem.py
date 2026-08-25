@@ -2,7 +2,7 @@ import os
 from glob import glob
 from pathlib import Path
 
-from editor_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, MODULOS, ModuloT
+from escriturador_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, MODULOS, ModuloT
 
 
 MODULOS_CLASSES = {
@@ -33,7 +33,7 @@ def main():
                 # Hifens ('-') em nomes de campos serão substituídos por dois underlines ('__')
                 arquivo_conteudo += f"    {campo['nome'].replace('-', '__')}: Campo{campo['tipo']}\n"
 
-        pasta_destino = os.path.join("src", "editor_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
+        pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
 
         if not os.path.exists(pasta_destino):
             os.makedirs(pasta_destino)

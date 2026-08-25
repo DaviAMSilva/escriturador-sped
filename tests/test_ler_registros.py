@@ -2,8 +2,8 @@ import glob
 
 import pytest
 
-from editor_sped import MODULOS_NOMES, Registro
-from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
+from escriturador_sped import MODULOS_NOMES, Registro
+from escriturador_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
 
 from .cache import cache
 

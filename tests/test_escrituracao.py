@@ -1,6 +1,6 @@
 import pytest
 
-from editor_sped import Registro
+from escriturador_sped import Registro
 
 from .cache import cache
 

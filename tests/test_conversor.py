@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from editor_sped import MAIOR_NIVEL, ORDEM_BLOCOS, Campo, LeiauteT, ModuloT
+from escriturador_sped import MAIOR_NIVEL, ORDEM_BLOCOS, Campo, LeiauteT, ModuloT
 from scripts.conversor import conversor
 
 from .constantes import MODULOS_REGISTROS
