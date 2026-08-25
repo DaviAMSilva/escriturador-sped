@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 
 import pytest
 
-from editor_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, MODULOS, Campo, ModuloT
+from escriturador_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, MODULOS, Campo, ModuloT
 
 from .cache import cache
 

@@ -10,8 +10,8 @@ from typing import Literal
 os.environ["__CONVERSAO__"] = "1"
 
 # pylint: disable=wrong-import-position
-from editor_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
-from editor_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
+from escriturador_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
+from escriturador_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
 
 
@@ -242,7 +242,7 @@ def main(formatado: bool = False):
         leiaute_json = conversor(modulo, leiaute, versao.replace(".", "_"))
 
 
-        pasta_destino = os.path.join("src", "editor_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
+        pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
         if not os.path.exists(pasta_destino):
             os.makedirs(pasta_destino)
 

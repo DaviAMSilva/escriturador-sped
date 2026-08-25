@@ -1,7 +1,7 @@
-[![pylint](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pylint.yml)
-[![pytest](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pytest.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/editor_sped/actions/workflows/pytest.yml)
+[![pytest](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml)
+[![pylint](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml)
 
-# Editor de Escriturações para o SPED
+# Escriturador SPED
 
 Objetivos iniciais do projeto:
 

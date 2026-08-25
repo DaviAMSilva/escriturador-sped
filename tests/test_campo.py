@@ -1,6 +1,6 @@
 import pytest
 
-from editor_sped import EFD_ICMS_IPI, Campo
+from escriturador_sped import EFD_ICMS_IPI, Campo
 
 
 def test_campo_atribuicao():
