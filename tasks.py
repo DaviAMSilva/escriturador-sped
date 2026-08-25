@@ -77,4 +77,4 @@ def test(c: Context, coverage: bool = False, profile: bool = False, profile_svg:
 
 @task
 def snakeviz(c: Context, arquivo: str = ".prof/combined.prof"):
-    c.run(f"snakeviz {arquivo}")
+    c.run(f"{PYTHON} -m snakeviz {arquivo}")
