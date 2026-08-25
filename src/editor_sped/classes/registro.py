@@ -1,10 +1,10 @@
-from typing import Any, Callable, Iterable, Never, Self, overload
+from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
-from ..constantes import ORDEM_BLOCOS
+from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..estruturas.tupla_campo import TuplaCampo
-from ..modulos import MODULOS, ModuloT
-from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
+from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
+from ..tipos import CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
 from .campo import Campo
 from .componente import Componente
 
@@ -32,9 +32,24 @@ class Registro(Componente):
 
 
 
-    def __init__(self, campos: str | dict[Chave, Valor], modulo: ModuloT, *, pai: "Registro | None" = None) -> None:
+    def __init__(self, modulo: ModuloT, campos: str | dict[Chave, Valor] | None = None, pai: "Registro | None" = None) -> None:
+        if modulo not in MODULOS_NOMES:
+            raise ValueError(f"Valor inválido para parâmetro 'modulo' ({modulo})")
+
+        if campos is not None and not isinstance(campos, (str, dict)):
+            raise TypeError(f"Tipo inválido para parâmetro 'campos' ({campos})")
+
         if pai is not None and not isinstance(pai, Registro):
             raise TypeError(f"Tipo inválido para parâmetro 'pai' ({pai})")
+
+        campos = campos or {}
+
+        # Lida com o caso de uma subclasse informar o nome diretamente
+        if getattr(self, "nome", None):
+            if isinstance(campos, dict):
+                campos["REG"] = self.nome
+            if isinstance(campos, str) and not campos.startswith(f"|{self.nome}"):
+                raise ValueError(f"A linha fornecida ({campos!r}) se inicia com um campo diferente do esperado ({self.nome!r})")
 
 
 
@@ -47,7 +62,7 @@ class Registro(Componente):
             nome_registro = textos_campos[0].upper()
             info_registro = info_registros[nome_registro]
 
-            super().__init__(nome_registro, ListaRegistro(), modulo)
+            super().__init__(modulo, nome_registro, ListaRegistro())
 
             info_campos = info_registro["campos"]
             esperado = len(info_campos)
@@ -60,7 +75,7 @@ class Registro(Componente):
                 )
 
             self.campos = TuplaCampo(
-                Campo(i, valor, nome_registro, modulo)
+                Campo(modulo, nome_registro, i, valor)
                 for i, valor in enumerate(textos_campos, 1)
             )
 
@@ -84,14 +99,14 @@ class Registro(Componente):
 
             info_registro = info_registros[nome_registro]
 
-            super().__init__(nome_registro, ListaRegistro(), modulo)
+            super().__init__(modulo, nome_registro, ListaRegistro())
 
             self.campos = TuplaCampo(
                 Campo(
-                    info_campo["numero"],
-                    campos.get(info_campo["nome"], campos.get(info_campo["numero"])),
+                    modulo,
                     nome_registro,
-                    modulo
+                    info_campo["numero"],
+                    campos.get(info_campo["nome"], campos.get(info_campo["numero"]))
                 )
                 for info_campo in info_registro["campos"]
             )
@@ -115,21 +130,11 @@ class Registro(Componente):
             pai.adicionar(self)
 
 
+    def __getattr__(self, nome: str) -> Campo[CampoTipoT, Valor]:
+        if nome in self.__getattribute__("campos"):
+            return self.__getattribute__("campos")[nome]
 
-    @overload
-    def __getitem__(self, chave: Chave) -> Campo: ...
-
-    @overload
-    def __getitem__(self, chave: slice) -> TuplaCampo: ...
-
-    def __getitem__(self, chave: Chave | slice):
-        return self.campos[chave]
-
-    def __setitem__(self, chave: Chave, valor: Valor):
-        self.campos[chave].valor = valor
-
-    def __contains__(self, chave: Chave | Campo):
-        return chave in self.campos
+        raise AttributeError(f"O campo com nome {nome!r} não existe em {self!r}")
 
 
 
@@ -138,6 +143,11 @@ class Registro(Componente):
 
     def __repr__(self) -> str:
         return f"Registro({self.linha!r})"
+
+
+
+    def como[ComoRegistroT: Registro](self, registro: type[ComoRegistroT]) -> ComoRegistroT:  # pylint: disable=unused-argument
+        return cast(ComoRegistroT, self)
 
 
 
@@ -198,7 +208,7 @@ class Registro(Componente):
             for campos_atual, atributo in campos_todos:
                 for nome_campo, valor_campo in campos_atual.items():
                     try:
-                        campo = self[nome_campo]
+                        campo = self.campos[nome_campo]
                     except KeyError:
                         continue
 
@@ -300,3 +310,21 @@ class Registro(Componente):
         self.filhos.clear()
 
         return self
+
+
+
+
+
+
+
+
+
+
+class RegistroEfdIcmsIpi(Registro):
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
+        super().__init__(EFD_ICMS_IPI, campos, pai)
+
+
+class RegistroEfdPisCofins(Registro):
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
+        super().__init__(EFD_PIS_COFINS, campos, pai)

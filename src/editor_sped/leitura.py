@@ -60,7 +60,7 @@ def ler_registros(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegis
 
 
         # Criando o objeto registro em si
-        ultimos_registros[nivel_atual] = Registro(registro_atual, modulo)
+        ultimos_registros[nivel_atual] = Registro(modulo, registro_atual)
 
 
 

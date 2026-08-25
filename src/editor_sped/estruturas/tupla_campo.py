@@ -1,7 +1,7 @@
 from typing import Iterable, Self, SupportsIndex, overload
 
 from ..classes.campo import Campo
-from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
+from ..tipos import CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
 
 
 
@@ -12,9 +12,9 @@ from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
 
 
 
-class TuplaCampo(tuple["Campo", ...]):
+class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
     def __init__(self, *_) -> None:
-        self.dicionario: dict[str, "Campo"] = {}
+        self.dicionario: dict[str, "Campo[CampoTipoT, Valor]"] = {}
 
         for campo in self:
             if not isinstance(campo, Campo):
@@ -29,15 +29,15 @@ class TuplaCampo(tuple["Campo", ...]):
     def __new__(cls) -> Self: ...
 
     @overload
-    def __new__(cls, iteravel: Iterable["Campo"]) -> Self: ...
+    def __new__(cls, iteravel: Iterable["Campo[CampoTipoT, Valor]"]) -> Self: ...
 
-    def __new__(cls, iteravel: Iterable["Campo"] = ()):
+    def __new__(cls, iteravel: Iterable["Campo[CampoTipoT, Valor]"] = ()):
         return super(TuplaCampo, cls).__new__(cls, tuple(iteravel))
 
 
 
     @overload
-    def __getitem__(self, chave: Chave | SupportsIndex) -> "Campo": ...
+    def __getitem__(self, chave: Chave | SupportsIndex) -> "Campo[CampoTipoT, Valor]": ...
 
     @overload
     def __getitem__(self, chave: slice) -> "TuplaCampo": ...

@@ -40,8 +40,8 @@ class Escrituracao(Componente, ABC):
 
 
 
-    def __init__(self, escrituracao_texto: str, nome: str, modulo: ModuloT) -> None:
-        super().__init__(nome.upper(), ListaRegistro(), modulo)
+    def __init__(self, modulo: ModuloT, escrituracao_texto: str, nome: str) -> None:
+        super().__init__(modulo, nome.upper(), ListaRegistro())
 
         self.blocos: dict[str, Bloco] = {}
 
@@ -135,8 +135,8 @@ class Escrituracao(Componente, ABC):
         if nome_bloco not in self.blocos and nome_bloco in ORDEM_BLOCOS[self.modulo]:
             self.blocos[nome_bloco] = Bloco(
                 nome_bloco,
-                Registro(f"|{nome_bloco}001|1|", self.modulo, pai=self.abertura),
-                Registro(f"|{nome_bloco}990|2|", self.modulo, pai=self.abertura),
+                Registro(self.modulo, f"|{nome_bloco}001|1|", self.abertura),
+                Registro(self.modulo, f"|{nome_bloco}990|2|", self.abertura),
                 self.modulo
             )
 
@@ -164,7 +164,7 @@ class Escrituracao(Componente, ABC):
         self.totalizar_escrituracao()
 
     def totalizar_escrituracao(self) -> None:
-        self.fechamento[2].valor_c = self.tamanho
+        self.fechamento.campos[2].valor_c = self.tamanho
 
     def totalizar_blocos(self) -> None:
         for nome in ORDEM_BLOCOS[self.modulo]:
@@ -172,8 +172,8 @@ class Escrituracao(Componente, ABC):
 
             if bloco:
                 # Se o bloco estiver vazio o valor da abertura é definido como 1
-                bloco.abertura[2].valor_c = 0 if bloco.tamanho > 2 else 1
-                bloco.fechamento[2].valor_c = bloco.tamanho
+                bloco.abertura.campos[2].valor_c = 0 if bloco.tamanho > 2 else 1
+                bloco.fechamento.campos[2].valor_c = bloco.tamanho
             else:
                 # Criando um novo bloco vazio se não existir
                 self.adicionar(nome)
@@ -186,7 +186,7 @@ class Escrituracao(Componente, ABC):
         registro_9001 = self.blocos["9"].abertura
 
         registros_9900 = registro_9001.filhos
-        registros_9900_blc = [registro_9900["REG_BLC"].valor_c for registro_9900 in registros_9900]
+        registros_9900_blc = [registro_9900.REG_BLC.valor_c for registro_9900 in registros_9900]
 
         registros_contagem = Counter(registro.nome for registro in self.registros)
 
@@ -196,9 +196,9 @@ class Escrituracao(Componente, ABC):
         registros_9900_remover = []
 
         for registro_9900 in registros_9900:
-            nome_registro = registro_9900["REG_BLC"].valor_c
+            nome_registro = registro_9900.REG_BLC.valor_c
             if nome_registro in registros_contagem:
-                registro_9900["QTD_REG_BLC"].valor_c = registros_contagem[nome_registro]
+                registro_9900.QTD_REG_BLC.valor_c = registros_contagem[nome_registro]
             else:
                 registros_9900_remover.append(registro_9900)
 
@@ -209,22 +209,22 @@ class Escrituracao(Componente, ABC):
         # Adicionando novos registros 9900 que não existiam antes
         for nome_registro in registros_contagem:
             if nome_registro not in registros_9900_blc:
-                Registro(f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", self.modulo, pai=registro_9001)
+                Registro(self.modulo, f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", registro_9001)
 
 
 
         # Atualizando ou adicionando o Registro |9900|9900|
         try:
             registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
-            registro_9900_9900["QTD_REG_BLC"].valor_c = len(registro_9001.filhos)
+            registro_9900_9900.QTD_REG_BLC.valor = len(registro_9001.filhos)
         except ValueError:
-            Registro(f"|9900|9900|{len(registro_9001.filhos) + 1}|", self.modulo, pai=registro_9001)
+            Registro(self.modulo, f"|9900|9900|{len(registro_9001.filhos) + 1}|", registro_9001)
 
 
 
         if ordenar_9900:
             # Ordenando os registros 9900 de acordo com o registro que ele totaliza
-            registro_9001.filhos.sort(key=lambda r: Registro.ordem(r["REG_BLC"].valor_c, self.modulo))
+            registro_9001.filhos.sort(key=lambda r: Registro.ordem(r.REG_BLC.valor_c, self.modulo))
 
 
 
@@ -240,9 +240,9 @@ class EfdIcmsIpi(Escrituracao):
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(escrituracao_texto, "EFD_ICMS_IPI", EFD_ICMS_IPI)
+            super().__init__(EFD_ICMS_IPI, escrituracao_texto, "EFD_ICMS_IPI")
         elif escrituracao_texto is None:
-            super().__init__("|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI", EFD_ICMS_IPI)
+            super().__init__(EFD_ICMS_IPI, "|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI")
         else:
             raise TypeError("Texto da escrituração inválido")
 
@@ -254,8 +254,8 @@ class EfdPisCofins(Escrituracao):
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(escrituracao_texto, "EFD_PIS_COFINS", EFD_PIS_COFINS)
+            super().__init__(EFD_PIS_COFINS, escrituracao_texto, "EFD_PIS_COFINS")
         elif escrituracao_texto is None:
-            super().__init__("|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS", EFD_PIS_COFINS)
+            super().__init__(EFD_PIS_COFINS, "|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS")
         else:
             raise TypeError("Texto da escrituração inválido")

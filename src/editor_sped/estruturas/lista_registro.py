@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING, Callable, Iterable, Mapping, SupportsIndex, overload
+from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, cast, overload
 
-from ..tipos import Chave, ChaveT, Valor, ValorC, ValorN
+from ..tipos import Chave, Valor, ValorC, ValorN
 
 if TYPE_CHECKING:
     from ..classes.registro import Registro
@@ -14,46 +14,39 @@ if TYPE_CHECKING:
 
 
 
-class ListaRegistro(list["Registro"]):
+class ListaRegistro[RegistroT: Registro](list[RegistroT]):
     @overload
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, iteravel: Iterable["Registro"]) -> None: ...
+    def __init__(self, iteravel: Iterable[RegistroT]) -> None: ...
 
-    def __init__(self, iteravel: Iterable["Registro"] = ()) -> None:
+    def __init__(self, iteravel: Iterable[RegistroT] = ()) -> None:
         super().__init__(iteravel)
 
 
 
     @overload
-    def __getitem__(self, chave: int | SupportsIndex) -> "Registro": ...
+    def __getitem__(self, chave: SupportsIndex) -> RegistroT: ...
 
     @overload
-    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]] | slice | None) -> "ListaRegistro": ...
+    def __getitem__(self, chave: slice) -> "ListaRegistro[RegistroT]": ...
 
-    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]] | int | SupportsIndex | slice | None):
-        if isinstance(chave, (SupportsIndex, int)):
-            return super().__getitem__(chave)
-
+    def __getitem__(self, chave: SupportsIndex | slice):
         if isinstance(chave, slice):
-            return ListaRegistro(super().__getitem__(chave))
+            return ListaRegistro[RegistroT](super().__getitem__(chave))
 
-        if isinstance(chave, str) or chave is None:
-            return self.buscar(chave)
-
-        if isinstance(chave, tuple) and len(chave) == 2:
-            if (isinstance(chave[0], str) or chave[0] is None) and (isinstance(chave[1], dict) or chave[1] is None):
-                return self.buscar(chave[0], chave[1])
-
-            raise TypeError(f"Tupla com valores inválidos ({chave})")
-
-        raise TypeError(f"Valor inválido ({chave})")
+        return super().__getitem__(chave)
 
 
 
     def __repr__(self) -> str:
         return f"ListaRegistro{super().__repr__()}"
+
+
+
+    def como[ComoRegistroT: Registro](self, registro: type[ComoRegistroT]) -> "ListaRegistro[ComoRegistroT]":  # pylint: disable=unused-argument
+        return cast(ListaRegistro[ComoRegistroT], self)
 
 
 
@@ -102,7 +95,7 @@ class ListaRegistro(list["Registro"]):
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
-    ) -> "Registro":
+    ) -> RegistroT:
         encontrado = self.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True

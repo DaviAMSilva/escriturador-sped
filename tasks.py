@@ -26,20 +26,8 @@ def venv(c: Context, python: str = PYTHON, pasta: str = "venv"):
 
 
 @task
-def install(c: Context, dev: bool = True, jupyter: bool = False):
-    cmd = [PYTHON, "-m", "pip", "install", "-e", "."]
-    extras = []
-
-    if dev:
-        extras.append("DEV")
-
-    if jupyter:
-        extras.append("JUPYTER")
-
-    if extras:
-        cmd[-1] = f".[{','.join(extras)}]"
-
-    c.run(" ".join(cmd))
+def install(c: Context, dev: bool = True):
+    c.run(f"{PYTHON} -m pip install -e {'.[DEV]' if dev else '.'}")
 
 
 @task
@@ -49,8 +37,15 @@ def conversor(c: Context, formatado: bool = False):
 
 
 @task
+def tipagem(c: Context):
+    from scripts.tipagem import main
+    main()
+
+
+@task
 def build(c: Context):
     conversor(c)
+    tipagem(c)
 
 
 @task
@@ -61,7 +56,7 @@ def all(c: Context):  # pylint: disable=redefined-builtin
 
 @task
 def lint(c: Context):
-    c.run(f"{PYTHON} -m pylint src tests scripts tasks.py")
+    c.run(f"{PYTHON} -m pylint --fail-under=9.8 src tests scripts tasks.py")
 
 
 @task
@@ -82,4 +77,4 @@ def test(c: Context, coverage: bool = False, profile: bool = False, profile_svg:
 
 @task
 def snakeviz(c: Context, arquivo: str = ".prof/combined.prof"):
-    c.run(f"snakeviz {arquivo}")
+    c.run(f"{PYTHON} -m snakeviz {arquivo}")

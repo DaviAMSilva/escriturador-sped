@@ -1,8 +1,5 @@
-from typing import Iterable, Mapping
-
 from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import ModuloT
-from ..tipos import ChaveT, Valor
 from .componente import Componente
 from .registro import Registro
 
@@ -20,24 +17,7 @@ class Bloco(Componente):
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento
 
-        super().__init__(nome.upper(), ListaRegistro([self.abertura, self.fechamento]), modulo)
-
-
-
-    def __getitem__(self, chave: str | tuple[str, Mapping[ChaveT, Valor | Iterable[Valor]]]) -> ListaRegistro:
-        if isinstance(chave, str):
-            return self.filhos.buscar(chave)
-
-        if isinstance(chave, tuple) and len(chave) == 2:
-            if (isinstance(chave[0], str) or chave[0] is None) and (isinstance(chave[1], dict) or chave[1] is None):
-                return self.buscar(chave[0], chave[1])
-
-            raise TypeError(f"Tupla com valores inválidos ({chave})")
-
-        raise TypeError(f"Valor inválido ({chave})")
-
-    def __contains__(self, chave: str):
-        return bool(self.filhos.buscar(chave, primeiro=True))
+        super().__init__(modulo, nome.upper(), ListaRegistro([self.abertura, self.fechamento]))
 
 
 

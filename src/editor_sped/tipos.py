@@ -1,9 +1,20 @@
-from typing import Literal, TypeVar, TypedDict
+from typing import Literal, TypedDict
 
 
-CampoTipoT = Literal["C", "N"]
-ModuloT = Literal["efd_pis_cofins", "efd_icms_ipi"]
-ModulosT = dict[ModuloT, "LeiauteT"]
+# pylint: disable=invalid-name
+type ModuloT = Literal["efd_pis_cofins", "efd_icms_ipi"]
+type ModulosT = dict[ModuloT, "LeiauteT"]
+
+type CampoTipoT = Literal["C", "N"]
+
+type Chave = str | int
+
+type ValorC = str
+type ValorN = int | float | None
+type ValorN0 = int | float
+type Valor = ValorC | ValorN
+type Valor0 = ValorC | ValorN0
+# pylint: enable=invalid-name
 
 
 class LeiauteT(TypedDict):
@@ -38,16 +49,3 @@ class CampoT(TypedDict):
     tamanho_exato: bool
     decimal: int | None
     tipo: CampoTipoT
-
-
-
-
-Chave = str | int
-ChaveT = TypeVar("ChaveT", bound=Chave)
-# pylint: disable=invalid-name
-ValorC = str
-ValorN = int | float | None
-ValorN0 = int | float
-Valor = ValorC | ValorN
-Valor0 = ValorC | ValorN0
-# pylint: enable=invalid-name

@@ -1,6 +1,8 @@
+from typing import Literal
+
 from ..constantes import ALFANUMERICO, NUMERICO
 from ..modulos import MODULOS, ModuloT
-from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
+from ..tipos import CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
 
 
 
@@ -11,7 +13,9 @@ from ..tipos import Chave, Valor, ValorC, ValorN, ValorN0
 
 
 
-class Campo:
+class Campo[TipoT: CampoTipoT, ValorT: Valor]:
+    tipo: TipoT
+
     # Tipos de campo
     ALFANUMERICO = ALFANUMERICO
     NUMERICO = NUMERICO
@@ -60,7 +64,7 @@ class Campo:
 
 
 
-    def __init__(self, chave: Chave, valor: Valor, nome_registro: str, modulo: ModuloT) -> None:
+    def __init__(self, modulo: ModuloT, nome_registro: str, chave: Chave, valor: Valor) -> None:
         info_campos = MODULOS[modulo]["registros"][nome_registro.upper()]["campos"]
 
         # Descobrindo o info_campo correto
@@ -87,7 +91,7 @@ class Campo:
         self.obrigatorio   = info_campo["obrigatorio"]
         self.tamanho       = info_campo["tamanho"]
         self.tamanho_exato = info_campo["tamanho_exato"]
-        self.tipo          = info_campo["tipo"]
+        self.tipo          = info_campo["tipo"]  # type: ignore
         # fmt: on
 
         self._valor_alfanumerico: ValorC = ""
@@ -112,12 +116,12 @@ class Campo:
 
 
     @property
-    def valor(self) -> Valor:
+    def valor(self) -> ValorT:
         if self.tipo == Campo.ALFANUMERICO:
-            return self.valor_c
+            return self.valor_c  # type: ignore
 
         if self.tipo == Campo.NUMERICO:
-            return self.valor_n
+            return self.valor_n  # type: ignore
 
         raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
 
@@ -207,3 +211,10 @@ class Campo:
     @valor_n0.setter
     def valor_n0(self, valor: Valor) -> None:
         self.valor = valor
+
+
+# Tipagem para tipos de campos específicos
+# pylint: disable=invalid-name
+type CampoC = Campo[Literal["C"], ValorC]
+type CampoN = Campo[Literal["N"], ValorN]
+# pylint: enable=invalid-name
