@@ -146,7 +146,7 @@ class Registro(Componente):
 
 
 
-    def como[ComoRegistroT: Registro](self, _registro: type[ComoRegistroT]) -> ComoRegistroT:
+    def como[ComoRegistroT: Registro](self, registro: type[ComoRegistroT]) -> ComoRegistroT:  # pylint: disable=unused-argument
         return cast(ComoRegistroT, self)
 
 

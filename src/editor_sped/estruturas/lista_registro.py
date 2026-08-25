@@ -45,7 +45,7 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
 
 
 
-    def como[ComoRegistroT: Registro](self, _registro: type[ComoRegistroT]) -> "ListaRegistro[ComoRegistroT]":
+    def como[ComoRegistroT: Registro](self, registro: type[ComoRegistroT]) -> "ListaRegistro[ComoRegistroT]":  # pylint: disable=unused-argument
         return cast(ListaRegistro[ComoRegistroT], self)
 
 
