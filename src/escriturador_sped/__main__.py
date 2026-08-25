@@ -5,7 +5,7 @@ from importlib.metadata import version
 from .modulos import MODULOS_PADROES, ModuloT
 
 
-print(f"Módulos disponíveis no Escriturador SPED ({version("escriturador_sped")}):")
+print(f"Módulos disponíveis no Escriturador SPED (v{version("escriturador_sped")}):")
 print("* = Versão carregada por padrão")
 
 
