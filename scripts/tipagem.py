@@ -17,7 +17,7 @@ def main():
         modulo, leiaute, versao = Path(caminho).parts  # type: ignore
 
         arquivo_conteudo = (
-            "# pylint: disable=relative-beyond-top-level,duplicate-code,non-ascii-name,too-many-lines\n"
+            "# pylint: disable=relative-beyond-top-level,duplicate-code,too-few-public-methods,non-ascii-name,too-many-lines,line-too-long\n"
             "from .....classes.campo import CampoC, CampoN\n"
             f"from .....classes.registro import Registro{MODULOS_CLASSES[modulo]}\n"
         )
@@ -26,12 +26,16 @@ def main():
             # Cabeçalho da classe
             arquivo_conteudo += (
                 f"\n\nclass Registro{nome_registro}(Registro{MODULOS_CLASSES[modulo]}):\n"
-                f"    nome = \"{nome_registro}\"\n"
+                f"    '''{info_registro['descricao']}'''\n"
+                f"    nome = '{nome_registro}'\n"
             )
 
             for campo in info_registro["campos"]:
                 # Hifens ('-') em nomes de campos serão substituídos por dois underlines ('__')
-                arquivo_conteudo += f"    {campo['nome'].replace('-', '__')}: Campo{campo['tipo']}\n"
+                arquivo_conteudo += (
+                    f"    {campo['nome'].replace('-', '__')}: Campo{campo['tipo']}\n"
+                    f"    '''{campo['descricao']}'''\n"
+                )
 
         pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
 
