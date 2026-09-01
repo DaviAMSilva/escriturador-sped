@@ -37,9 +37,12 @@ def conversor(c: Context, formatado: bool = False):
 
 
 @task
-def tipagem(c: Context):
+def tipagem(c: Context, lint: bool = True):  # pylint: disable=redefined-outer-name
     from scripts.tipagem import main
     main()
+
+    if lint:
+        c.run(f"{PYTHON} -m pylint --fail-under=10 src/escriturador_sped/modulos/**/*.py")
 
 
 @task
@@ -56,7 +59,7 @@ def all(c: Context):  # pylint: disable=redefined-builtin
 
 @task
 def lint(c: Context):
-    c.run(f"{PYTHON} -m pylint --fail-under=9.8 src tests scripts tasks.py")
+    c.run(f"{PYTHON} -m pylint --fail-under=9.9 src tests scripts tasks.py")
 
 
 @task
