@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Self
 
 from ..arquivos import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
-from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
+from ..constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
 from .bloco import Bloco
@@ -23,7 +23,7 @@ from .registro import Registro
 class Escrituracao(Componente, ABC):
     # Tipos de campo
     EFD_ICMS_IPI = EFD_ICMS_IPI
-    EFD_PIS_COFINS = EFD_PIS_COFINS
+    EFD_CONTRIBUICOES = EFD_CONTRIBUICOES
 
     MODULOS_NOMES = MODULOS_NOMES
     MODULO = None
@@ -249,13 +249,13 @@ class EfdIcmsIpi(Escrituracao):
 
 
 
-class EfdPisCofins(Escrituracao):
-    MODULO = Escrituracao.EFD_PIS_COFINS
+class EfdContribuicoes(Escrituracao):
+    MODULO = Escrituracao.EFD_CONTRIBUICOES
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(EFD_PIS_COFINS, escrituracao_texto, "EFD_PIS_COFINS")
+            super().__init__(EFD_CONTRIBUICOES, escrituracao_texto, "EFD_CONTRIBUICOES")
         elif escrituracao_texto is None:
-            super().__init__(EFD_PIS_COFINS, "|0000||||||||||||||\n|9999|2|", "EFD_PIS_COFINS")
+            super().__init__(EFD_CONTRIBUICOES, "|0000||||||||||||||\n|9999|2|", "EFD_CONTRIBUICOES")
         else:
             raise TypeError("Texto da escrituração inválido")

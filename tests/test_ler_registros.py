@@ -3,7 +3,7 @@ import glob
 import pytest
 
 from escriturador_sped import MODULOS_NOMES, Registro
-from escriturador_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
+from escriturador_sped.constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES
 
 from .cache import cache
 
@@ -14,8 +14,8 @@ def test_ler_registros(arquivo: str):
 
     if EFD_ICMS_IPI in arquivo:
         registros = Registro.ler(registros_texto, EFD_ICMS_IPI)
-    elif EFD_PIS_COFINS in arquivo:
-        registros = Registro.ler(registros_texto, EFD_PIS_COFINS)
+    elif EFD_CONTRIBUICOES in arquivo:
+        registros = Registro.ler(registros_texto, EFD_CONTRIBUICOES)
     else:
         raise ValueError(f"Arquivo inválido: {arquivo}")
 

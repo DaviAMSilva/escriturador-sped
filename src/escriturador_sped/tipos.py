@@ -2,7 +2,7 @@ from typing import Literal, TypedDict
 
 
 # pylint: disable=invalid-name
-type ModuloT = Literal["efd_pis_cofins", "efd_icms_ipi"]
+type ModuloT = Literal["efd_contribuicoes", "efd_icms_ipi"]
 type ModulosT = dict[ModuloT, "LeiauteT"]
 
 type CampoTipoT = Literal["C", "N"]

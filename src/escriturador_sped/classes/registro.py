@@ -1,6 +1,6 @@
 from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
-from ..constantes import EFD_ICMS_IPI, EFD_PIS_COFINS, ORDEM_BLOCOS
+from ..constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..estruturas.tupla_campo import TuplaCampo
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
@@ -325,6 +325,6 @@ class RegistroEfdIcmsIpi(Registro):
         super().__init__(EFD_ICMS_IPI, campos, pai)
 
 
-class RegistroEfdPisCofins(Registro):
+class RegistroEfdContribuicoes(Registro):
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
-        super().__init__(EFD_PIS_COFINS, campos, pai)
+        super().__init__(EFD_CONTRIBUICOES, campos, pai)

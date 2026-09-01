@@ -6,12 +6,13 @@ from glob import glob
 from pathlib import Path
 from typing import Literal
 
+from escriturador_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
+from escriturador_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
+
 # Permite importar a biblioteca mesmo sem os módulos gerados
 os.environ["__CONVERSAO__"] = "1"
 
 # pylint: disable=wrong-import-position
-from escriturador_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
-from escriturador_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
 
 
@@ -27,7 +28,7 @@ JSON_INDENTACAO = 4
 
 # Nomes das colunas esperadas para cada arquivo e cada módulo
 COLUNAS: dict[ModuloT, dict[Literal["campos", "registros"], list[str]]] = {
-    "efd_pis_cofins": {
+    "efd_contribuicoes": {
         "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"],
         "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
     },

@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 
 import pytest
 
-from escriturador_sped import EFD_ICMS_IPI, EFD_PIS_COFINS, MODULOS, Campo, ModuloT
+from escriturador_sped import EFD_CONTRIBUICOES, EFD_ICMS_IPI, MODULOS, Campo, ModuloT
 
 from .cache import cache
 
@@ -69,7 +69,7 @@ def test_importar_exportar(arquivo: str):
 
     if EFD_ICMS_IPI in arquivo:
         comparar_escrituracoes(escrituracao_texto, resultado, EFD_ICMS_IPI)
-    elif EFD_PIS_COFINS in arquivo:
-        comparar_escrituracoes(escrituracao_texto, resultado, EFD_PIS_COFINS)
+    elif EFD_CONTRIBUICOES in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, EFD_CONTRIBUICOES)
     else:
         raise ValueError(f"Arquivo inválido: {arquivo}")
