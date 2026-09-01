@@ -1,6 +1,6 @@
 from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
-from ..constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES, ORDEM_BLOCOS
+from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..estruturas.tupla_campo import TuplaCampo
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
@@ -27,7 +27,7 @@ class Registro(Componente):
 
     @staticmethod
     def ler(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro:
-        from ..leitura import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
+        from ..leitura import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import  # NOQA
         return ler_registros(registros, modulo)
 
 
@@ -318,6 +318,16 @@ class Registro(Componente):
 
 
 
+
+
+class RegistroEcd(Registro):
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
+        super().__init__(ECD, campos, pai)
+
+
+class RegistroEcf(Registro):
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
+        super().__init__(ECF, campos, pai)
 
 
 class RegistroEfdIcmsIpi(Registro):

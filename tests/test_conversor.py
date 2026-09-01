@@ -69,6 +69,9 @@ def verificar_registro(registro: RegistroT, nome_registro: str, campos_esperados
     # list:  Múltiplos valores possíveis
     # tuple: Faixa de valores possíveis (inclusive)
     # int:   Valor exato necessário
+    # TODO: Usar comparação exata apenas para os módulos padrões, senão usar menor ou igual
+    # TODO: Adicionar suporte para registros I020 (Campos Adicionais)
+    # TODO: Adicionar suporte para registros I510 e I550 (Leiaute Parametrizável)
     if isinstance(campos_esperados, list):
         assert len(registro["campos"]) in campos_esperados, \
             f"Erro em registro {nome_registro}: {len(registro["campos"])} campos não está presente em {campos_esperados}"

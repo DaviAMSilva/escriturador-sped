@@ -28,6 +28,14 @@ JSON_INDENTACAO = 4
 
 # Nomes das colunas esperadas para cada arquivo e cada módulo
 COLUNAS: dict[ModuloT, dict[Literal["campos", "registros"], list[str]]] = {
+    "ecd": {
+        "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Valores Válidos", "Obrig", "Regras de Validação do Campo"],
+        "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
+    },
+    "ecf": {
+        "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Valores Válidos", "Obrig"],
+        "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
+    },
     "efd_contribuicoes": {
         "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"],
         "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
@@ -194,6 +202,10 @@ def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dic
             )
 
 
+
+            # Por enquanto não há distinção entre N e NS (NUMÉRICO SINALIZADO), mas possivelmente haverá no futuro
+            if linha_campos["Tipo"] == "NS":
+                linha_campos["Tipo"] = "N"
 
             # Testa se o tipo de campo é um dos valores válidos
             assert linha_campos["Tipo"] in ("C", "N"), f"Tipo inesperado: {linha_campos['Tipo']}"

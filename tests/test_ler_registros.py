@@ -3,7 +3,7 @@ import glob
 import pytest
 
 from escriturador_sped import MODULOS_NOMES, Registro
-from escriturador_sped.constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES
+from escriturador_sped.constantes import ECD, ECF, EFD_ICMS_IPI, EFD_CONTRIBUICOES
 
 from .cache import cache
 
@@ -12,7 +12,11 @@ from .cache import cache
 def test_ler_registros(arquivo: str):
     registros_texto = cache.texto(arquivo)
 
-    if EFD_ICMS_IPI in arquivo:
+    if ECD in arquivo:
+        registros = Registro.ler(registros_texto, ECD)
+    elif ECF in arquivo:
+        registros = Registro.ler(registros_texto, ECF)
+    elif EFD_ICMS_IPI in arquivo:
         registros = Registro.ler(registros_texto, EFD_ICMS_IPI)
     elif EFD_CONTRIBUICOES in arquivo:
         registros = Registro.ler(registros_texto, EFD_CONTRIBUICOES)
@@ -61,12 +65,12 @@ def test_ler_registros_erro():
         ("|",          SyntaxError),
         ("||",         SyntaxError),
         ("|||",        KeyError),
-        ("C100",       SyntaxError),
-        ("C100|0|",    SyntaxError),
-        ("|C100",      SyntaxError),
-        ("C100|0",     SyntaxError),
+        ("0000",       SyntaxError),
+        ("0000|0|",    SyntaxError),
+        ("|0000",      SyntaxError),
+        ("0000|0",     SyntaxError),
         ("|ERRO|1|",   KeyError),
-        ("|C100|0|",   SyntaxError),
+        ("|0000|0|",   SyntaxError),
         ("|0990|ABC|", ValueError),
     ]
     # fmt: on

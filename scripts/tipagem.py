@@ -2,10 +2,11 @@ import os
 from glob import glob
 from pathlib import Path
 
-from escriturador_sped import EFD_ICMS_IPI, EFD_CONTRIBUICOES, MODULOS, ModuloT
-
+from escriturador_sped import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, MODULOS, ModuloT
 
 MODULOS_CLASSES = {
+    ECD: "Ecd",
+    ECF: "Ecf",
     EFD_ICMS_IPI: "EfdIcmsIpi",
     EFD_CONTRIBUICOES: "EfdContribuicoes"
 }

@@ -9,6 +9,8 @@ src/escriturador_sped/modulos/*
 # Essa configuração permite arquivos numerados, mas ignora arquivos com
 # sufixo maiores que podem ser utilizados para testes com arquivos privados
 exemplos/*
+!exemplos/ecd_?.txt
+!exemplos/ecf_?.txt
 !exemplos/efd_contribuicoes_?.txt
 !exemplos/efd_icms_ipi_?.txt
 

@@ -2,12 +2,14 @@ import json
 import os
 from importlib.resources import files
 
-from ..constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES
+from ..constantes import ECD, ECF, EFD_ICMS_IPI, EFD_CONTRIBUICOES
 from ..tipos import ModulosT, ModuloT
 
 
 # Controla qual versão de cada módulo será carregada por padrão
 MODULOS_PADROES: dict[ModuloT, tuple[str, str]] = {
+    ECD: ("009", "2026.01"),
+    ECF: ("012", "2026.02"),
     EFD_CONTRIBUICOES: ("006", "1.35"),
     EFD_ICMS_IPI: ("020", "3.2.3")
 }
