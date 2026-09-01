@@ -49,7 +49,7 @@ class Componente(ABC):
         return sum(filho.tamanho for filho in self.filhos)
 
     @property
-    def registros(self) -> ListaRegistro:
+    def registros(self) -> "ListaRegistro[Registro]":
         return self.buscar()
 
 
@@ -64,7 +64,7 @@ class Componente(ABC):
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
-    ) -> "ListaRegistro":
+    ) -> "ListaRegistro[Registro]":
         return self.filhos.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=primeiro

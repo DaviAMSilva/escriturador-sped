@@ -41,7 +41,7 @@ class Escrituracao(Componente, ABC):
 
 
     def __init__(self, modulo: ModuloT, escrituracao_texto: str, nome: str) -> None:
-        super().__init__(modulo, nome.upper(), ListaRegistro())
+        super().__init__(modulo, nome.upper(), ListaRegistro[Registro]())
 
         self.blocos: dict[str, Bloco] = {}
 

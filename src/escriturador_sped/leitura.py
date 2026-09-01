@@ -14,7 +14,7 @@ from .modulos import MODULOS, ModuloT
 
 
 
-def ler_registros(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro:
+def ler_registros(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro[Registro]:
     if not registros or not isinstance(registros, (str, Iterable)):
         raise TypeError(f"Tipo inválido para parâmetro 'registros' ({registros})")
 
@@ -28,7 +28,7 @@ def ler_registros(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegis
     ultimos_registros: list[Registro | None] = [None for _ in range(MAIOR_NIVEL + 1)]
 
     # Para a lista atual de registros é usado para os registros que estão na raiz e não têm pais
-    registros_raiz = ListaRegistro()
+    registros_raiz = ListaRegistro[Registro]()
 
     # Para cada registro informado
     for registro_atual in registros:

@@ -60,8 +60,8 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True,
         primeiro=False
-    ) -> "ListaRegistro":
-        encontrados = ListaRegistro()
+    ) -> "ListaRegistro[Registro]":
+        encontrados = ListaRegistro["Registro"]()
 
         if nome:
             nome = nome.upper()
@@ -71,7 +71,7 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
 
             if valido:
                 if primeiro:
-                    return ListaRegistro([filho])
+                    return ListaRegistro["Registro"]([filho])
 
                 encontrados.append(filho)
 
@@ -95,7 +95,7 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
-    ) -> RegistroT:
+    ) -> "Registro":
         encontrado = self.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True

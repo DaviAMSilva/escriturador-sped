@@ -26,7 +26,7 @@ class Registro(Componente):
         return ORDEM_BLOCOS[modulo].index(nome[0].upper()) * 1000 + int(nome[1:4])
 
     @staticmethod
-    def ler(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro:
+    def ler(registros: str | Iterable[str], modulo: ModuloT) -> "ListaRegistro[Registro]":
         from ..leitura import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
         return ler_registros(registros, modulo)
 
@@ -62,7 +62,7 @@ class Registro(Componente):
             nome_registro = textos_campos[0].upper()
             info_registro = info_registros[nome_registro]
 
-            super().__init__(modulo, nome_registro, ListaRegistro())
+            super().__init__(modulo, nome_registro, ListaRegistro["Registro"]())
 
             info_campos = info_registro["campos"]
             esperado = len(info_campos)
@@ -99,7 +99,7 @@ class Registro(Componente):
 
             info_registro = info_registros[nome_registro]
 
-            super().__init__(modulo, nome_registro, ListaRegistro())
+            super().__init__(modulo, nome_registro, ListaRegistro["Registro"]())
 
             self.campos = TuplaCampo(
                 Campo(
@@ -230,7 +230,7 @@ class Registro(Componente):
 
 
 
-    def adicionar(self, registros: "Registro | ListaRegistro | Iterable[Registro]") -> Self:
+    def adicionar(self, registros: "Registro | ListaRegistro[Registro] | Iterable[Registro]") -> Self:
         for novo_registro in [registros] if isinstance(registros, Registro) else registros:
             if not isinstance(novo_registro, Registro):
                 raise TypeError(f"Item não é um registro ({novo_registro!r})")
@@ -255,7 +255,7 @@ class Registro(Componente):
     @overload
     def remover(
         self,
-        registros: "Registro | ListaRegistro | Iterable[Registro]",
+        registros: "Registro | ListaRegistro[Registro] | Iterable[Registro]",
         *,
         nome: Never = ...,
         filtro: Never = ...,
@@ -277,7 +277,7 @@ class Registro(Componente):
 
     def remover(
         self,
-        registros: "Registro | ListaRegistro | Iterable[Registro] | None" = None,
+        registros: "Registro | ListaRegistro[Registro] | Iterable[Registro] | None" = None,
         *,
         nome: str | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
