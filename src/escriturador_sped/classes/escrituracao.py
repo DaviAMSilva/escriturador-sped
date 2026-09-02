@@ -235,7 +235,7 @@ class Escrituracao(Componente, ABC):
 
 
 
-class EfdIcmsIpi(Escrituracao):
+class EscrituracaoEfdIcmsIpi(Escrituracao):
     MODULO = Escrituracao.EFD_ICMS_IPI
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
@@ -249,7 +249,7 @@ class EfdIcmsIpi(Escrituracao):
 
 
 
-class EfdContribuicoes(Escrituracao):
+class EscrituracaoEfdContribuicoes(Escrituracao):
     MODULO = Escrituracao.EFD_CONTRIBUICOES
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
