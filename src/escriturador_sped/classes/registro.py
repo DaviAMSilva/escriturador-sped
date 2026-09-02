@@ -18,16 +18,22 @@ from .componente import Componente
 
 
 class Registro(Componente):
-    @staticmethod
-    def ordem(nome: str, modulo: ModuloT) -> int:
+    MODULO: ModuloT
+
+    @classmethod
+    def ordem(cls, nome: str, modulo: ModuloT) -> int:
         # Exemplos:
         # 0100 ->    0 + 100 =  100
         # C500 -> 2000 + 500 = 2500
         return ORDEM_BLOCOS[modulo].index(nome[0].upper()) * 1000 + int(nome[1:4])
 
-    @staticmethod
-    def ler(registros: str | Iterable[str], modulo: ModuloT) -> "ListaRegistro[Registro]":
+    @classmethod
+    def ler(cls, registros: str | Iterable[str], modulo: ModuloT | None = None) -> ListaRegistro:
         from ..leitura import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
+
+        if not modulo:
+            modulo = cls.MODULO
+
         return ler_registros(registros, modulo)
 
 
