@@ -47,6 +47,25 @@ COLUNAS: dict[ModuloT, dict[Literal["campos", "registros"], list[str]]] = {
 }
 
 
+# Registros com quantidades variáveis de campos (suporte experimental)
+# list:  Múltiplos valores possíveis
+# tuple: Faixa de valores possíveis (inclusive)
+CAMPOS_VARIAVEIS: dict[ModuloT, dict[str, None | list[int] | tuple[int, int]]] = {
+    "ecd": {
+        # Leiaute parametrizável (I510)
+        "I550": (1, 100),
+        "I555": (1, 100),
+        # Campos adicionais (I020)
+        "I155": [9, 15],
+        "I157": [5, 7],
+        "I200": [6, 7],
+        "I250": [9, 11],
+        "I310": [5, 7],
+        "I355": [5, 7],
+    }
+}
+
+
 
 
 
@@ -123,14 +142,20 @@ def converter_registros(modulo: ModuloT, arquivo_registros: str, objeto_registro
             # )
 
 
+            try:
+                campos_variaveis = CAMPOS_VARIAVEIS[modulo][linha_registros["code"]]
+            except KeyError:
+                campos_variaveis = None
+
 
             objeto_registros[linha_registros["code"]] = {
                 "descricao": linha_registros["desc"].strip(),
                 "nivel": int(linha_registros["level"]),
                 "obrigatorio": registro_obrigatorio,
-                # Não é preciso armazenar informação adicional sobre ocorrências pois todo registro com nível > 2 é automaticamente um registro "filho"
                 "unico": linha_registros["card"].split(":")[-1] == "1",
                 "campos": [],
+                "campos_exatos": campos_variaveis if isinstance(campos_variaveis, list) else None,
+                "campos_faixa": campos_variaveis if isinstance(campos_variaveis, tuple) else None,
                 "filhos": [],
                 "pai": None
             }

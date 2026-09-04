@@ -2,7 +2,22 @@ from typing import Literal
 
 from ..constantes import ALFANUMERICO, NUMERICO
 from ..modulos import MODULOS, ModuloT
-from ..tipos import CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
+from ..tipos import CampoT, CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
+
+
+
+
+
+
+
+
+
+
+# Tipagem para tipos de campos específicos
+# pylint: disable=invalid-name
+type CampoC = Campo[Literal["C"], ValorC]
+type CampoN = Campo[Literal["N"], ValorN]
+# pylint: enable=invalid-name
 
 
 
@@ -73,7 +88,22 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
             if chave <= 0:
                 raise ValueError("Os campos de um registro têm a numeração iniciada pelo número 1")
 
-            info_campo = info_campos[chave - 1]
+            try:
+                info_campo = info_campos[chave - 1]
+            except IndexError:
+                # A execução só é suposta a chegar aqui se uma quantidade válida de campos for
+                # maior que a quantidade de campos fixos existentes (módulo ECD, I550 e I555)
+                # Nesse caso todos os campos restantes são tratados como campos alfanuméricos
+                info_campo: CampoT = {
+                    "numero": chave - 1,
+                    "nome": f"CAMPO{chave:02d}",
+                    "descricao": "",
+                    "obrigatorio": False,
+                    "tamanho": 255,
+                    "tamanho_exato": False,
+                    "decimal": None,
+                    "tipo": "C"
+                }
         elif isinstance(chave, str):
             # Caso for o nome, encontrar o info_campo com esse nome
             for info_campo in info_campos:
@@ -211,10 +241,3 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
     @valor_n0.setter
     def valor_n0(self, valor: Valor) -> None:
         self.valor = valor
-
-
-# Tipagem para tipos de campos específicos
-# pylint: disable=invalid-name
-type CampoC = Campo[Literal["C"], ValorC]
-type CampoN = Campo[Literal["N"], ValorN]
-# pylint: enable=invalid-name

@@ -1,5 +1,4 @@
 import glob
-from decimal import Decimal, InvalidOperation
 
 import pytest
 
@@ -30,8 +29,11 @@ def comparar_escrituracoes(texto1: str, texto2: str, modulo: ModuloT):
 
 def comparar_campos(modulo: ModuloT, campos1: list[str], campos2: list[str], nome1: str, nome2: str):
     for i, (campo1, campo2) in enumerate(zip(campos1, campos2)):
-        tipo1 = MODULOS[modulo]["registros"][nome1]["campos"][i]["tipo"]
-        tipo2 = MODULOS[modulo]["registros"][nome2]["campos"][i]["tipo"]
+        try:
+            tipo1 = MODULOS[modulo]["registros"][nome1]["campos"][i]["tipo"]
+            tipo2 = MODULOS[modulo]["registros"][nome2]["campos"][i]["tipo"]
+        except IndexError:
+            tipo1, tipo2 = "C", "C"
 
         assert tipo1 == tipo2
 
@@ -41,8 +43,8 @@ def comparar_campos(modulo: ModuloT, campos1: list[str], campos2: list[str], nom
                 continue
 
             try:
-                valor1 = Decimal(campo1.replace(",", "."))
-                valor2 = Decimal(campo2.replace(",", "."))
+                valor1 = float(campo1.replace(",", "."))
+                valor2 = float(campo2.replace(",", "."))
 
                 # Valor numérico
                 assert valor1 == valor2
@@ -50,8 +52,8 @@ def comparar_campos(modulo: ModuloT, campos1: list[str], campos2: list[str], nom
                 # Valor numérico com tamanho exato
                 if MODULOS[modulo]["registros"][nome1]["campos"][i]["tamanho_exato"]:
                     assert campo1 == campo2
-            except InvalidOperation as e:
-                raise ValueError("Não foi possível converter para decimal") from e
+            except ValueError as e:
+                raise ValueError("Não foi possível converter para float") from e
         elif tipo1 == Campo.ALFANUMERICO:
             # Valor alfanumérico
             assert campo1 == campo2

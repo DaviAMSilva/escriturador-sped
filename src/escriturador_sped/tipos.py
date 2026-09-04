@@ -36,6 +36,8 @@ class RegistroT(TypedDict):
     obrigatorio: bool
     unico: bool
     campos: list["CampoT"]
+    campos_exatos: list[int] | None
+    campos_faixa: tuple[int, int] | None
     filhos: list[str]
     pai: str | None
 
