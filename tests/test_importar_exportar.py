@@ -1,4 +1,5 @@
 import glob
+from typing import assert_never
 
 import pytest
 
@@ -58,7 +59,7 @@ def comparar_campos(modulo: ModuloT, campos1: list[str], campos2: list[str], nom
             # Valor alfanumérico
             assert campo1 == campo2
         else:
-            raise ValueError(f"Tipo de campo desconhecido: {tipo1}")
+            assert_never(tipo1)
 
 
 @pytest.mark.parametrize("arquivo", glob.glob("*.txt", root_dir="exemplos/"))

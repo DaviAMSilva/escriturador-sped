@@ -104,7 +104,7 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         try:
             return encontrado[0]
         except IndexError as e:
-            raise ValueError("O registro pesquisado não foi encontrado") from e
+            raise ValueError("O registro buscado não foi encontrado") from e
 
 
 

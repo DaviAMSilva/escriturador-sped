@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, assert_never
 
 from ..constantes import ALFANUMERICO, NUMERICO
 from ..modulos import MODULOS, ModuloT
@@ -153,7 +153,7 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
         if self.tipo == Campo.NUMERICO:
             return self.valor_n  # type: ignore
 
-        raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
+        assert_never(self.tipo)
 
     @valor.setter
     def valor(self, valor: Valor) -> None:
@@ -198,7 +198,7 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
 
 
-        raise ValueError(f"Tipo de campo desconhecido ({self.tipo})")
+        assert_never(self.tipo)
 
 
 
