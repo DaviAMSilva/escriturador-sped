@@ -20,7 +20,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -e .[DEV]
-    - name: Convertendo tabelas
+    - name: Convertendo módulos
       run: |
         python scripts/conversor.py
     - name: Testar com pytest

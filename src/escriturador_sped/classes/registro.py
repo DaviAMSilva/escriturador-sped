@@ -1,6 +1,6 @@
 from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
-from ..constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES, ORDEM_BLOCOS
+from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..estruturas.tupla_campo import TuplaCampo
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
@@ -71,14 +71,36 @@ class Registro(Componente):
             super().__init__(modulo, nome_registro, ListaRegistro["Registro"]())
 
             info_campos = info_registro["campos"]
-            esperado = len(info_campos)
-            recebido = len(textos_campos)
 
-            if recebido != esperado:
-                raise SyntaxError(
-                    f"A quantidade de campos é diferente da esperada ({recebido} ao invés de {esperado} no registro {self.nome})."
-                    f"{' É provável que o tipo da escrituração esteja incorreto' if self.nome == '0000' else ''}"
-                )
+            campos_encontrados = len(textos_campos)
+
+            campos_exatos = MODULOS[modulo]["registros"][nome_registro]["campos_exatos"]
+            campos_faixa = MODULOS[modulo]["registros"][nome_registro]["campos_faixa"]
+
+            # Testando se a quantidade de campos encontrados é válida
+            if campos_exatos:
+                # Registro precisa ter uma de várias quantidades possíveis de campos
+                if campos_encontrados not in campos_exatos:
+                    raise SyntaxError(
+                        f"A quantidade de campos ({campos_encontrados}) não está presente na lista de "
+                        f"quantidades esperadas ({campos_exatos!r}) no registro '{self.nome}'"
+                    )
+            elif campos_faixa:
+                # Registro precisa ter uma quantidade de campos entre dois limites (inclusive)
+                if not campos_faixa[0] <= campos_encontrados <= campos_faixa[1]:
+                    raise SyntaxError(
+                        f"A quantidade de campos ({campos_encontrados}) não está dentro da faixa de "
+                        f"quantidades esperadas ({tuple(campos_faixa)!r}) no registro '{self.nome}'"
+                    )
+            else:
+                # Registro precisa ter uma quantidade exata de campos
+                campos_esperados = len(info_campos)
+                if campos_encontrados != campos_esperados:
+                    raise SyntaxError(
+                        "A quantidade de campos é diferente da esperada "
+                        f"({campos_encontrados} ao invés de {campos_esperados} no registro {self.nome})."
+                        f"{' É provável que o tipo da escrituração esteja incorreto' if self.nome == '0000' else ''}"
+                    )
 
             self.campos = TuplaCampo(
                 Campo(modulo, nome_registro, i, valor)
@@ -137,8 +159,13 @@ class Registro(Componente):
 
 
     def __getattr__(self, nome: str) -> Campo[CampoTipoT, Valor]:
-        if nome in self.__getattribute__("campos"):
-            return self.__getattribute__("campos")[nome]
+        nome_hifen = nome.replace("__", "-")
+        nome_barra = nome.replace("__", "/")
+
+        if nome_hifen in self.__getattribute__("campos"):
+            return self.__getattribute__("campos")[nome_hifen]
+        if nome_barra in self.__getattribute__("campos"):
+            return self.__getattribute__("campos")[nome_barra]
 
         raise AttributeError(f"O campo com nome {nome!r} não existe em {self!r}")
 
@@ -324,6 +351,16 @@ class Registro(Componente):
 
 
 
+
+
+class RegistroEcd(Registro):
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
+        super().__init__(ECD, campos, pai)
+
+
+class RegistroEcf(Registro):
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
+        super().__init__(ECF, campos, pai)
 
 
 class RegistroEfdIcmsIpi(Registro):

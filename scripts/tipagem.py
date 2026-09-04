@@ -2,10 +2,11 @@ import os
 from glob import glob
 from pathlib import Path
 
-from escriturador_sped import EFD_ICMS_IPI, EFD_CONTRIBUICOES, MODULOS, ModuloT
-
+from escriturador_sped import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, MODULOS, ModuloT
 
 MODULOS_CLASSES = {
+    ECD: "Ecd",
+    ECF: "Ecf",
     EFD_ICMS_IPI: "EfdIcmsIpi",
     EFD_CONTRIBUICOES: "EfdContribuicoes"
 }
@@ -26,15 +27,15 @@ def main():
             # Cabeçalho da classe
             arquivo_conteudo += (
                 f"\n\nclass Registro{nome_registro}(Registro{MODULOS_CLASSES[modulo]}):\n"
-                f"    '''{info_registro['descricao']}'''\n"
+                f"    r'''{info_registro['descricao']}'''\n"
                 f"    nome = '{nome_registro}'\n"
             )
 
             for campo in info_registro["campos"]:
-                # Hifens ('-') em nomes de campos serão substituídos por dois underlines ('__')
+                # Hifens ('-') e barras ('/') em nomes de campos serão substituídos por dois underlines ('__')
                 arquivo_conteudo += (
-                    f"    {campo['nome'].replace('-', '__')}: Campo{campo['tipo']}\n"
-                    f"    '''{campo['descricao']}'''\n"
+                    f"    {campo['nome'].replace('-', '__').replace('/', '__')}: Campo{campo['tipo']}\n"
+                    f"    r'''{campo['descricao']}'''\n"
                 )
 
         pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")

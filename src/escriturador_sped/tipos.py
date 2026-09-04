@@ -2,7 +2,7 @@ from typing import Literal, TypedDict
 
 
 # pylint: disable=invalid-name
-type ModuloT = Literal["efd_contribuicoes", "efd_icms_ipi"]
+type ModuloT = Literal["ecd", "ecf", "efd_contribuicoes", "efd_icms_ipi"]
 type ModulosT = dict[ModuloT, "LeiauteT"]
 
 type CampoTipoT = Literal["C", "N"]
@@ -36,6 +36,8 @@ class RegistroT(TypedDict):
     obrigatorio: bool
     unico: bool
     campos: list["CampoT"]
+    campos_exatos: list[int] | None
+    campos_faixa: tuple[int, int] | None
     filhos: list[str]
     pai: str | None
 

@@ -1,8 +1,8 @@
 import os
 
 from escriturador_sped.arquivos import abrir_escrituracao
-from escriturador_sped.classes.escrituracao import EscrituracaoEfdIcmsIpi, EscrituracaoEfdContribuicoes, Escrituracao
-from escriturador_sped.constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES
+from escriturador_sped.classes.escrituracao import Escrituracao, EscrituracaoEcd, EscrituracaoEcf, EscrituracaoEfdContribuicoes, EscrituracaoEfdIcmsIpi
+from escriturador_sped.constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI
 
 
 class Cache():
@@ -18,7 +18,11 @@ class Cache():
 
     def escrituracao(self, arquivo: str) -> Escrituracao:
         if arquivo not in self.escrituracoes:
-            if EFD_ICMS_IPI in arquivo:
+            if ECD in arquivo:
+                self.escrituracoes[arquivo] = EscrituracaoEcd(self.texto(arquivo))
+            elif ECF in arquivo:
+                self.escrituracoes[arquivo] = EscrituracaoEcf(self.texto(arquivo))
+            elif EFD_ICMS_IPI in arquivo:
                 self.escrituracoes[arquivo] = EscrituracaoEfdIcmsIpi(self.texto(arquivo))
             elif EFD_CONTRIBUICOES in arquivo:
                 self.escrituracoes[arquivo] = EscrituracaoEfdContribuicoes(self.texto(arquivo))

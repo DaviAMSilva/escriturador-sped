@@ -6,13 +6,13 @@ from glob import glob
 from pathlib import Path
 from typing import Literal
 
+# Permite importar a biblioteca mesmo sem os módulos gerados
+# pylint: disable=wrong-import-position
+os.environ["__CONVERSAO__"] = "1"
+
 from escriturador_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
 from escriturador_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
-# Permite importar a biblioteca mesmo sem os módulos gerados
-os.environ["__CONVERSAO__"] = "1"
-
-# pylint: disable=wrong-import-position
 
 
 
@@ -28,6 +28,14 @@ JSON_INDENTACAO = 4
 
 # Nomes das colunas esperadas para cada arquivo e cada módulo
 COLUNAS: dict[ModuloT, dict[Literal["campos", "registros"], list[str]]] = {
+    "ecd": {
+        "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Valores Válidos", "Obrig", "Regras de Validação do Campo"],
+        "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
+    },
+    "ecf": {
+        "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Valores Válidos", "Obrig"],
+        "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
+    },
     "efd_contribuicoes": {
         "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig"],
         "registros": ["block", "code", "required", "level", "card", "spec_required", "desc"]
@@ -35,6 +43,25 @@ COLUNAS: dict[ModuloT, dict[Literal["campos", "registros"], list[str]]] = {
     "efd_icms_ipi": {
         "campos": ["Register", "Nº", "Campo", "Descrição", "Tipo", "Tam", "Dec", "Obrig", "Entr", "Saídas"],
         "registros": ["block", "code", "required", "in_required", "out_required", "level", "card", "spec_required", "spec_in", "spec_out", "desc"],
+    }
+}
+
+
+# Registros com quantidades variáveis de campos (suporte experimental)
+# list:  Múltiplos valores possíveis
+# tuple: Faixa de valores possíveis (inclusive)
+CAMPOS_VARIAVEIS: dict[ModuloT, dict[str, None | list[int] | tuple[int, int]]] = {
+    "ecd": {
+        # Leiaute parametrizável (I510)
+        "I550": (1, 100),
+        "I555": (1, 100),
+        # Campos adicionais (I020)
+        "I155": [9, 15],
+        "I157": [5, 7],
+        "I200": [6, 7],
+        "I250": [9, 11],
+        "I310": [5, 7],
+        "I355": [5, 7],
     }
 }
 
@@ -115,14 +142,20 @@ def converter_registros(modulo: ModuloT, arquivo_registros: str, objeto_registro
             # )
 
 
+            try:
+                campos_variaveis = CAMPOS_VARIAVEIS[modulo][linha_registros["code"]]
+            except KeyError:
+                campos_variaveis = None
+
 
             objeto_registros[linha_registros["code"]] = {
                 "descricao": linha_registros["desc"].strip(),
                 "nivel": int(linha_registros["level"]),
                 "obrigatorio": registro_obrigatorio,
-                # Não é preciso armazenar informação adicional sobre ocorrências pois todo registro com nível > 2 é automaticamente um registro "filho"
                 "unico": linha_registros["card"].split(":")[-1] == "1",
                 "campos": [],
+                "campos_exatos": campos_variaveis if isinstance(campos_variaveis, list) else None,
+                "campos_faixa": campos_variaveis if isinstance(campos_variaveis, tuple) else None,
                 "filhos": [],
                 "pai": None
             }
@@ -194,6 +227,10 @@ def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dic
             )
 
 
+
+            # Por enquanto não há distinção entre N e NS (NUMÉRICO SINALIZADO), mas possivelmente haverá no futuro
+            if linha_campos["Tipo"] == "NS":
+                linha_campos["Tipo"] = "N"
 
             # Testa se o tipo de campo é um dos valores válidos
             assert linha_campos["Tipo"] in ("C", "N"), f"Tipo inesperado: {linha_campos['Tipo']}"

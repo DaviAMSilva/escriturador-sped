@@ -56,7 +56,7 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
             if isinstance(chave, str):
                 return self.dicionario[chave]
         except KeyError as e:
-            raise KeyError(f"Campo não encontrado pelo valor de pesquisa ({chave})") from e
+            raise KeyError(f"Campo não encontrado pelo valor de busca ({chave})") from e
 
         raise TypeError(f"Valor inválido ({chave})")
 

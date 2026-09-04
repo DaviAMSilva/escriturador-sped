@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Self
 
 from ..arquivos import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
-from ..constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES, ORDEM_BLOCOS
+from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
 from .bloco import Bloco
@@ -12,16 +12,10 @@ from .componente import Componente
 from .registro import Registro
 
 
-
-
-
-
-
-
-
-
 class Escrituracao(Componente, ABC):
     # Tipos de campo
+    ECD = ECD
+    ECF = ECF
     EFD_ICMS_IPI = EFD_ICMS_IPI
     EFD_CONTRIBUICOES = EFD_CONTRIBUICOES
 
@@ -235,14 +229,42 @@ class Escrituracao(Componente, ABC):
 
 
 
+class EscrituracaoEcd(Escrituracao):
+    MODULO = Escrituracao.ECD
+
+    def __init__(self, escrituracao_texto: str | None = None) -> None:
+        if isinstance(escrituracao_texto, str):
+            super().__init__(ECD, escrituracao_texto, ECD.upper())
+        elif escrituracao_texto is None:
+            super().__init__(ECD, "|0000|||||||||||||||||||||||\n|9999|2|", ECD.upper())
+        else:
+            raise TypeError("Texto da escrituração inválido")
+
+
+
+
+class EscrituracaoEcf(Escrituracao):
+    MODULO = Escrituracao.ECF
+
+    def __init__(self, escrituracao_texto: str | None = None) -> None:
+        if isinstance(escrituracao_texto, str):
+            super().__init__(ECF, escrituracao_texto, ECF.upper())
+        elif escrituracao_texto is None:
+            super().__init__(ECF, "|0000||||||||||||||||\n|9999|2|", ECF.upper())
+        else:
+            raise TypeError("Texto da escrituração inválido")
+
+
+
+
 class EscrituracaoEfdIcmsIpi(Escrituracao):
     MODULO = Escrituracao.EFD_ICMS_IPI
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(EFD_ICMS_IPI, escrituracao_texto, "EFD_ICMS_IPI")
+            super().__init__(EFD_ICMS_IPI, escrituracao_texto, EFD_ICMS_IPI.upper())
         elif escrituracao_texto is None:
-            super().__init__(EFD_ICMS_IPI, "|0000|||||||||||||||\n|9999|2|", "EFD_ICMS_IPI")
+            super().__init__(EFD_ICMS_IPI, "|0000|||||||||||||||\n|9999|2|", EFD_ICMS_IPI.upper())
         else:
             raise TypeError("Texto da escrituração inválido")
 
@@ -254,8 +276,8 @@ class EscrituracaoEfdContribuicoes(Escrituracao):
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
-            super().__init__(EFD_CONTRIBUICOES, escrituracao_texto, "EFD_CONTRIBUICOES")
+            super().__init__(EFD_CONTRIBUICOES, escrituracao_texto, EFD_CONTRIBUICOES.upper())
         elif escrituracao_texto is None:
-            super().__init__(EFD_CONTRIBUICOES, "|0000||||||||||||||\n|9999|2|", "EFD_CONTRIBUICOES")
+            super().__init__(EFD_CONTRIBUICOES, "|0000||||||||||||||\n|9999|2|", EFD_CONTRIBUICOES.upper())
         else:
             raise TypeError("Texto da escrituração inválido")
