@@ -4,20 +4,12 @@ from pathlib import Path
 from typing import Self
 
 from ..arquivos import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
-from ..constantes import EFD_ICMS_IPI, EFD_CONTRIBUICOES, ORDEM_BLOCOS, ECD, ECF
+from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, ORDEM_BLOCOS
 from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import MODULOS, MODULOS_NOMES, ModuloT
 from .bloco import Bloco
 from .componente import Componente
 from .registro import Registro
-
-
-
-
-
-
-
-
 
 
 class Escrituracao(Componente, ABC):
@@ -237,7 +229,7 @@ class Escrituracao(Componente, ABC):
 
 
 
-class Ecd(Escrituracao):
+class EscrituracaoEcd(Escrituracao):
     MODULO = Escrituracao.ECD
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
@@ -251,7 +243,7 @@ class Ecd(Escrituracao):
 
 
 
-class Ecf(Escrituracao):
+class EscrituracaoEcf(Escrituracao):
     MODULO = Escrituracao.ECF
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
@@ -265,7 +257,7 @@ class Ecf(Escrituracao):
 
 
 
-class EfdIcmsIpi(Escrituracao):
+class EscrituracaoEfdIcmsIpi(Escrituracao):
     MODULO = Escrituracao.EFD_ICMS_IPI
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
@@ -279,7 +271,7 @@ class EfdIcmsIpi(Escrituracao):
 
 
 
-class EfdContribuicoes(Escrituracao):
+class EscrituracaoEfdContribuicoes(Escrituracao):
     MODULO = Escrituracao.EFD_CONTRIBUICOES
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:

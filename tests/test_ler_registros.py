@@ -3,7 +3,7 @@ import glob
 import pytest
 
 from escriturador_sped import MODULOS_NOMES, Registro
-from escriturador_sped.constantes import ECD, ECF, EFD_ICMS_IPI, EFD_CONTRIBUICOES
+from escriturador_sped.constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI
 
 from .cache import cache
 

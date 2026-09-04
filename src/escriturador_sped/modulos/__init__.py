@@ -2,7 +2,7 @@ import json
 import os
 from importlib.resources import files
 
-from ..constantes import ECD, ECF, EFD_ICMS_IPI, EFD_CONTRIBUICOES
+from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI
 from ..tipos import ModulosT, ModuloT
 
 
