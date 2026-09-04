@@ -97,3 +97,6 @@ addopts = "-s"
 
 [tool.check-wheel-contents]
 toplevel = ["escriturador_sped"]
+
+[tool.coverage.run]
+omit = ["tests/*", "tasks.py"]
