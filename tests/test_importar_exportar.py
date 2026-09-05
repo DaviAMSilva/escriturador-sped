@@ -1,14 +1,14 @@
 import glob
-from decimal import Decimal, InvalidOperation
+from typing import assert_never
 
 import pytest
 
-from editor_sped import EFD_ICMS_IPI, EFD_INFO, EFD_PIS_COFINS, Campo, EfdTipo
+from escriturador_sped import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, MODULOS, Campo, ModuloT
 
 from .cache import cache
 
 
-def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
+def comparar_escrituracoes(texto1: str, texto2: str, modulo: ModuloT):
     lines1 = texto1.splitlines()
     lines2 = texto2.splitlines()
 
@@ -25,13 +25,16 @@ def comparar_escrituracoes(texto1: str, texto2: str, efd_tipo: EfdTipo):
         assert nome1 == nome2
         assert len(campos1) == len(campos2)
 
-        comparar_campos(efd_tipo, campos1, campos2, nome1, nome2)
+        comparar_campos(modulo, campos1, campos2, nome1, nome2)
 
 
-def comparar_campos(efd_tipo: EfdTipo, campos1: list[str], campos2: list[str], nome1: str, nome2: str):
+def comparar_campos(modulo: ModuloT, campos1: list[str], campos2: list[str], nome1: str, nome2: str):
     for i, (campo1, campo2) in enumerate(zip(campos1, campos2)):
-        tipo1 = EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tipo"]
-        tipo2 = EFD_INFO[efd_tipo]["registros"][nome2]["campos"][i]["tipo"]
+        try:
+            tipo1 = MODULOS[modulo]["registros"][nome1]["campos"][i]["tipo"]
+            tipo2 = MODULOS[modulo]["registros"][nome2]["campos"][i]["tipo"]
+        except IndexError:
+            tipo1, tipo2 = "C", "C"
 
         assert tipo1 == tipo2
 
@@ -41,25 +44,25 @@ def comparar_campos(efd_tipo: EfdTipo, campos1: list[str], campos2: list[str], n
                 continue
 
             try:
-                valor1 = Decimal(campo1.replace(",", "."))
-                valor2 = Decimal(campo2.replace(",", "."))
+                valor1 = float(campo1.replace(",", "."))
+                valor2 = float(campo2.replace(",", "."))
 
                 # Valor numérico
                 assert valor1 == valor2
 
                 # Valor numérico com tamanho exato
-                if EFD_INFO[efd_tipo]["registros"][nome1]["campos"][i]["tamanho_exato"]:
+                if MODULOS[modulo]["registros"][nome1]["campos"][i]["tamanho_exato"]:
                     assert campo1 == campo2
-            except InvalidOperation as e:
-                raise ValueError("Não foi possível converter para decimal") from e
+            except ValueError as e:
+                raise ValueError("Não foi possível converter para float") from e
         elif tipo1 == Campo.ALFANUMERICO:
             # Valor alfanumérico
             assert campo1 == campo2
         else:
-            raise ValueError(f"Tipo de campo desconhecido: {tipo1}")
+            assert_never(tipo1)
 
 
-@pytest.mark.parametrize("arquivo", glob.glob("efd_*.txt", root_dir="exemplos/"))
+@pytest.mark.parametrize("arquivo", glob.glob("*.txt", root_dir="exemplos/"))
 def test_importar_exportar(arquivo: str):
     escrituracao_texto = cache.texto(arquivo)
     escrituracao = cache.escrituracao(arquivo)
@@ -67,9 +70,13 @@ def test_importar_exportar(arquivo: str):
     escrituracao.totalizar()
     resultado = escrituracao.texto()
 
-    if EFD_ICMS_IPI in arquivo:
+    if ECD in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, ECD)
+    elif ECF in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, ECF)
+    elif EFD_ICMS_IPI in arquivo:
         comparar_escrituracoes(escrituracao_texto, resultado, EFD_ICMS_IPI)
-    elif EFD_PIS_COFINS in arquivo:
-        comparar_escrituracoes(escrituracao_texto, resultado, EFD_PIS_COFINS)
+    elif EFD_CONTRIBUICOES in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, EFD_CONTRIBUICOES)
     else:
         raise ValueError(f"Arquivo inválido: {arquivo}")

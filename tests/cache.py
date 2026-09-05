@@ -1,8 +1,8 @@
 import os
 
-from editor_sped.classes.escrituracao import Escrituracao, EscrituracaoICMSIPI, EscrituracaoPISCOFINS
-from editor_sped.constantes import EFD_ICMS_IPI, EFD_PIS_COFINS
-from editor_sped.utilidades import abrir_escrituracao
+from escriturador_sped.arquivos import abrir_escrituracao
+from escriturador_sped.classes.escrituracao import Escrituracao, EscrituracaoEcd, EscrituracaoEcf, EscrituracaoEfdContribuicoes, EscrituracaoEfdIcmsIpi
+from escriturador_sped.constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI
 
 
 class Cache():
@@ -18,10 +18,16 @@ class Cache():
 
     def escrituracao(self, arquivo: str) -> Escrituracao:
         if arquivo not in self.escrituracoes:
-            if EFD_ICMS_IPI in arquivo:
-                self.escrituracoes[arquivo] = EscrituracaoICMSIPI(self.texto(arquivo))
-            if EFD_PIS_COFINS in arquivo:
-                self.escrituracoes[arquivo] = EscrituracaoPISCOFINS(self.texto(arquivo))
+            if ECD in arquivo:
+                self.escrituracoes[arquivo] = EscrituracaoEcd(self.texto(arquivo))
+            elif ECF in arquivo:
+                self.escrituracoes[arquivo] = EscrituracaoEcf(self.texto(arquivo))
+            elif EFD_ICMS_IPI in arquivo:
+                self.escrituracoes[arquivo] = EscrituracaoEfdIcmsIpi(self.texto(arquivo))
+            elif EFD_CONTRIBUICOES in arquivo:
+                self.escrituracoes[arquivo] = EscrituracaoEfdContribuicoes(self.texto(arquivo))
+            else:
+                raise ValueError(f"Arquivo inválido: {arquivo}")
 
         return self.escrituracoes[arquivo]
 
