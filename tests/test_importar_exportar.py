@@ -74,9 +74,9 @@ def test_importar_exportar(arquivo: str):
         comparar_escrituracoes(escrituracao_texto, resultado, ECD)
     elif ECF in arquivo:
         comparar_escrituracoes(escrituracao_texto, resultado, ECF)
-    elif EFD_ICMS_IPI in arquivo:
-        comparar_escrituracoes(escrituracao_texto, resultado, EFD_ICMS_IPI)
     elif EFD_CONTRIBUICOES in arquivo:
         comparar_escrituracoes(escrituracao_texto, resultado, EFD_CONTRIBUICOES)
+    elif EFD_ICMS_IPI in arquivo:
+        comparar_escrituracoes(escrituracao_texto, resultado, EFD_ICMS_IPI)
     else:
         raise ValueError(f"Arquivo inválido: {arquivo}")

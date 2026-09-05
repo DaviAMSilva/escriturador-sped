@@ -20,6 +20,8 @@ from .componente import Componente
 class Registro(Componente):
     MODULO: ModuloT
 
+
+
     @classmethod
     def ordem(cls, nome: str, modulo: ModuloT) -> int:
         # Exemplos:
