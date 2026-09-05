@@ -14,13 +14,12 @@ with as_file(files("escriturador_sped.modulos")) as modulos_raiz:
     for caminho in sorted(modulos_raiz.glob("*/*/*/")):
         modulo: ModuloT
         modulo, leiaute, versao = caminho.parts[-3:] # type: ignore
-        modulos[modulo].append((leiaute, versao))
+        modulos[modulo].append((leiaute[1:], versao[1:].replace("_", ".")))
 
 
 for modulo, leiautes_versoes in modulos.items():
     print(f"\n[{modulo}]")
     for leiaute, versao in leiautes_versoes:
-        leiaute, versao = leiaute[1:], versao[1:].replace("_", ".")
         try:
             print("* " if MODULOS_PADROES[modulo] == (leiaute, versao) else "  ", end="")
             print(f"Leiaute: {leiaute} - Versão: {versao}")

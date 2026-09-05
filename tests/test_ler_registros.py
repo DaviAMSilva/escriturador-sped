@@ -16,10 +16,10 @@ def test_ler_registros(arquivo: str):
         registros = Registro.ler(registros_texto, ECD)
     elif ECF in arquivo:
         registros = Registro.ler(registros_texto, ECF)
-    elif EFD_ICMS_IPI in arquivo:
-        registros = Registro.ler(registros_texto, EFD_ICMS_IPI)
     elif EFD_CONTRIBUICOES in arquivo:
         registros = Registro.ler(registros_texto, EFD_CONTRIBUICOES)
+    elif EFD_ICMS_IPI in arquivo:
+        registros = Registro.ler(registros_texto, EFD_ICMS_IPI)
     else:
         raise ValueError(f"Arquivo inválido: {arquivo}")
 

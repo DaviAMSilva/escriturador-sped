@@ -7,13 +7,13 @@ from ..tipos import ModulosT, ModuloT
 
 
 # Controla qual versão de cada módulo será carregada por padrão
+MODULOS_NOMES: tuple[ModuloT, ...] = (ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI)
 MODULOS_PADROES: dict[ModuloT, tuple[str, str]] = {
     ECD: ("009", "2026.01"),
     ECF: ("012", "2026.02"),
     EFD_CONTRIBUICOES: ("006", "1.35"),
     EFD_ICMS_IPI: ("020", "3.2.3")
 }
-MODULOS_NOMES: tuple[ModuloT, ...] = tuple(MODULOS_PADROES.keys())
 
 
 # Usado para escolher qual versão a ser carregada

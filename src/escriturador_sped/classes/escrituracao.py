@@ -13,21 +13,21 @@ from .registro import Registro
 
 
 class Escrituracao(Componente, ABC):
-    # Tipos de campo
+    MODULO = None
+
     ECD = ECD
     ECF = ECF
     EFD_ICMS_IPI = EFD_ICMS_IPI
     EFD_CONTRIBUICOES = EFD_CONTRIBUICOES
 
     MODULOS_NOMES = MODULOS_NOMES
-    MODULO = None
 
 
 
     @classmethod
     def abrir(cls, arquivo: str | Path) -> Self:
         # Isso é estranho, mas funciona pois as subclasses usam apenas um parâmetro
-        return cls(abrir_escrituracao(arquivo))  # type: ignore # pylint: disable=no-value-for-parameter
+        return cls(abrir_escrituracao(arquivo))  # pyright: ignore[reportCallIssue] # pylint: disable=no-value-for-parameter
 
     def salvar(self, arquivo: str | Path) -> None:
         salvar_escrituracao(arquivo, self.texto())
@@ -242,7 +242,6 @@ class EscrituracaoEcd(Escrituracao):
 
 
 
-
 class EscrituracaoEcf(Escrituracao):
     MODULO = Escrituracao.ECF
 
@@ -256,6 +255,18 @@ class EscrituracaoEcf(Escrituracao):
 
 
 
+class EscrituracaoEfdContribuicoes(Escrituracao):
+    MODULO = Escrituracao.EFD_CONTRIBUICOES
+
+    def __init__(self, escrituracao_texto: str | None = None) -> None:
+        if isinstance(escrituracao_texto, str):
+            super().__init__(EFD_CONTRIBUICOES, escrituracao_texto, EFD_CONTRIBUICOES.upper())
+        elif escrituracao_texto is None:
+            super().__init__(EFD_CONTRIBUICOES, "|0000||||||||||||||\n|9999|2|", EFD_CONTRIBUICOES.upper())
+        else:
+            raise TypeError("Texto da escrituração inválido")
+
+
 
 class EscrituracaoEfdIcmsIpi(Escrituracao):
     MODULO = Escrituracao.EFD_ICMS_IPI
@@ -265,19 +276,5 @@ class EscrituracaoEfdIcmsIpi(Escrituracao):
             super().__init__(EFD_ICMS_IPI, escrituracao_texto, EFD_ICMS_IPI.upper())
         elif escrituracao_texto is None:
             super().__init__(EFD_ICMS_IPI, "|0000|||||||||||||||\n|9999|2|", EFD_ICMS_IPI.upper())
-        else:
-            raise TypeError("Texto da escrituração inválido")
-
-
-
-
-class EscrituracaoEfdContribuicoes(Escrituracao):
-    MODULO = Escrituracao.EFD_CONTRIBUICOES
-
-    def __init__(self, escrituracao_texto: str | None = None) -> None:
-        if isinstance(escrituracao_texto, str):
-            super().__init__(EFD_CONTRIBUICOES, escrituracao_texto, EFD_CONTRIBUICOES.upper())
-        elif escrituracao_texto is None:
-            super().__init__(EFD_CONTRIBUICOES, "|0000||||||||||||||\n|9999|2|", EFD_CONTRIBUICOES.upper())
         else:
             raise TypeError("Texto da escrituração inválido")
