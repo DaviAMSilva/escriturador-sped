@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Visualizador de Registros - Editor SPED</title>
+    <title>Módulos SPED — Escriturador SPED</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="efd_info.js"></script>
+    <script src="modulos.js"></script>
     <style>
         body {
             font-family: sans-serif;
@@ -126,13 +126,15 @@
 <body>
     <span class="selecao">
         Escolha o tipo de escrituração:
-        <select name="efd_tipo" id="efd_tipo" onchange="toggleVisibility()">
+        <select name="seletor-modulo" id="seletor-modulo" onchange="toggleVisibility()">
+            <option value="ecd">ECD</option>
+            <option value="ecf">ECF</option>
+            <option value="efd_contribuicoes">EFD_CONTRIBUICOES</option>
             <option value="efd_icms_ipi">EFD_ICMS_IPI</option>
-            <option value="efd_pis_cofins">EFD_PIS_COFINS</option>
         </select>
     </span>
     <div id="container-principal">
-        <div id="container-efd_icms_ipi">
+        <div id="container-ecd">
             <table>
                 <thead>
                     <tr>
@@ -144,7 +146,31 @@
                 </tbody>
             </table>
         </div>
-        <div id="container-efd_pis_cofins">
+        <div id="container-ecf">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Registro</th>
+                        <th>Campos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="container-efd_contribuicoes">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Registro</th>
+                        <th>Campos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="container-efd_icms_ipi">
             <table>
                 <thead>
                     <tr>
@@ -158,40 +184,44 @@
         </div>
     </div>
     <script>
-        const EFD_ORDEM_BLOCOS = {
-            "efd_icms_ipi": ["0", "B", "C", "D", "E", "G", "H", "K", "1", "9"],
-            "efd_pis_cofins": ["0", "A", "C", "D", "F", "I", "M", "P", "1", "9"]
+        const ORDEM_BLOCOS = {
+            "ecd": ["0", "C", "I", "J", "K", "9"],
+            "ecf": ["0", "C", "E", "J", "K", "L", "M", "N", "P", "Q", "S", "T", "U", "V", "W", "X", "Y", "9"],
+            "efd_contribuicoes": ["0", "A", "C", "D", "F", "I", "M", "P", "1", "9"],
+            "efd_icms_ipi": ["0", "B", "C", "D", "E", "G", "H", "K", "1", "9"]
         }
 
 
 
         function toggleVisibility() {
-            const valorAtual = document.getElementById("efd_tipo").value;
+            const valorAtual = document.getElementById("seletor-modulo").value;
+            document.getElementById("container-ecd").style.display = valorAtual === "ecd" ? "block" : "none";
+            document.getElementById("container-ecf").style.display = valorAtual === "ecf" ? "block" : "none";
+            document.getElementById("container-efd_contribuicoes").style.display = valorAtual === "efd_contribuicoes" ? "block" : "none";
             document.getElementById("container-efd_icms_ipi").style.display = valorAtual === "efd_icms_ipi" ? "block" : "none";
-            document.getElementById("container-efd_pis_cofins").style.display = valorAtual === "efd_pis_cofins" ? "block" : "none";
         }
         toggleVisibility();
 
 
 
         // Testa se o arquivo foi carregado corretamente
-        if (typeof EFD_INFO === "undefined") {
-            const mensagemAviso = "O arquivo efd_info.json não foi encontrado. Tenha certeza que o arquivo foi gerado corretamente.";
+        if (typeof MODULOS === "undefined") {
+            const mensagemAviso = "O arquivo modulos.js não foi encontrado. Tenha certeza que o arquivo foi gerado corretamente.";
             const elementoAviso = document.createElement("div");
             elementoAviso.style.color = "red";
             elementoAviso.textContent = mensagemAviso;
             document.body.appendChild(elementoAviso);
-            throw new Error("Erro ao carregar o arquivo efd_info.json (EFD_INFO é undefined)");
+            throw new Error("Erro ao carregar o arquivo modulos.js (MODULOS é undefined)");
         }
 
 
 
-        for (const tipo of Object.keys(EFD_ORDEM_BLOCOS)) {
-            const registros = EFD_INFO[tipo].registros;
+        for (const tipo of Object.keys(ORDEM_BLOCOS)) {
+            const registros = MODULOS[tipo].registros;
 
             const registros_ordenados = Object.keys(registros).sort((a, b) => {
-                const chaveA = EFD_ORDEM_BLOCOS[tipo].indexOf(a[0]) * 1000 + parseInt(a.slice(1, 4));
-                const chaveB = EFD_ORDEM_BLOCOS[tipo].indexOf(b[0]) * 1000 + parseInt(b.slice(1, 4));
+                const chaveA = ORDEM_BLOCOS[tipo].indexOf(a[0]) * 1000 + parseInt(a.slice(1, 4));
+                const chaveB = ORDEM_BLOCOS[tipo].indexOf(b[0]) * 1000 + parseInt(b.slice(1, 4));
                 return chaveA - chaveB;
             });
 
@@ -213,7 +243,7 @@
 
                 const tdCampos = document.createElement("td");
                 const spanLinhaCampos = document.createElement('span');
-                campos.forEach(campo => {
+                campos.forEach((campo, i) => {
                     const numeroFormatado = String(campo.numero).padStart(2, "0");
 
                     const spanCampo = document.createElement('span');
@@ -226,7 +256,8 @@
                     spanCampoNumero.innerHTML = `<a href='#${nome_registro}-${numeroFormatado}'>${numeroFormatado}</a>`
                     spanCampo.appendChild(spanCampoNumero);
 
-                    spanLinhaCampos.appendChild(document.createElement("wbr"));
+                    if (i > 0) spanLinhaCampos.appendChild(document.createElement("wbr"));
+
                     spanLinhaCampos.appendChild(document.createTextNode('|'));
                     spanLinhaCampos.appendChild(spanCampo);
 
