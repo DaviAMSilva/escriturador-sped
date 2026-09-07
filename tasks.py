@@ -46,9 +46,16 @@ def tipagem(c: Context, lint: bool = True):  # pylint: disable=redefined-outer-n
 
 
 @task
+def docs(c: Context, lint: bool = True):  # pylint: disable=redefined-outer-name
+    from scripts.docs import main
+    main()
+
+
+@task
 def build(c: Context):
     conversor(c)
     tipagem(c)
+    docs(c)
 
 
 @task

@@ -1,0 +1,115 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    padding-bottom: 25%;
+}
+
+select {
+    margin-bottom: 20px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+table tr td:nth-child(1) {
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.registro {
+    cursor: pointer;
+    color: #007BFF;
+    position: relative;
+    scroll-margin-top: 2em;
+}
+
+.registro:hover::after {
+    content: attr(data-title);
+    white-space: pre-wrap;
+    text-align: left;
+    position: absolute;
+    top: 100%;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: .9em;
+    z-index: 1000;
+    width: 700px;
+}
+
+.campo {
+    cursor: pointer;
+    color: #28A745;
+    position: relative;
+    scroll-margin-top: 2em;
+}
+
+.campo:hover::after {
+    content: attr(data-title);
+    white-space: pre-wrap;
+    position: absolute;
+    top: 100%;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: .9em;
+    z-index: 1000;
+    width: 700px;
+}
+
+.campo small {
+    font-size: 0.70em;
+    margin-left: 1px;
+    color: darkgreen;
+    user-select: none;
+}
+
+.selecao {
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .campo:not(:nth-child(2))::before {
+        content: "\A";
+        white-space: pre;
+    }
+    .pipe {
+        display: none;
+    }
+
+    .registro:hover::after,
+    .campo:hover::after {
+        font-size: 0.75em;
+        width: 200px;
+    }
+}
