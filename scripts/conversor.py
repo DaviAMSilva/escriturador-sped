@@ -297,7 +297,7 @@ def main(formatado: bool = False):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Converte os módulos SPED para um formato mais prático")
+    parser = argparse.ArgumentParser(description="Converte os módulos SPED para o formato usado pela biblioteca")
     parser.add_argument("--formatado", action="store_true", help="Gera o arquivo com uma formatação ao invés de ser minimizado")
     args = parser.parse_args()
 
