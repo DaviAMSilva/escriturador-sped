@@ -1,1 +1,2 @@
+prune tests
 recursive-include src/escriturador_sped/modulos *.json
