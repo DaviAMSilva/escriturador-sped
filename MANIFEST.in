@@ -9,5 +9,6 @@ include scripts/conversor.py
 
 recursive-include tests *.py
 
-recursive-include modulos *.csv
-recursive-include src/escriturador_sped/modulos *.json
+recursive-include modulos campos.csv
+recursive-include modulos registros.csv
+recursive-include src/escriturador_sped/modulos modulo.json

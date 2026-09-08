@@ -16,7 +16,7 @@ def main(formatado: bool = False):
             modulo, leiaute, versao = caminho.parts[-3:]  # type: ignore
             leiaute, versao = leiaute[1:], versao[1:].replace("_", ".")
 
-            with open(os.path.join(caminho, "leiaute.json"), "r", encoding="utf-8") as f:
+            with open(os.path.join(caminho, "modulo.json"), "r", encoding="utf-8") as f:
                 modulos[modulo][leiaute][versao] = json.load(f)
 
     with open("docs/modulos/modulos.js", "w", encoding="utf-8") as f:

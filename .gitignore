@@ -2,7 +2,7 @@
 .vscode
 extra/
 
-src/escriturador_sped/modulos/
+src/escriturador_sped/modulos/*
 !src/escriturador_sped/modulos/__init__.py
 
 docs/modulos/modulos.js

@@ -20,7 +20,7 @@ MODULOS_PADROES: dict[ModuloT, tuple[str, str]] = {
 def carregar_modulo(modulo: ModuloT, leiaute: str, versao: str):
     try:
         with files("escriturador_sped.modulos").joinpath(
-            modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}", "leiaute.json"
+            modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}", "modulo.json"
         ).open("r", encoding="utf-8") as arquivo_modulo:
             MODULOS[modulo] = json.loads(arquivo_modulo.read())
     except FileNotFoundError as e:

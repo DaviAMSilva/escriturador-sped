@@ -72,7 +72,7 @@ include-package-data = true
 
 
 [tool.setuptools.package-data]
-escriturador_sped = ["modulos/**/*.json"]
+escriturador_sped = ["modulos/**/modulo.json"]
 
 
 [tool.setuptools.packages.find]
@@ -100,4 +100,4 @@ addopts = "-s"
 toplevel = ["escriturador_sped"]
 
 [tool.coverage.run]
-omit = ["tests/*", "tasks.py"]
+omit = ["tests/*", "scripts/*"]

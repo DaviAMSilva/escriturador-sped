@@ -277,15 +277,15 @@ def main(formatado: bool = False):
         modulo, leiaute, versao = Path(caminho).parts  # type: ignore
 
 
-        leiaute_json = conversor(modulo, leiaute, versao.replace(".", "_"))
+        json_convertido = conversor(modulo, leiaute, versao.replace(".", "_"))
 
 
         pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
         if not os.path.exists(pasta_destino):
             os.makedirs(pasta_destino)
 
-        with open(os.path.join(pasta_destino, "leiaute.json"), "w", encoding="utf-8") as arquivo_convertido:
-            arquivo_convertido.write(json.dumps(leiaute_json, indent=JSON_INDENTACAO if formatado else None, ensure_ascii=False))
+        with open(os.path.join(pasta_destino, "modulo.json"), "w", encoding="utf-8") as arquivo_convertido:
+            arquivo_convertido.write(json.dumps(json_convertido, indent=JSON_INDENTACAO if formatado else None, ensure_ascii=False))
 
 
 
@@ -297,7 +297,7 @@ def main(formatado: bool = False):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Converte as tabelas EFD para um formato mais prático")
+    parser = argparse.ArgumentParser(description="Converte os módulos SPED para um formato mais prático")
     parser.add_argument("--formatado", action="store_true", help="Gera o arquivo com uma formatação ao invés de ser minimizado")
     args = parser.parse_args()
 
