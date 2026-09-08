@@ -1,15 +1,9 @@
 body {
     font-family: sans-serif;
-    margin: 20px;
-    line-height: 1.6;
+    line-height: 1.5;
     overflow-x: hidden;
     padding-bottom: 25%;
-}
-
-select {
-    margin-bottom: 20px;
-    padding: 5px;
-    font-size: 16px;
+    margin: 20px 10%;
 }
 
 table {
@@ -46,11 +40,23 @@ a {
     color: inherit;
 }
 
+.selecao {
+    font-size: 1rem;
+
+    * {
+        margin-bottom: 20px;
+        padding: 5px;
+    }
+}
+
+
 .registro {
     cursor: pointer;
     color: #007BFF;
     position: relative;
     scroll-margin-top: 2em;
+    font-family: monospace;
+    font-size: 1.3em;
 }
 
 .registro:hover::after {
@@ -62,7 +68,7 @@ a {
     background: #f9f9f9;
     border: 1px solid #ddd;
     padding: 10px;
-    font-size: .9em;
+    font-size: 0.9em;
     z-index: 1000;
     width: 700px;
 }
@@ -72,6 +78,8 @@ a {
     color: #28A745;
     position: relative;
     scroll-margin-top: 2em;
+    font-family: monospace;
+    font-size: 1.3em;
 }
 
 .campo:hover::after {
@@ -82,7 +90,7 @@ a {
     background: #f9f9f9;
     border: 1px solid #ddd;
     padding: 10px;
-    font-size: .9em;
+    font-size: 0.9em;
     z-index: 1000;
     width: 700px;
 }
@@ -94,15 +102,20 @@ a {
     user-select: none;
 }
 
-.selecao {
-    font-size: 16px;
+.wj {
+    user-select: none;
 }
 
 @media (max-width: 768px) {
-    .campo:not(:nth-child(2))::before {
+    body {
+    margin: 20px;
+    }
+
+    .campo:not(:nth-child(3))::before {
         content: "\A";
         white-space: pre;
     }
+
     .pipe {
         display: none;
     }
