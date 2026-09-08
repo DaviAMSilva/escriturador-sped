@@ -52,21 +52,15 @@ def docs(c: Context, formatado: bool = False):
 
 
 @task
-def build(c: Context):
+def build(c: Context, sdist: bool = False, wheel: bool = False):
     conversor(c)
-    tipagem(c)
-    docs(c)
-
-
-@task
-def all(c: Context):  # pylint: disable=redefined-builtin
-    install(c)
-    build(c)
+    tipagem(c, False)
+    c.run(f"{PYTHON} -m build{' --sdist' if sdist else ''}{' --wheel' if wheel else ''}")
 
 
 @task
 def lint(c: Context):
-    c.run(f"{PYTHON} -m pylint --fail-under=9.9 src tests scripts tasks.py")
+    c.run(f"{PYTHON} -m pylint src tests scripts tasks.py")
 
 
 @task
