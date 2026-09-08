@@ -86,8 +86,6 @@ ignore = ["E303"]
 
 
 [tool.pylint]
-max-args = 10
-max-attributes = 15
 max-line-length = 160
 min-similarity-lines = 10
 disable = ["C0114", "C0115", "C0116"]
