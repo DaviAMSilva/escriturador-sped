@@ -71,6 +71,10 @@ DEV = [
 include-package-data = true
 
 
+[tool.setuptools.package-data]
+escriturador_sped = ["modulos/**/*.json"]
+
+
 [tool.setuptools.packages.find]
 where = ["src"]
 exclude = ["tests"]
