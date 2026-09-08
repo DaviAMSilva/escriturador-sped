@@ -5,6 +5,8 @@ extra/
 src/escriturador_sped/modulos/*
 !src/escriturador_sped/modulos/__init__.py
 
+docs/modulos/modulos.js
+
 # Exemplos PIS/COFINS disponíveis em http://sped.rfb.gov.br/pasta/show/1606
 # Essa configuração permite arquivos numerados, mas ignora arquivos com
 # sufixo maiores que podem ser utilizados para testes com arquivos privados

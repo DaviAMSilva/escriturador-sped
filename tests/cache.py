@@ -22,10 +22,10 @@ class Cache():
                 self.escrituracoes[arquivo] = EscrituracaoEcd(self.texto(arquivo))
             elif ECF in arquivo:
                 self.escrituracoes[arquivo] = EscrituracaoEcf(self.texto(arquivo))
-            elif EFD_ICMS_IPI in arquivo:
-                self.escrituracoes[arquivo] = EscrituracaoEfdIcmsIpi(self.texto(arquivo))
             elif EFD_CONTRIBUICOES in arquivo:
                 self.escrituracoes[arquivo] = EscrituracaoEfdContribuicoes(self.texto(arquivo))
+            elif EFD_ICMS_IPI in arquivo:
+                self.escrituracoes[arquivo] = EscrituracaoEfdIcmsIpi(self.texto(arquivo))
             else:
                 raise ValueError(f"Arquivo inválido: {arquivo}")
 

@@ -46,7 +46,7 @@ def ler_registros(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegis
             raise SyntaxError(f"Linha inválida, quantidade insuficiente de campos ({registro_atual})")
 
         try:
-            # Pega o nome do registro e encontra o seu nível dentro da tabela
+            # Pega o nome do registro e encontra o seu nível dentro do leiaute do módulo
             nivel_atual = MODULOS[modulo]["registros"][registro_atual_campos[1]]["nivel"]
         except KeyError as e:
             # O registro não existe ou a linha foi mal-formatada

@@ -1,0 +1,1 @@
+# Escriturador SPED

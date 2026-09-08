@@ -15,8 +15,8 @@ maintainers = [
     { name = "Davi Augusto Moreira da Silva", email = "daviamsilva@hotmail.com" },
 ]
 
-readme = { file = "README.md", content-type = "text/markdown" }
-license = { text = "MIT" }
+readme = "README.md"
+license = "MIT"
 
 keywords = [
     "python",
@@ -35,7 +35,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Financial and Insurance Industry",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
@@ -72,6 +71,10 @@ DEV = [
 include-package-data = true
 
 
+[tool.setuptools.package-data]
+escriturador_sped = ["modulos/**/modulo.json"]
+
+
 [tool.setuptools.packages.find]
 where = ["src"]
 exclude = ["tests"]
@@ -83,8 +86,6 @@ ignore = ["E303"]
 
 
 [tool.pylint]
-max-args = 10
-max-attributes = 15
 max-line-length = 160
 min-similarity-lines = 10
 disable = ["C0114", "C0115", "C0116"]
@@ -99,4 +100,4 @@ addopts = "-s"
 toplevel = ["escriturador_sped"]
 
 [tool.coverage.run]
-omit = ["tests/*", "tasks.py"]
+omit = ["tests/*", "scripts/*"]
