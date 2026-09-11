@@ -60,7 +60,7 @@ def build(c: Context, sdist: bool = False, wheel: bool = False):
 
 @task
 def lint(c: Context):
-    c.run(f"{PYTHON} -m pylint src tests scripts tasks.py")
+    c.run(f"{PYTHON} -m pylint --fail-under=9.9 src tests scripts tasks.py")
 
 
 @task
