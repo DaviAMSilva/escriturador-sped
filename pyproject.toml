@@ -58,6 +58,7 @@ Changelog = "https://github.com/DaviAMSilva/escriturador-sped/releases"
 [project.optional-dependencies]
 DEV = [
     "invoke",
+    "build",
     "autopep8",
     "pylint",
     "pytest",
