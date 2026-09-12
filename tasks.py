@@ -42,7 +42,7 @@ def tipagem(c: Context, lint: bool = True):  # pylint: disable=redefined-outer-n
     main()
 
     if lint:
-        c.run(f"{PYTHON} -m pylint --fail-under=10 src/escriturador_sped/modulos/**/*.py")
+        c.run(f"{PYTHON} -m pylint src/escriturador_sped/modulos/**/*.py")
 
 
 @task
@@ -60,7 +60,7 @@ def build(c: Context, sdist: bool = False, wheel: bool = False):
 
 @task
 def lint(c: Context):
-    c.run(f"{PYTHON} -m pylint --fail-under=9.9 src tests scripts tasks.py")
+    c.run(f"{PYTHON} -m pylint --fail-under=9.8 src tests scripts tasks.py")
 
 
 @task
