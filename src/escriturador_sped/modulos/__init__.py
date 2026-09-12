@@ -12,7 +12,7 @@ MODULOS_PADROES: dict[ModuloT, tuple[str, str]] = {
     ECD: ("009", "2026.01"),
     ECF: ("012", "2026.02"),
     EFD_CONTRIBUICOES: ("006", "1.35"),
-    EFD_ICMS_IPI: ("020", "3.2.3")
+    EFD_ICMS_IPI: ("020", "3.2.4")
 }
 
 
