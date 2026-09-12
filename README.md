@@ -1,3 +1,5 @@
+<!-- markdownlint-disable first-line-h1 no-inline-html -->
+
 [![pytest](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml)
 [![pylint](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml)
 
@@ -56,3 +58,38 @@ A biblioteca **Escriturador SPED** tem como objetivo providenciar uma API de ace
         <td><code>efd_icms_ipi.l021.v3_2_4</code></td>
     </tr>
 </table>
+
+## Instalação
+
+Futuramente estará disponível em [PyPI](https://pypi.org/), mas por enquanto pode ser instalado diretamente do GitHub:
+
+```bash
+pip install git+https://github.com/DaviAMSilva/escriturador-sped
+```
+
+Ou instalação para desenvolvimento:
+
+```bash
+# Clonagem
+git clone https://github.com/DaviAMSilva/escriturador-sped
+cd escriturador-sped
+
+# Crie o ambiente virtual (opcioinal)
+python -m venv venv
+
+# Ative o ambiente virtual:
+# - Linux/MacOS: source venv/bin/activate
+# - CMD: .\venv\Scripts\activate.bat
+# - Powershell: .\venv\Scripts\Activate.ps1
+
+# Instalação editável com ferramentas de desenvolvimento
+pip install -e .[DEV]
+
+# Scripts intermediários
+invoke conversor
+invoke tipagem
+
+# Scripts de teste e lintagem
+invoke test
+invoke lint
+```
