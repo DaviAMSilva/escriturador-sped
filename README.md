@@ -74,7 +74,7 @@ Ou instalação para desenvolvimento:
 git clone https://github.com/DaviAMSilva/escriturador-sped
 cd escriturador-sped
 
-# Crie o ambiente virtual (opcioinal)
+# Crie o ambiente virtual (opcional)
 python -m venv venv
 
 # Ative o ambiente virtual:
@@ -92,4 +92,44 @@ invoke tipagem
 # Scripts de teste e lintagem
 invoke test
 invoke lint
+```
+
+## Exemplo de Uso
+
+### Exemplo Básico
+
+No exemplo abaixo abre uma escrituração que já existe, encontra todas as notas avulsas de entrada e defini a situação do documento como 08
+
+```python
+from escriturador_sped import EscrituracaoEfdIcmsIpi
+
+# Abrindo uma escrituração de um arquivo já existente
+escrituracao = EscrituracaoEfdIcmsIpi.abrir("escrituracao.txt")
+
+# Conseguindo o bloco C
+bloco_c = escrituracao["C"]
+
+# Loop de todos os registros do tipo C100
+for registro_C100 in bloco_c.buscar("C100"):
+    # Todos os campos contém duas representações do mesmo valor interno e a
+    # extração desses valores segue a definição de tipos de campos dos manuais:
+    # valor_c: Valor Alfanumérico
+    # valor_n: Valor Numérico
+    operacao = registro_C100.IND_OPER.valor_c
+    emissor = registro_C100.IND_EMIT.valor_c
+    situacao = registro_C100.COD_SIT.valor_n
+    cnpj_chave = registro_C100.CHV_NFE.valor_c[6:20]
+    cnpj_empresa = registro_C100.COD_PART.valor_c # Assumindo código igual a CNPJ
+
+    # operacao == "0": Operação de entrada
+    # emissor  == "1": Emissão de terceiros
+    if operacao == "0" and emissor == "1" and situacao != 8 and cnpj_chave and cnpj_chave != cnpj_empresa:
+        # Alterando o valor do campo (valor = "08" também seria válido)
+        registro_C100.COD_SIT.valor = 8
+
+# Atualizando os registros de totalização do bloco 9 se registros forem adicionados ou removidos
+escrituracao.totalizar()
+
+# Salvando a escrituração em um arquivo separado
+escrituracao.salvar("escrituracao_corrigida.txt")
 ```
