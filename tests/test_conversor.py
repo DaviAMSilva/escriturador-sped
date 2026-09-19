@@ -14,8 +14,8 @@ from .constantes import MODULOS_REGISTROS
 @pytest.mark.parametrize("caminho", glob("*/*/*/", root_dir="modulos"))
 def test_conversor(caminho: str):
     modulo: ModuloT
-    modulo, leiaute, versao = Path(caminho).parts  # type: ignore
-    leiaute_atual: LeiauteT = conversor(modulo, leiaute, versao)
+    modulo, leiaute, manual = Path(caminho).parts  # type: ignore
+    leiaute_atual: LeiauteT = conversor(modulo, leiaute, manual)
 
 
     # Convertido para dicionário

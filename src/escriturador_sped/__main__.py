@@ -6,23 +6,23 @@ from .modulos import MODULOS_PADROES, ModuloT
 
 
 print(f"Módulos disponíveis no Escriturador SPED (v{version("escriturador_sped")}):")
-print("* = Versão carregada por padrão")
+print("* = Manual carregada por padrão")
 
 
 modulos: dict[ModuloT, list[tuple[str, str]]] = defaultdict(list)
 with as_file(files("escriturador_sped.modulos")) as modulos_raiz:
     for caminho in sorted(modulos_raiz.glob("*/*/*/")):
         modulo: ModuloT
-        modulo, leiaute, versao = caminho.parts[-3:] # type: ignore
-        modulos[modulo].append((leiaute[1:], versao[1:].replace("_", ".")))
+        modulo, leiaute, manual = caminho.parts[-3:] # type: ignore
+        modulos[modulo].append((leiaute[1:], manual[1:].replace("_", ".")))
 
 
 for modulo, leiautes_versoes in modulos.items():
     print(f"\n[{modulo}]")
-    for leiaute, versao in leiautes_versoes:
+    for leiaute, manual in leiautes_versoes:
         try:
-            print("* " if MODULOS_PADROES[modulo] == (leiaute, versao) else "  ", end="")
-            print(f"Leiaute: {leiaute} - Versão: {versao}")
+            print("* " if MODULOS_PADROES[modulo] == (leiaute, manual) else "  ", end="")
+            print(f"Leiaute: {leiaute} - Manual: {manual}")
         except KeyError:
             continue
 

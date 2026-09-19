@@ -14,11 +14,11 @@ def main(formatado: bool = False):
     with as_file(files("escriturador_sped.modulos")) as modulos_raiz:
         modulo: ModuloT
         for caminho in sorted(modulos_raiz.glob("*/*/*/")):
-            modulo, leiaute, versao = caminho.parts[-3:]  # type: ignore
-            leiaute, versao = leiaute[1:], versao[1:].replace("_", ".")
+            modulo, leiaute, manual = caminho.parts[-3:]  # type: ignore
+            leiaute, manual = leiaute[1:], manual[1:].replace("_", ".")
 
             with open(os.path.join(caminho, "modulo.json"), "r", encoding="utf-8") as f:
-                modulos[modulo][leiaute][versao] = json.load(f)
+                modulos[modulo][leiaute][manual] = json.load(f)
 
     with open("docs/modulos/modulos.js", "w", encoding="utf-8") as f:
         f.write("const MODULOS=")
