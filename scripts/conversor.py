@@ -74,9 +74,9 @@ CAMPOS_VARIAVEIS: dict[ModuloT, dict[str, None | list[int] | tuple[int, int]]] =
 
 
 
-def conversor(modulo: ModuloT, leiaute: str, versao: str) -> LeiauteT:
-    arquivo_registros = os.path.join(os.path.dirname(__file__), "..", "modulos", modulo, leiaute, versao, "registros.csv")
-    arquivo_campos = os.path.join(os.path.dirname(__file__), "..", "modulos", modulo, leiaute, versao, "campos.csv")
+def conversor(modulo: ModuloT, leiaute: str, manual: str) -> LeiauteT:
+    arquivo_registros = os.path.join(os.path.dirname(__file__), "..", "modulos", modulo, leiaute, manual, "registros.csv")
+    arquivo_campos = os.path.join(os.path.dirname(__file__), "..", "modulos", modulo, leiaute, manual, "campos.csv")
 
 
 
@@ -274,13 +274,13 @@ def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dic
 def main(formatado: bool = False):
     for caminho in glob("*/*/*/", root_dir="modulos"):
         modulo: ModuloT
-        modulo, leiaute, versao = Path(caminho).parts  # type: ignore
+        modulo, leiaute, manual = Path(caminho).parts  # type: ignore
 
 
-        json_convertido = conversor(modulo, leiaute, versao.replace(".", "_"))
+        json_convertido = conversor(modulo, leiaute, manual.replace(".", "_"))
 
 
-        pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
+        pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"m{manual.replace('.', '_')}")
         if not os.path.exists(pasta_destino):
             os.makedirs(pasta_destino)
 

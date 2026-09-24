@@ -58,26 +58,24 @@ function Tabela(registros) {
 }
 
 function App() {
-    // TODO: Corrigir ordenação dos registros
-
     function formatar(tabela) {
-        return `Módulo: ${tabela.modulo.toUpperCase()} — Leiaute: ${tabela.leiaute.padStart(3, "0")} — Versão: ${tabela.versao}`;
+        return `Módulo: ${tabela.modulo.toUpperCase()} — Leiaute: ${tabela.leiaute.padStart(3, "0")} — Manual: ${tabela.manual}`;
     }
 
     function chave(tabela) {
-        return `${tabela.modulo}-${tabela.leiaute.padStart(3, "0")}-${tabela.versao}`;
+        return `${tabela.modulo}-${tabela.leiaute.padStart(3, "0")}-${tabela.manual}`;
     }
 
     const tabelas = Object.entries(MODULOS).flatMap(([modulo, leiautes]) => {
         return Object.entries(leiautes).flatMap(([leiaute, versoes]) => {
-            return Object.entries(versoes).map(([versao, dados]) => {
+            return Object.entries(versoes).map(([manual, dados]) => {
                 const blocosOrdem = Object.fromEntries(dados.blocos.map((k, v) => [k.nome, v]));
 
                 const registros = Object.entries(dados.registros).sort((a, b) => {
                     return blocosOrdem[a[0][0]] - blocosOrdem[b[0][0]];
                 });
 
-                return { modulo, leiaute, versao, blocos: dados.blocos, registros: registros };
+                return { modulo, leiaute, manual, blocos: dados.blocos, registros };
             });
         });
     });
