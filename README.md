@@ -231,17 +231,21 @@ Novos registros são criados usando o texto da linha final, de maneira idêntica
 
 As funções `registro.adicionar()` e `registro.remover()` são usadas para modificar a lista de filhos diretos de um registro específico. Também é possível usar uma lista de registros em ambas para modificar múltiplos filhos de uma vez. Ao remover também há a alternativa de usar filtros para encontrar quais registros a serem removidos.
 
-No exemplo abaixo será recriado o arquivo de exemplo [`efd_contribuicoes_3.txt`](exemplos/efd_contribuicoes_3.txt) iniciando-se de uma escrituração vazia:
+No exemplo abaixo será recriado o arquivo de exemplo [`efd_contribuicoes_3.txt`](exemplos/efd_contribuicoes_2.txt) iniciando-se de uma escrituração vazia:
 
 ```python
-# Convenção de usar Escrituracao e Registro
+# Uma conve# Uma convenção opcional é renomear as classes do módulo a ser usado simplesmente como Escrituracao e Registro
+# Assim independente de qual módulo estiver em uso o nomes das classes usadas são sempre os mesmos
 from escriturador_sped import EscrituracaoEfdContribuicoes as Escrituracao, RegistroEfdContribuicoes as Registro
 from escriturador_sped.modulos.efd_contribuicoes.l006.m1_35.registros import *
 
-# Escrituração vazia
+# Ao criar uma escrituração sem parâmetros o resultado é uma escrituração "vazia" em que os únicos registros
+# presentes são os de abertura e fechamento da escrituração e blocos além dos registros de totalização do bloco 9
 escrituracao = Escrituracao()
 
-# Editando com valores
+# Com a escrituração vazia todos os campos (exceto REG) são inicializados vazios e precisam ser preenchidos
+# Uma observação interessante é que para valores compostos apenas de números (como datas) não faz diferença se
+# os valores estão em formato numérico ou de texto, internalmente ambos são convertidos para o formato apropriado
 escrituracao.abertura.valores({
     "REG": "0000",
     "COD_VER": 2,
@@ -256,34 +260,44 @@ escrituracao.abertura.valores({
     "IND_ATIV": 0
 })
 
-# Abertura e Fechamento
+# Os atributos 'abertura' e 'fechamento' estão disponíveis para a escrituração e os blocos
+# Na escrituração representam os registros 0000 e 9999
+# No bloco qualquer X representam os registros X001 e X990
 registro_0001 = escrituracao["0"].abertura
 registro_m001 = escrituracao["M"].abertura
 
-# Adicionando filhos com uma lista
+# A função de adicionar registros filhos aceitam um único registro ou uma lista de registros
+# Se algum dos filhos a serem adicionados não for descendente direto a função gera uma exceção
 registro_m001.adicionar([
+    # Método 1: Criar um registro usando o mesmo formato de linha dos arquivos de escrituração
     Registro("|M200|0|0|0|0|0|0|0|0|0|0|0|0|"),
     Registro("|M600|0|0|0|0|0|0|0|0|0|0|0|0|")
 ])
 
-# Criando registro com um dicionário
-Registro({
+# Método 2: Criando um registro a partir de um dicionário onde cada chave é um nome de um campo
+# Nesse caso casos não especificados são tratados como vazios e o campo REG é obrigatório
+registro_0001.adicionar(Registro({
     "REG": "0140",
     "COD_EST": 1,
     "NOME": "EMPRESA XXX",
     "CNPJ": "99999999000191",
     "UF": "MG",
     "COD_MUN": 3106200
-}, registro_0001)
+}))
 
-# Criando registros em sequência
+# O segundo parâmetro permite definir um registro 'pai' ao registro que está prestes a ser criado
+# Internamente isso executará 'pai.adicionar(self)', que inclui a mesma verificação de parentesco
 Registro("|0111|1|0|0|0|1|",
-    Registro("|0110|1|2|1|1|", registro_0001)
+    Registro("|0110|1|2|1|1|", pai=registro_0001)
 )
 
-# Totalizando escrituração
+# Totalizando a escrituração com ordenação opcional dos registros bloco 9
 escrituracao.totalizar(ordenar_9900=True)
 
-# Gerando texto da escrituração
+# A função 'texto' está disponível para todos os componentes da escrituração
+# e retorna o formato textual final para escrituração para aquele componente
 print(escrituracao.texto())
+
+# Converte a escrituração para texto e a salva no arquivo especificado
+escrituracao.salvar("exemplos/efd_contribuicoes_2.txt")
 ```
