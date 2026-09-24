@@ -101,10 +101,10 @@ invoke lint
 O exemplo abaixo abre uma escrituração que já existe, encontra todas as notas avulsas de entrada e defini a situação do documento como 08
 
 ```python
-from escriturador_sped import EscrituracaoEfdIcmsIpi
+from escriturador_sped import EscrituracaoEfdIcmsIpi as Registro
 
 # Abrindo uma escrituração de um arquivo já existente
-escrituracao = EscrituracaoEfdIcmsIpi.abrir("escrituracao.txt")
+escrituracao = Registro.abrir("escrituracao.txt")
 
 # Conseguindo o bloco C
 bloco_c = escrituracao["C"]
@@ -142,7 +142,7 @@ O exemplo abaixo gera um relatório com estrutura idêntica ao relatório de sa�
 import pandas as pd
 
 # Importando a escrituração desejada e a função de carregar uma combinação módulo/leiaute/manual específica
-from escriturador_sped import EscrituracaoEfdIcmsIpi, carregar_modulo
+from escriturador_sped import EscrituracaoEfdIcmsIpi as Registro, carregar_modulo
 
 # Importando os registros derivados para uma combinação módulo/leiaute/manual específica
 # É possível importar todos os registros ou apenas os registros a serem usados
@@ -150,11 +150,11 @@ from escriturador_sped.modulos.efd_icms_ipi.l020.m3_2_4.registros import *
 
 # Carregando uma das combinações módulo/leiaute/manual suportadas pela a biblioteca
 # Use 'python -m escriturador_sped' para listar as combinações suportadas
-# Por padrão a biblioteca sempre irá carregar o módulo vigente mais recente
-carregar_modulo(EscrituracaoEfdIcmsIpi.MODULO, "020", "3.2.4")
+# Por padrão a biblioteca sempre irá carregar os módulos vigentes mais recentes
+carregar_modulo(Registro.MODULO, "020", "3.2.4")
 
 # Abrindo o arquivo da escrituração
-escrituracao = EscrituracaoEfdIcmsIpi.abrir("escrituracao.txt")
+escrituracao = Registro.abrir("escrituracao.txt")
 
 # Lista das colunas no relatório final (mesmos nomes que os campos dos registros C100 e C190)
 COLUNAS = [
@@ -223,4 +223,67 @@ print(relatorio)
 #         020      5929 12          100.0         0.0      0.0            0.0         0.0        0.0     0.0
 #         040      5929 0           111.0         0.0      0.0            0.0         0.0        0.0     0.0
 #         060      5929 0           114.0         0.0      0.0            0.0         0.0        0.0     0.0
+```
+
+## Criando, Adicionando e Removendo Registros
+
+Novos registros são criados usando o texto da linha final, de maneira idêntica ao arquivo de escrituração, ou usando um dicionário contendo apenas os campos considerados relevantes.
+
+As funções `registro.adicionar()` e `registro.remover()` são usadas para modificar a lista de filhos diretos de um registro específico. Também é possível usar uma lista de registros em ambas para modificar múltiplos filhos de uma vez. Ao remover também há a alternativa de usar filtros para encontrar quais registros a serem removidos.
+
+No exemplo abaixo será recriado o arquivo de exemplo [`efd_contribuicoes_3.txt`](exemplos/efd_contribuicoes_3.txt) iniciando-se de uma escrituração vazia:
+
+```python
+# Convenção de usar Escrituracao e Registro
+from escriturador_sped import EscrituracaoEfdContribuicoes as Escrituracao, RegistroEfdContribuicoes as Registro
+from escriturador_sped.modulos.efd_contribuicoes.l006.m1_35.registros import *
+
+# Escrituração vazia
+escrituracao = Escrituracao()
+
+# Editando com valores
+escrituracao.abertura.valores({
+    "REG": "0000",
+    "COD_VER": 2,
+    "TIPO_ESCRIT": 0,
+    "DT_INI": "01042011",
+    "DT_FIN": "30042011",
+    "NOME": "EMPRESA XXX",
+    "CNPJ": "99999999000191",
+    "UF": "MG",
+    "COD_MUN": 3106200,
+    "IND_NAT_PJ": 0,
+    "IND_ATIV": 0
+})
+
+# Abertura e Fechamento
+registro_0001 = escrituracao["0"].abertura
+registro_m001 = escrituracao["M"].abertura
+
+# Adicionando filhos com uma lista
+registro_m001.adicionar([
+    Registro("|M200|0|0|0|0|0|0|0|0|0|0|0|0|"),
+    Registro("|M600|0|0|0|0|0|0|0|0|0|0|0|0|")
+])
+
+# Criando registro com um dicionário
+Registro({
+    "REG": "0140",
+    "COD_EST": 1,
+    "NOME": "EMPRESA XXX",
+    "CNPJ": "99999999000191",
+    "UF": "MG",
+    "COD_MUN": 3106200
+}, registro_0001)
+
+# Criando registros em sequência
+Registro("|0111|1|0|0|0|1|",
+    Registro("|0110|1|2|1|1|", registro_0001)
+)
+
+# Totalizando escrituração
+escrituracao.totalizar(ordenar_9900=True)
+
+# Gerando texto da escrituração
+print(escrituracao.texto())
 ```
