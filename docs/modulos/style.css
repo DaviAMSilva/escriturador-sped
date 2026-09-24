@@ -42,10 +42,19 @@ a {
 
 .selecao {
     font-size: 1rem;
+    margin-bottom: 20px;
 
-    * {
-        margin-bottom: 20px;
+    >* {
+        margin: 5px;
+    }
+
+    a button {
         padding: 5px;
+    }
+
+    select {
+        padding: 5px;
+        margin-bottom: 20px;
     }
 }
 
@@ -108,7 +117,7 @@ a {
 
 @media (max-width: 768px) {
     body {
-    margin: 20px;
+        margin: 20px;
     }
 
     .campo:not(:nth-child(3))::before {

@@ -98,7 +98,7 @@ invoke lint
 
 ### Exemplo Básico
 
-No exemplo abaixo abre uma escrituração que já existe, encontra todas as notas avulsas de entrada e defini a situação do documento como 08
+O exemplo abaixo abre uma escrituração que já existe, encontra todas as notas avulsas de entrada e defini a situação do documento como 08
 
 ```python
 from escriturador_sped import EscrituracaoEfdIcmsIpi
@@ -117,7 +117,7 @@ for registro_C100 in bloco_c.buscar("C100"):
     # valor_n: Valor Numérico
     operacao = registro_C100.IND_OPER.valor_c
     emissor = registro_C100.IND_EMIT.valor_c
-    situacao = registro_C100.COD_SIT.valor_n
+    situacao = registro_C100.COD_SIT.valor_c
     cnpj_chave = registro_C100.CHV_NFE.valor_c[6:20]
     cnpj_empresa = registro_C100.COD_PART.valor_c # Assumindo código igual a CNPJ
 
@@ -132,4 +132,95 @@ escrituracao.totalizar()
 
 # Salvando a escrituração em um arquivo separado
 escrituracao.salvar("escrituracao_corrigida.txt")
+```
+
+### Exemplo Avançado
+
+O exemplo abaixo gera um relatório com estrutura idêntica ao relatório de saídas presente no programa Validador EFD ICMS IPI. Para isso a biblioteca [pandas](https://pandas.pydata.org) é utilizada.
+
+```python
+import pandas as pd
+
+# Importando a escrituração desejada e a função de carregar uma combinação módulo/leiaute/manual específica
+from escriturador_sped import EscrituracaoEfdIcmsIpi, carregar_modulo
+
+# Importando os registros derivados para uma combinação módulo/leiaute/manual específica
+# É possível importar todos os registros ou apenas os registros a serem usados
+from escriturador_sped.modulos.efd_icms_ipi.l020.m3_2_4.registros import *
+
+# Carregando uma das combinações módulo/leiaute/manual suportadas pela a biblioteca
+# Use 'python -m escriturador_sped' para listar as combinações suportadas
+# Por padrão a biblioteca sempre irá carregar o módulo vigente mais recente
+carregar_modulo(EscrituracaoEfdIcmsIpi.MODULO, "020", "3.2.4")
+
+# Abrindo o arquivo da escrituração
+escrituracao = EscrituracaoEfdIcmsIpi.abrir("escrituracao.txt")
+
+# Lista das colunas no relatório final (mesmos nomes que os campos dos registros C100 e C190)
+COLUNAS = [
+    "COD_SIT", "CST_ICMS", "CFOP", "ALIQ_ICMS",
+    "VL_OPR",
+    "VL_BC_ICMS", "VL_ICMS",
+    "VL_BC_ICMS_ST", "VL_ICMS_ST",
+    "VL_RED_BC", "VL_IPI"
+]
+
+# Dicionário de colunas para o DataFrame
+colunas = {campo: [] for campo in COLUNAS}
+
+# Buscando todos os registros C100 de notas fiscais de saída
+# Dica: A pesquisa de registros específicos pode ser feita diretamente na escrituração ou no bloco
+# Mesmo assim é recomendado especificar o bloco para melhorar a clareza e velocidade da pesquisa
+# escrituracao["C"].buscar("C100") <=> escrituracao.buscar("C100")
+registros_c100_saida = escrituracao["C"].buscar("C100", campos={"IND_OPER": "1"})
+
+# Loop por todos os registros C100->C190 para adicionar-los no relatório
+for registro_c100 in registros_c100_saida.como(RegistroC100):
+    cod_sit = registro_c100.COD_SIT.valor
+
+    # A função 'como' está disponível nos resultados de busca (ListaRegistro)
+    # ou em registros individuais e permite alterar a tipagem dos registros
+    # genéricos em editores de texto que suportem tipagens da linguagem Python
+    # Funciona do mesmo modo que a função 'cast' da biblioteca padrão 'typing'
+    for registro_c190 in registro_c100.buscar("C190").como(RegistroC190):
+        # A função 'valores' pode ser usada para alterar os valores dos
+        # campos de um registros, mas também pode ser usada para retornar
+        # um dicionário com os nomes e valores desses mesmos campos
+        # Exemplo de alteração: registro_c190.valores({"CST_ICMS": 60})
+        linha = registro_c190.valores()
+
+        # COD_SIT é a única coluna cujo o valor depende do registro C100
+        linha["COD_SIT"] = cod_sit
+
+        # Adicionando cada item de cada linha no dicionário de colunas
+        for nome in COLUNAS:
+            colunas[nome].append(linha[nome])
+
+# Cria o DataFrame, soma e agrupa os valores de todas as colunas,
+# exceto as quatro primeiras: COD_SIT, CST_ICMS, CFOP e ALIQ_ICMS
+# que são os mesmos do relatório no visualizador do SPED Fiscal
+relatorio = (
+    pd.DataFrame(colunas)
+    .groupby(COLUNAS[:4], as_index=False)
+    .sum()
+    .set_index(COLUNAS[:4])
+)
+
+# Exibindo o DataFrame (exemplo fictício abaixo)
+print(relatorio)
+
+#                                  VL_OPR  VL_BC_ICMS  VL_ICMS  VL_BC_ICMS_ST  VL_ICMS_ST  VL_RED_BC  VL_IPI
+# COD_SIT CST_ICMS CFOP ALIQ_ICMS                                                                           
+# 00      000      5102 7           101.0         0.0      0.0            0.0         0.0        0.0     0.0
+#                       18          115.0         0.0      0.0            0.0         0.0        0.0     0.0
+#                       25           99.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         060      5405 0           114.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         200      5102 7           105.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         200      5102 12          116.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         200      5102 18          117.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         260      5405 0           114.0         0.0      0.0            0.0         0.0        0.0     0.0
+# 08      000      5929 18           97.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         020      5929 12          100.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         040      5929 0           111.0         0.0      0.0            0.0         0.0        0.0     0.0
+#         060      5929 0           114.0         0.0      0.0            0.0         0.0        0.0     0.0
 ```
