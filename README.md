@@ -6,7 +6,7 @@
 # Escriturador SPED
 
 <div align="center">
-<img src="logo.webp" alt="Logo and title of the project" width="30%" />
+<img src="docs/logo.webp" alt="Logo and title of the project" width="30%" />
 </div>
 
 A biblioteca **Escriturador SPED** tem como objetivo providenciar uma API de acesso, criação e manipulação de arquivos de escrituração pertencentes ao projeto [SPED](https://www.gov.br/sped/pt-br) do governo brasileiro. A biblioteca escrita em [Python](http://python.org/) é destinada a programadores, ou usuários avançados, que trabalham com módulos do projeto SPED que envolvam a criação ou edição de escriturações.
