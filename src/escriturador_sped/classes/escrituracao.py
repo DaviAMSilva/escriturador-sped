@@ -29,9 +29,10 @@ class Escrituracao(Componente, ABC):
         # Isso é estranho, mas funciona pois as subclasses usam apenas um parâmetro
         return cls(abrir_escrituracao(arquivo))  # pyright: ignore[reportCallIssue] # pylint: disable=no-value-for-parameter
 
-    def salvar(self, arquivo: str | Path) -> None:
+    def salvar(self, arquivo: str | Path) -> Self:
         salvar_escrituracao(arquivo, self.texto())
 
+        return self
 
 
     def __init__(self, modulo: ModuloT, escrituracao_texto: str, nome: str) -> None:
