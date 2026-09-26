@@ -6,12 +6,12 @@ from glob import glob
 from pathlib import Path
 from typing import Literal
 
-from escriturador_sped.constantes import ECD, ECF, MAIOR_NIVEL, ORDEM_BLOCOS
-from escriturador_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
-
 # Permite importar a biblioteca mesmo sem os módulos gerados
 # pylint: disable=wrong-import-position
 os.environ["__CONVERSAO__"] = "1"
+
+from escriturador_sped.constantes import ECD, ECF, MAIOR_NIVEL, ORDEM_BLOCOS
+from escriturador_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
 
 
 
