@@ -129,8 +129,8 @@ class Escrituracao(Componente, ABC):
         if nome_bloco not in self.blocos and nome_bloco in ORDEM_BLOCOS[self.modulo]:
             self.blocos[nome_bloco] = Bloco(
                 nome_bloco,
-                Registro(self.modulo, f"|{nome_bloco}001|1|", self.abertura),
-                Registro(self.modulo, f"|{nome_bloco}990|2|", self.abertura),
+                Registro(self.modulo, f"|{nome_bloco}001|1|", pai=self.abertura),
+                Registro(self.modulo, f"|{nome_bloco}990|2|", pai=self.abertura),
                 self.modulo
             )
 
@@ -213,7 +213,7 @@ class Escrituracao(Componente, ABC):
                     "REG": "9900",
                     "REG_BLC": nome_registro,
                     "QTD_REG_BLC": registros_contagem[nome_registro]
-                }, registro_9001)
+                }, pai=registro_9001)
 
 
 
@@ -222,7 +222,11 @@ class Escrituracao(Componente, ABC):
             registro_9900_9900 = self.blocos["9"].abertura.primeiro("9900", {"REG_BLC": "9900"}, recursivo=False)
             registro_9900_9900.QTD_REG_BLC.valor = len(registro_9001.filhos)
         except ValueError:
-            Registro(self.modulo, f"|9900|9900|{len(registro_9001.filhos) + 1}|", registro_9001)
+            Registro(self.modulo, {
+                "REG": "9900",
+                "REG_BLC": "9900",
+                "QTD_REG_BLC": len(registro_9001.filhos) + 1
+            }, pai=registro_9001)
 
 
 
