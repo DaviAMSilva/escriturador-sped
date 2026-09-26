@@ -96,7 +96,7 @@ invoke lint
 
 ## Exemplo de Uso
 
-### Exemplo Básico
+### Alterando Valores de Registros
 
 O exemplo abaixo abre uma escrituração que já existe, encontra todas as notas avulsas de entrada e defini a situação do documento como 08
 
@@ -134,7 +134,7 @@ escrituracao.totalizar()
 escrituracao.salvar("escrituracao_corrigida.txt")
 ```
 
-### Exemplo Avançado
+### Gerando Relatório de Saídas
 
 O exemplo abaixo gera um relatório com estrutura idêntica ao relatório de saídas presente no programa Validador EFD ICMS IPI. Para isso a biblioteca [pandas](https://pandas.pydata.org) é utilizada.
 
@@ -225,7 +225,8 @@ print(relatorio)
 #         060      5929 0           114.0         0.0      0.0            0.0         0.0        0.0     0.0
 ```
 
-## Criando, Adicionando e Removendo Registros
+### Criando, Adicionando e Removendo Registros
+<!-- TODO: Removendo Registros -->
 
 Novos registros são criados usando o texto da linha final, de maneira idêntica ao arquivo de escrituração, ou usando um dicionário contendo apenas os campos considerados relevantes.
 
@@ -234,7 +235,7 @@ As funções `registro.adicionar()` e `registro.remover()` são usadas para modi
 No exemplo abaixo será recriado o arquivo de exemplo [`efd_contribuicoes_3.txt`](exemplos/efd_contribuicoes_2.txt) iniciando-se de uma escrituração vazia:
 
 ```python
-# Uma conve# Uma convenção opcional é renomear as classes do módulo a ser usado simplesmente como Escrituracao e Registro
+# Uma convenção opcional é renomear as classes do módulo a ser usado simplesmente como Escrituracao e Registro
 # Assim independente de qual módulo estiver em uso o nomes das classes usadas são sempre os mesmos
 from escriturador_sped import EscrituracaoEfdContribuicoes as Escrituracao, RegistroEfdContribuicoes as Registro
 from escriturador_sped.modulos.efd_contribuicoes.l006.m1_35.registros import *
@@ -285,10 +286,15 @@ registro_0001.adicionar(Registro({
     "COD_MUN": 3106200
 }))
 
-# O segundo parâmetro permite definir um registro 'pai' ao registro que está prestes a ser criado
-# Internamente isso executará 'pai.adicionar(self)', que inclui a mesma verificação de parentesco
-Registro("|0111|1|0|0|0|1|",
-    Registro("|0110|1|2|1|1|", pai=registro_0001)
+# Ao criar um novo registro é possível informar qual será o pai e adicionar filhos ao novo registro
+# Os argumentos 'pai' e 'filhos' são do tipo palavra-chave (keyword) e precisam ser nomeados explicitamente
+# Internamente isso executará 'pai.adicionar(self)' e 'self.adicionar(filhos)'
+Registro(
+    "|0110|1|2|1|1|",
+    pai=registro_0001,
+    filhos=[
+        Registro("|0111|1|0|0|0|1|")
+    ]
 )
 
 # Totalizando a escrituração com ordenação opcional dos registros bloco 9
