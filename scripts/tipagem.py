@@ -15,7 +15,7 @@ MODULOS_CLASSES = {
 def main():
     for caminho in glob("*/*/*/", root_dir="modulos"):
         modulo: ModuloT
-        modulo, leiaute, versao = Path(caminho).parts  # type: ignore
+        modulo, leiaute, manual = Path(caminho).parts  # type: ignore
 
         arquivo_conteudo = (
             "# pylint: disable=relative-beyond-top-level,duplicate-code,too-few-public-methods,non-ascii-name,too-many-lines,line-too-long\n"
@@ -38,7 +38,7 @@ def main():
                     f"    r'''{campo['descricao']}'''\n"
                 )
 
-        pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"v{versao.replace('.', '_')}")
+        pasta_destino = os.path.join("src", "escriturador_sped", "modulos", modulo, f"l{leiaute}", f"m{manual.replace('.', '_')}")
 
         if not os.path.exists(pasta_destino):
             os.makedirs(pasta_destino)
