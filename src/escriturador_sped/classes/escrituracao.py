@@ -149,7 +149,7 @@ class Escrituracao(Componente, ABC):
 
 
 
-    def totalizar(self, ordenar_9900=False) -> None:
+    def totalizar(self, ordenar_9900=False) -> Self:
         # A totalização dos registros e dos blocos dependem um do outro
         # por isso, é necessário realizar a totalização dessa forma
         self.totalizar_blocos()
@@ -157,10 +157,14 @@ class Escrituracao(Componente, ABC):
         self.totalizar_blocos()
         self.totalizar_escrituracao()
 
-    def totalizar_escrituracao(self) -> None:
+        return self
+
+    def totalizar_escrituracao(self) -> Self:
         self.fechamento.campos[2].valor_c = self.tamanho
 
-    def totalizar_blocos(self) -> None:
+        return self
+
+    def totalizar_blocos(self) -> Self:
         for nome in ORDEM_BLOCOS[self.modulo]:
             bloco = self.blocos.get(nome, None)
 
@@ -175,7 +179,9 @@ class Escrituracao(Componente, ABC):
         # Ordenar os blocos é obrigatório
         self.abertura.filhos.sort(key=lambda r: Registro.ordem(r.nome, r.modulo))
 
-    def totalizar_registros(self, ordenar_9900=False) -> None:
+        return self
+
+    def totalizar_registros(self, ordenar_9900=False) -> Self:
         # Encontrando todos os nomes de registros presentes na escrituração
         registro_9001 = self.blocos["9"].abertura
 
@@ -203,7 +209,11 @@ class Escrituracao(Componente, ABC):
         # Adicionando novos registros 9900 que não existiam antes
         for nome_registro in registros_contagem:
             if nome_registro not in registros_9900_blc:
-                Registro(self.modulo, f"|9900|{nome_registro}|{registros_contagem[nome_registro]}|", registro_9001)
+                Registro(self.modulo, {
+                    "REG": "9900",
+                    "REG_BLC": nome_registro,
+                    "QTD_REG_BLC": registros_contagem[nome_registro]
+                }, registro_9001)
 
 
 
@@ -219,6 +229,8 @@ class Escrituracao(Componente, ABC):
         if ordenar_9900:
             # Ordenando os registros 9900 de acordo com o registro que ele totaliza
             registro_9001.filhos.sort(key=lambda r: Registro.ordem(r.REG_BLC.valor_c, self.modulo))
+
+        return self
 
 
 
