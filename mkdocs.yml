@@ -4,8 +4,67 @@ copyright: Copyright © 2026 <a href="https://daviamsilva.dev">Davi Augusto More
 repo_url: https://github.com/DaviAMSilva/escriturador-sped
 docs_dir: docs
 edit_uri: ""
+
 theme:
+  logo: imagens/logo-branco.webp
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.indexes
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
   name: material
+  language: pt-BR
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Modo Automático
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Modo Claro
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Modo Escuro
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
 nav:
-  - Escriturador SPED: index.md
-  - Módulos: modulos/index.html
+  - instalacao.md
+  - conceitos-basicos.md
+  - Visualizador de Módulos SPED: modulos/index.html
+  - Classes:
+      - classes/componente.md
+      - classes/escrituracao.md
+      - classes/bloco.md
+      - classes/registro.md
+      - classes/campo.md
+  - Estruturas de Dados:
+      - estruturas-de-dados/lista-registro.md
+      - estruturas-de-dados/tupla-campo.md
+  - Outros Conceitos:
+      - buscas.md
+      - constantes.md
+      - tipagem.md
