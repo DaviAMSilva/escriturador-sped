@@ -65,6 +65,7 @@ DEV = [
     "pytest-cov",
     "pytest-profiling",
     "snakeviz",
+    "mkdocs-material"
 ]
 
 
