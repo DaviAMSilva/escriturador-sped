@@ -4,20 +4,20 @@
 
     Essa documentação supõe que o leitor já contêm conhecimento prévio do ambiente [SPED](https://www.gov.br/sped/pt-br) e suas escriturações, além de conhecimentos básicos de programação em [Python](https://www.python.org/).
 
-- **[Componente](./componentes/index.md): A classe base da qual as classes Escrituração, Bloco e Registro abaixo são derivadas.**
+- **[Componente](./classes/componente.md): A classe base da qual as classes Escrituração, Bloco e Registro abaixo são derivadas.**
 
     Contém métodos e atributos comuns a todas essas classes.
 
-- **[Escrituração](./componentes/escrituracao.md): A classe que armazena as informações de uma escrituração.**
+- **[Escrituração](./classes/escrituracao.md): A classe que armazena as informações de uma escrituração.**
 
     Escriturações contêm exatamente dois registros filhos, um de abertura e um de fechamento.  
     Contêm uma quantidade limitada de blocos, dependente no tipo do módulo em questão, alguns obrigatórios e o resto opcional.
 
-- **[Bloco](./componentes/bloco.md): A classe que armazena as informações de um bloco.**
+- **[Bloco](./classes/bloco.md): A classe que armazena as informações de um bloco.**
 
     Blocos contêm exatamente dois registros filhos, um de abertura e um de fechamento.
 
-- **[Registro](./componentes/registro.md): A classe que armazena as informações de um registro.**
+- **[Registro](./classes/registro.md): A classe que armazena as informações de um registro.**
 
     Registros podem conter qualquer quantidade de registros filhos, incluindo nenhum filho.  
     Registros contêm um referência ao registro pai, exceto os registros `0000` e `9999` de abertura e fechamento de um escrituração.  
