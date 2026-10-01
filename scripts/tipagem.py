@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring,missing-function-docstring
 import os
 from glob import glob
 from pathlib import Path
@@ -18,7 +19,7 @@ def main():
         modulo, leiaute, manual = Path(caminho).parts  # type: ignore
 
         arquivo_conteudo = (
-            "# pylint: disable=relative-beyond-top-level,duplicate-code,too-few-public-methods,non-ascii-name,too-many-lines,line-too-long\n"
+            "# pylint: disable=missing-module-docstring,relative-beyond-top-level,duplicate-code,too-few-public-methods,non-ascii-name,too-many-lines,line-too-long\n"
             "from .....classes.campo import CampoC, CampoN\n"
             f"from .....classes.registro import Registro{MODULOS_CLASSES[modulo]}\n"
         )

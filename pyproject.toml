@@ -90,7 +90,6 @@ ignore = ["E303"]
 [tool.pylint]
 max-line-length = 160
 min-similarity-lines = 10
-disable = ["C0114", "C0115", "C0116"]
 
 
 [tool.pytest.ini_options]

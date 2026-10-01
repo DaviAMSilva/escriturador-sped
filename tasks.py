@@ -1,4 +1,4 @@
-# pylint: disable=import-outside-toplevel,unused-argument,import-error
+# pylint: disable=missing-module-docstring,missing-function-docstring,import-outside-toplevel,unused-argument,import-error
 
 import os
 

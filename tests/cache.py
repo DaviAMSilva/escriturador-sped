@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring,missing-function-docstring,missing-class-docstring
 import os
 
 from escriturador_sped.arquivos import abrir_escrituracao

@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring,missing-function-docstring
 import pytest
 
 from escriturador_sped import EFD_ICMS_IPI, Campo
