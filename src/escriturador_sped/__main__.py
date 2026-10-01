@@ -1,3 +1,25 @@
+"""Mostra informações sobre a versão atual do biblioteca e seus módulos.
+
+Examples:
+    >>> python -m escriturador_sped
+
+        Módulos disponíveis no Escriturador SPED (v1.4.1):
+        * = Manual carregada por padrão
+
+        [ecd]
+        * Leiaute: 009 - Manual: 2026.01
+
+        [ecf]
+        * Leiaute: 012 - Manual: 2026.02
+
+        [efd_contribuicoes]
+        * Leiaute: 006 - Manual: 1.35
+
+        [efd_icms_ipi]
+          Leiaute: 020 - Manual: 3.2.3
+        * Leiaute: 020 - Manual: 3.2.4
+          Leiaute: 021 - Manual: 3.2.4
+"""
 from collections import defaultdict
 from importlib.resources import as_file, files
 from importlib.metadata import version

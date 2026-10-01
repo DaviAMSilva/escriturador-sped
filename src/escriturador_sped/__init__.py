@@ -1,3 +1,4 @@
+"""Biblioteca para auxiliar a criação e edição de arquivos de escrituração do SPED brasileiro."""
 from .arquivos import abrir_escrituracao, remover_assinatura_escrituracao, salvar_escrituracao
 from .classes import *
 from .constantes import *

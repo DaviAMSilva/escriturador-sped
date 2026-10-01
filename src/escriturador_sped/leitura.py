@@ -1,3 +1,4 @@
+"""Contém a lógica para a leitura e criação de registros."""
 from typing import Iterable
 
 from .classes.registro import Registro
@@ -15,6 +16,23 @@ from .modulos import MODULOS, ModuloT
 
 
 def ler_registros(registros: str | Iterable[str], modulo: ModuloT) -> ListaRegistro[Registro]:
+    """Converte registros em forma de texto para instâncias da classe `Registro`.
+
+    Args:
+        registros: Registros em forma de texto separado por linhas ou um iterável de registros.
+        modulo: Módulo ao qual os registros pertencem.
+
+    Raises:
+        TypeError: Se um registro não for de um tipo válido.
+        KeyError: Se o nome de um registro não for encontrado.
+        SyntaxError: Se um registro não começar e terminar com `|`.
+        SyntaxError: Se um registro não conter a quantidade esperada de campos.
+        SyntaxError: Se um registro não for um filho válido de seu pai.
+        SyntaxError: Se dois registros consecutivos estiverem em uma ordem inválida.
+
+    Returns:
+        Lista dos registros convertidos.
+    """
     if not registros or not isinstance(registros, (str, Iterable)):
         raise TypeError(f"Tipo inválido para parâmetro 'registros' ({registros})")
 

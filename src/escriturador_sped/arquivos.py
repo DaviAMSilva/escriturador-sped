@@ -1,3 +1,4 @@
+"""Funções de tratamento de arquivos usadas pela biblioteca."""
 from pathlib import Path
 
 from .constantes import ENCODING, NEWLINE
@@ -12,6 +13,17 @@ from .constantes import ENCODING, NEWLINE
 
 
 def remover_assinatura_escrituracao(escrituracao_texto: str):
+    """Remove a assinatura de uma escrituração em forma de texto.
+
+    Args:
+        escrituracao_texto: Texto da escrituração contendo a assinatura a ser removida.
+
+    Raises:
+        ValueError: Se o registro `|9999|` de fechamento não for encontrado.
+
+    Returns:
+        Texto da escrituração com a assinatura removida.
+    """
     linhas = escrituracao_texto.splitlines()
     for i, linha in enumerate(linhas):
         campos = linha.split("|")
@@ -26,6 +38,14 @@ def remover_assinatura_escrituracao(escrituracao_texto: str):
 
 
 def abrir_escrituracao(arquivo: str | Path) -> str:
+    """Abre um arquivo de escrituração.
+
+    Args:
+        arquivo: Caminho do arquivo a ser aberto.
+
+    Returns:
+        O texto da escrituração aberta.
+    """
     with open(arquivo, "r", encoding=ENCODING) as entrada:
         escrituracao_texto = entrada.read()
 
@@ -35,5 +55,11 @@ def abrir_escrituracao(arquivo: str | Path) -> str:
 
 
 def salvar_escrituracao(arquivo: str | Path, texto: str) -> None:
+    """Salva um arquivo de escrituração.
+
+    Args:
+        arquivo: Caminho do arquivo a ser salvo.
+        texto: Texto da escrituração a ser salva.
+    """
     with open(arquivo, "w", encoding=ENCODING, newline=NEWLINE) as saida:
         saida.write(texto)
