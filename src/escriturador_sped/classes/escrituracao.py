@@ -13,7 +13,7 @@ from .registro import Registro
 
 
 class Escrituracao(Componente, ABC):
-    MODULO = None
+    MODULO: ModuloT
 
     ECD = ECD
     ECF = ECF

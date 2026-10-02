@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
 from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, ORDEM_BLOCOS
@@ -17,7 +18,7 @@ from .componente import Componente
 
 
 
-class Registro(Componente):
+class Registro(Componente, ABC):
     MODULO: ModuloT
 
 
@@ -364,20 +365,28 @@ class Registro(Componente):
 
 
 class RegistroEcd(Registro):
+    MODULO = ECD
+
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(ECD, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEcf(Registro):
+    MODULO = ECF
+
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(ECF, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEfdIcmsIpi(Registro):
+    MODULO = EFD_ICMS_IPI
+
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(EFD_ICMS_IPI, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEfdContribuicoes(Registro):
+    MODULO = EFD_CONTRIBUICOES
+
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(EFD_CONTRIBUICOES, campos, pai=pai, filhos=filhos)
