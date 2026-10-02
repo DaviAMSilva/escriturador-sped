@@ -40,7 +40,7 @@ class Registro(Componente):
 
 
 
-    def __init__(self, modulo: ModuloT, campos: str | dict[Chave, Valor] | None = None, pai: "Registro | None" = None) -> None:
+    def __init__(self, modulo: ModuloT, campos: str | dict[Chave, Valor] | None = None, *, pai: "Registro | None" = None, filhos: "list[Registro] | ListaRegistro | Iterable[Registro] | None" = None) -> None:
         if modulo not in MODULOS_NOMES:
             raise ValueError(f"Valor inválido para parâmetro 'modulo' ({modulo})")
 
@@ -49,6 +49,9 @@ class Registro(Componente):
 
         if pai is not None and not isinstance(pai, Registro):
             raise TypeError(f"Tipo inválido para parâmetro 'pai' ({pai})")
+
+        if filhos is not None and not isinstance(filhos, Iterable):
+            raise TypeError(f"Tipo inválido para parâmetro 'filhos' ({filhos})")
 
         campos = campos or {}
 
@@ -158,6 +161,11 @@ class Registro(Componente):
         self.pai: Registro = pai  # type: ignore
         if pai:
             pai.adicionar(self)
+
+        # Adicionando filhos
+        if filhos:
+            self.adicionar(filhos)
+
 
 
     def __getattr__(self, nome: str) -> Campo[CampoTipoT, Valor]:
@@ -356,20 +364,20 @@ class Registro(Componente):
 
 
 class RegistroEcd(Registro):
-    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
-        super().__init__(ECD, campos, pai)
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
+        super().__init__(ECD, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEcf(Registro):
-    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
-        super().__init__(ECF, campos, pai)
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
+        super().__init__(ECF, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEfdIcmsIpi(Registro):
-    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
-        super().__init__(EFD_ICMS_IPI, campos, pai)
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
+        super().__init__(EFD_ICMS_IPI, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEfdContribuicoes(Registro):
-    def __init__(self, campos: str | dict[Chave, Valor] | None = None, pai: Registro | None = None) -> None:
-        super().__init__(EFD_CONTRIBUICOES, campos, pai)
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
+        super().__init__(EFD_CONTRIBUICOES, campos, pai=pai, filhos=filhos)

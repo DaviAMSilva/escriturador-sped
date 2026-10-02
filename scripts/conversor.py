@@ -11,8 +11,9 @@ from typing import Literal
 # pylint: disable=wrong-import-position
 os.environ["__CONVERSAO__"] = "1"
 
-from escriturador_sped.constantes import MAIOR_NIVEL, ORDEM_BLOCOS
+from escriturador_sped.constantes import ECD, ECF, MAIOR_NIVEL, ORDEM_BLOCOS
 from escriturador_sped.tipos import CampoTipoT, LeiauteT, ModuloT, RegistroT
+
 
 
 
@@ -247,6 +248,16 @@ def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dic
             else:
                 tamanho_campo = int(linha_campos["Tam"].replace("*", "").replace("-", ""))
 
+            tamanho_exato = (
+                # Nos outros módulos '*' significa tamanho exato
+                (len(linha_campos["Tam"]) > 0 and linha_campos["Tam"][-1] == "*")
+                or
+                # Nos módulo ECD e ECF alguns campos têm tamanho exato, mas não todos
+                # Infelizmente não existe um indicador similar a '*' nesses módulos
+                # Por causa disso o ideal é supor que todos os campos têm tamanho exato
+                (linha_campos["Tam"] not in ("", "-") and modulo in (ECD, ECF))
+            )
+
 
 
             objeto_registros[nome_registro]["campos"].append({
@@ -255,7 +266,7 @@ def converter_campos(modulo: ModuloT, arquivo_campos: str, objeto_registros: dic
                 "descricao": linha_campos["Descrição"].strip(),
                 "obrigatorio": campo_obrigatorio,
                 "tamanho": tamanho_campo,
-                "tamanho_exato": len(linha_campos["Tam"]) > 0 and linha_campos["Tam"][-1] == "*",
+                "tamanho_exato": tamanho_exato,
                 "decimal": None if linha_campos["Dec"] in ("", "-") else int(linha_campos["Dec"]),
                 "tipo": tipo_campo,
             })
