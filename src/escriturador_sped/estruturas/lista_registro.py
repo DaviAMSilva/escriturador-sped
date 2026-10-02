@@ -1,3 +1,4 @@
+"""Contém a classe `ListaRegistro`."""
 from typing import TYPE_CHECKING, Callable, Iterable, SupportsIndex, cast, overload
 
 from ..tipos import Chave, Valor, ValorC, ValorN
@@ -15,6 +16,14 @@ if TYPE_CHECKING:
 
 
 class ListaRegistro[RegistroT: Registro](list[RegistroT]):
+    """Representa uma lista de registros com funcionalidades adicionais.
+
+    Attributes:
+        nomes (tuple[str, ...]): Tupla com os nomes dos registros presentes na lista de registros.
+
+    Args:
+        iteravel: Iterável de registros a serem adicionados durante a criação da lista de registros.
+    """
     @overload
     def __init__(self) -> None: ...
 
@@ -46,6 +55,11 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
 
 
     def como[ComoRegistroT: Registro](self, registro: type[ComoRegistroT]) -> "ListaRegistro[ComoRegistroT]":  # pylint: disable=unused-argument
+        """Corrige a tipo dos registros na lista para o tipo especificado.
+
+        Returns:
+            A própria lista, mas com o tipo dos registros corrigido.
+        """
         return cast(ListaRegistro[ComoRegistroT], self)
 
 
@@ -61,6 +75,24 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         recursivo=True,
         primeiro=False
     ) -> "ListaRegistro[Registro]":
+        """Realiza uma busca de registros válidos entre os registros na lista de registros, de acordo com os parâmetros informados.
+
+        Args:
+            nome: Nome dos registros buscados.
+            campos: Dicionários com chaves e um ou mais valores dos campos nos registros buscados.
+            campos_c: Dicionários com chaves e um ou mais valores alfanuméricos dos campos nos registros buscados.
+            campos_n: Dicionários com chaves e um ou mais valores numéricos dos campos nos registros buscados.
+            filtro: Função que recebe um `Registro` e retorna `True` para os registros buscados.
+            recursivo: Se a busca é feita de forma recursiva.
+            primeiro: Se a busca deve ser encerrada após o primeiro registro ser encontrado.
+
+        Returns:
+            Lista de registros contendo todos os registros válidos encontrados na busca.
+
+        Examples:
+            >>> registros.buscar("NOME", {"CAMPO": [1, 2]}, filtro=lambda r: True)
+            ListaRegistro[Registro('|NOME|1|'), Registro('|NOME|2|')]
+        """
         encontrados = ListaRegistro["Registro"]()
 
         if nome:
@@ -96,6 +128,29 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         filtro: Callable[["Registro"], bool] | None = None,
         recursivo=True
     ) -> "Registro":
+        """Realiza uma busca pelo primeiro registro válido entre os registros na lista de registros, de acordo com os parâmetros informados.
+
+        Args:
+            nome: Nome dos registros buscados.
+            campos: Dicionários com chaves e um ou mais valores dos campos nos registros buscados.
+            campos_c: Dicionários com chaves e um ou mais valores alfanuméricos dos campos nos registros buscados.
+            campos_n: Dicionários com chaves e um ou mais valores numéricos dos campos nos registros buscados.
+            filtro: Função que recebe um `Registro` e retorna `True` para os registros buscados.
+            recursivo: Se a busca é feita de forma recursiva.
+
+        Returns:
+            Primeiro registro válido encontrado na busca.
+
+        Raises:
+            ValueError: Se nenhum registro válido for encontrado.
+
+        Examples:
+            >>> registros.primeiro("NOME", {"CAMPO": [1, 2]}, filtro=lambda r: True)
+            Registro('|NOME|1|')
+
+            >>> registros.primeiro("ERRO")
+            ValueError: O registro buscado não foi encontrado
+        """
         encontrado = self.buscar(
             nome, campos, campos_c=campos_c, campos_n=campos_n,
             filtro=filtro, recursivo=recursivo, primeiro=True
@@ -110,4 +165,5 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
 
     @property
     def nomes(self) -> tuple[str, ...]:
+        """Nomes dos registros na lista de registros, sem repetição."""
         return tuple(dict.fromkeys(r.nome for r in self))

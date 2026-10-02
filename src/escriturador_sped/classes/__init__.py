@@ -1,4 +1,4 @@
-"""Contém as principais classes usadas pela biblioteca."""
+"""Contém as classes componentes e a classe `Campo` usadas pela biblioteca."""
 from .bloco import Bloco
 from .campo import Campo, CampoC, CampoN
 from .componente import Componente

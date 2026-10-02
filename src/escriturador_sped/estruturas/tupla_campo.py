@@ -1,3 +1,4 @@
+"""Contém a classe `TuplaCampo`."""
 from typing import Iterable, Self, SupportsIndex, overload
 
 from ..classes.campo import Campo
@@ -13,6 +14,18 @@ from ..tipos import CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
 
 
 class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
+    """Representa uma tupla de campos com funcionalidades adicionais.
+
+    Attributes:
+        nomes (tuple[str, ...]): Tupla com os nomes dos campos presentes na tupla de campos.
+
+    Args:
+        iteravel: Iterável de campos a serem adicionados durante a criação da tupla de campos.
+
+    Raises:
+        TypeError: Se um dos argumentos não é um campo.
+    """
+
     def __init__(self, *_) -> None:
         self.dicionario: dict[str, "Campo[CampoTipoT, Valor]"] = {}
 
@@ -43,6 +56,26 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
     def __getitem__(self, chave: slice) -> "TuplaCampo": ...
 
     def __getitem__(self, chave: Chave | SupportsIndex | slice):
+        """Retorna um ou mais campos na tupla de campos.
+
+        Args:
+            chave: Índice, nome ou slice dos campos buscados.
+
+        Raises:
+            IndexError: Se a chave for um valor igual a 0 (campos têm indexação iniciada em 1).
+            KeyError: Se um campo com o nome igual a chave não for encontrado.
+            TypeError: Se a chave não é de um tipo válido.
+
+        Returns:
+            Um campo ou uma tupla de campos.
+
+        Examples:
+            >>> campos[1]
+            Campo['C']('REG': '0000')
+
+            >>> campos['COD_VER']
+            Campo['N']('COD_VER': 0)
+        """
         try:
             if isinstance(chave, int):
                 if chave == 0:
@@ -63,6 +96,14 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
 
 
     def __contains__(self, chave: object) -> bool:
+        """Determina se uma chave representa um campo na tupla de campos.
+
+        Args:
+            chave: Índice, nome ou campo a ser determinado se existe na tupla de campos.
+
+        Returns:
+            Se a chave representa pelo menos um dos campos da tupla de campos.
+        """
         if isinstance(chave, str):
             return chave in self.dicionario
 
@@ -79,6 +120,31 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
 
 
     def valores(self, valores: dict[Chave, Valor] | None = None) -> dict[str, Valor]:
+        """Permite visualizar ou alterar os valores dos campos na tupla de campos.
+
+        Diferentes variações dessa função podem retornar especificamente os valores alfanumérico, numéricos ou numéricos, não nulos:
+
+        - `TuplaCampo.valores() -> dict[str, Valor]`
+        - `TuplaCampo.valores_c() -> dict[str, ValorC]`
+        - `TuplaCampo.valores_n() -> dict[str, ValorN]`
+        - `TuplaCampo.valores_n0() -> dict[str, ValorN0]`
+
+        Args:
+            valores: Dicionário de valores a serem alterados na tupla de campos.
+
+        Raises:
+            TypeError: Se os valores não são de um tipo válido.
+
+        Returns:
+            Valores dos campos na tupla de campos, após a alteração se essa tiver ocorrida.
+
+        Examples:
+            >>> campos.valores()
+            {'NOME': 'UM', 'VALOR': 10}
+
+            >>> campos.valores({NOME: 'DOIS', 2: 20})
+            {'NOME': 'DOIS', 'VALOR': 20}
+        """
         if isinstance(valores, dict):
             for campo, valor in valores.items():
                 if campo in self:
@@ -89,14 +155,17 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
         return {campo.nome: campo.valor for campo in self}
 
     def valores_c(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorC]:
+        """Consultar `TuplaCampos.valores()`."""
         self.valores(valores)
         return {campo.nome: campo.valor_c for campo in self}
 
     def valores_n(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN]:
+        """Consultar `TuplaCampos.valores()`."""
         self.valores(valores)
         return {campo.nome: campo.valor_n for campo in self}
 
     def valores_n0(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN0]:
+        """Consultar `TuplaCampos.valores()`."""
         self.valores(valores)
         return {campo.nome: campo.valor_n0 for campo in self}
 
@@ -104,4 +173,5 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
 
     @property
     def nomes(self) -> tuple[str, ...]:
+        """Nomes dos campos na tupla de campos."""
         return tuple(self.dicionario.keys())
