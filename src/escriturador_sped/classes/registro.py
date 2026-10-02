@@ -1,3 +1,4 @@
+"""Contém a classe abstratas `Registro` e suas subclasses."""
 from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
 from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, ORDEM_BLOCOS
@@ -18,19 +19,93 @@ from .componente import Componente
 
 
 class Registro(Componente):
+    """Contém informações sobre um registro e seus campos.
+
+    Na criação de um registro os campos podem ser informados nos seguintes modos:
+
+    - **Texto**: Da mesma forma como a linha de uma escrituração.  
+    *Todos os campos são obrigatório.*
+    - **Dicionário**: Um dicionários contendo as chaves dos campos e seus valores.  
+    *Campos ausentes são interpretados como vazios.*
+
+    Se for informado o registro pai, o novo registro será automaticamente adicionado na lista de filhos do registro pai.
+    Se forem informados registros filhos, eles serão automaticamente adicionados na lista de filhos do novo registro.
+
+    Attributes:
+        nome (str): Nome do registro.
+        campos (TuplaCampo): Campos do registro.
+        filhos (ListaRegistro): Filhos diretos do registro.
+        pai (Registro | None): Pai do Registro.
+        modulo (ModuloT): Módulo ao qual o bloco pertence.
+        descricao (str): Descrição do registro.
+        nivel (int): Nível do registro na escrituração.
+        obrigatorio (bool): Se o registro é obrigatório aparecer na escrituração.
+        unico (bool): Se o registro deve aparecer apenas uma vez na escrituração.
+
+    Args:
+        modulo: Módulo ao qual o bloco pertence.
+        campos: Lista dos valores iniciais dos campos do registro.
+        pai: Registro pai do registro a ser criado.
+        filhos: Registros filhos para o registro a ser criado.
+
+    Raises:
+        ValueError: Se o valor do parâmetro modulo for inválido.
+        TypeError: Se o parâmetro `campos` for do tipo inválido.
+        TypeError: Se o parâmetro `pai` for do tipo inválido.
+        TypeError: Se o parâmetro `filhos` for do tipo inválido.
+        ValueError: Se os campos são do tipo texto e o primeiro campo for diferente do esperado pela subclasse.
+        SyntaxError: Se a quantidade de campos for diferente da esperada no modo de texto.
+        ValueError: Se não houver pelo menos um campo com nome REG ou número 1 no modo de dicionário.
+        TypeError: Se os campos não forem do tipo texto ou dicionário.
+
+    Examples:
+        >>> novo_registro = Registro(Escrituracao.EFD_ICMS_IPI, '|NOME|10|')
+        Registro('|NOME|10|')
+        >>> novo_registro.pai
+        None
+
+        >>> novo_registro = Registro(Escrituracao.EFD_ICMS_IPI, {'REG': 'NOME', 2: 20}, pai=registro_pai)
+        Registro('|NOME|20|')
+        >>> novo_registro.pai.filhos
+        ListaRegistro[Registro('|NOME|20|')]
+    """
     MODULO: ModuloT
 
 
 
     @classmethod
     def ordem(cls, nome: str, modulo: ModuloT) -> int:
-        # Exemplos:
-        # 0100 ->    0 + 100 =  100
-        # C500 -> 2000 + 500 = 2500
+        """Calcula o número de ordem de um registro.
+
+        Usado para realizar comparações de ordem entre registros.
+
+        Args:
+            nome: Nome do registro.
+            modulo: Módulo ao qual o registro pertence.
+
+        Returns:
+            Valor numérico da ordem do registro.
+
+        Examples:
+            >>> Registro.ordem('0100', Escrituracao.EFD_ICMS_IPI)
+            100
+
+            >>> Registro.ordem('C500', Escrituracao.EFD_ICMS_IPI)
+            2500
+        """
         return ORDEM_BLOCOS[modulo].index(nome[0].upper()) * 1000 + int(nome[1:4])
 
     @classmethod
     def ler(cls, registros: str | Iterable[str], modulo: ModuloT | None = None) -> ListaRegistro:
+        """Converte várias linhas para uma lista de registros.
+
+        Args:
+            registros: Uma lista de registros em forma de texto. Pode ser um texto separados por quebras de linhas ou um iterável de textos individuais.
+            modulo: Módulo ao qual o registro pertence.
+
+        Returns:
+            Lista dos registros convertidos.
+        """
         from ..leitura import ler_registros  # pylint: disable=import-outside-toplevel,cyclic-import
 
         if not modulo:
@@ -169,6 +244,17 @@ class Registro(Componente):
 
 
     def __getattr__(self, nome: str) -> Campo[CampoTipoT, Valor]:
+        """Retorna o campo com o nome especificado pelo atributo.
+
+        Args:
+            nome: Nome de campo a ser retornado.
+
+        Raises:
+            AttributeError: Se o campo com esse nome não existir.
+
+        Returns:
+            Campo: O campo a ser retornado.
+        """
         nome_hifen = nome.replace("__", "-")
         nome_barra = nome.replace("__", "/")
 
@@ -190,6 +276,11 @@ class Registro(Componente):
 
 
     def como[ComoRegistroT: Registro](self, registro: type[ComoRegistroT]) -> ComoRegistroT:  # pylint: disable=unused-argument
+        """Corrige a tipo do registro para o tipo especificado.
+
+        Returns:
+            O próprio registro, mas com o tipo corrigido.
+        """
         return cast(ComoRegistroT, self)
 
 
@@ -204,6 +295,7 @@ class Registro(Componente):
 
     @property
     def linha(self) -> str:
+        """A representação do registro como uma linha de uma escrituração."""
         return f"|{'|'.join([str(c) for c in self.campos])}|"
 
     @property
@@ -213,15 +305,43 @@ class Registro(Componente):
 
 
     def valores(self, valores: dict[Chave, Valor] | None = None) -> dict[str, Valor]:
+        """Permite visualizar ou alterar os valores dos campos do registro.
+
+        Diferentes variações dessa função podem retornar especificamente os valores alfanumérico, numéricos ou numéricos, não nulos:
+
+        - `Registro.valores() -> dict[str, Valor]`
+        - `Registro.valores_c() -> dict[str, ValorC]`
+        - `Registro.valores_n() -> dict[str, ValorN]`
+        - `Registro.valores_n0() -> dict[str, ValorN0]`
+
+        Args:
+            valores: Dicionário de valores a serem alterados do registro.
+
+        Raises:
+            TypeError: Se os valores não são de um tipo válido.
+
+        Returns:
+            Valores dos campos do registro, após a alteração se essa tiver ocorrida.
+
+        Examples:
+            >>> registro.valores()
+            {'NOME': 'UM', 'VALOR': 1}
+
+            >>> registro.valores({NOME: 'DOIS', 2: 2})
+            {'NOME': 'DOIS', 'VALOR': 2}
+        """
         return self.campos.valores(valores)
 
     def valores_c(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorC]:
+        """Consultar `Registro.valores()`."""
         return self.campos.valores_c(valores)
 
     def valores_n(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN]:
+        """Consultar `Registro.valores()`."""
         return self.campos.valores_n(valores)
 
     def valores_n0(self, valores: dict[Chave, Valor] | None = None) -> dict[str, ValorN0]:
+        """Consultar `Registro.valores()`."""
         return self.campos.valores_n0(valores)
 
 
@@ -235,6 +355,18 @@ class Registro(Componente):
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None
     ) -> bool:
+        """Testa se o registro é válido, de acordo com os parâmetros informados.
+
+        Args:
+            nome: Nome do registro válido.
+            campos: Dicionários com chaves e um ou mais valores dos campos no registro válido.
+            campos_c: Dicionários com chaves e um ou mais valores alfanuméricos dos campos no registro válido.
+            campos_n: Dicionários com chaves e um ou mais valores numéricos dos campos no registro válido.
+            filtro: Função que recebe um `Registro` e retorna `True` para o registro válido.
+
+        Returns:
+            Se o registro passa o teste.
+        """
         if nome is not None and nome != self.nome:
             return False
 
@@ -274,6 +406,18 @@ class Registro(Componente):
 
 
     def adicionar(self, registros: "Registro | ListaRegistro[Registro] | Iterable[Registro]") -> Self:
+        """Adiciona registros filhos em um registro.
+
+        Args:
+            registros: Lista de registros filhos a serem adicionados ao registro pai.
+
+        Raises:
+            TypeError: Se um dos itens não for um registro.
+            ValueError: Se um dos registros filhos não for um filho válido do registro pai.
+
+        Returns:
+            O próprio registro.
+        """
         for novo_registro in [registros] if isinstance(registros, Registro) else registros:
             if not isinstance(novo_registro, Registro):
                 raise TypeError(f"Item não é um registro ({novo_registro!r})")
@@ -328,6 +472,22 @@ class Registro(Componente):
         campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None
     ) -> Self:
+        """Remove registros filhos de um registro, de acordo com os parâmetros informados.
+
+        Args:
+            registros: Lista de registros a serem removidos. Se esse parâmetro for informado não é permitido informar nenhum outro parâmetro.
+            nome: Nome dos registros a serem removidos.
+            filtro: Função que recebe um `Registro` e retorna `True` para os registros a serem removidos.
+            campos: Dicionários com chaves e um ou mais valores dos campos nos registros a serem removidos.
+            campos_c: Dicionários com chaves e um ou mais valores alfanuméricos dos campos nos registros a serem removidos.
+            campos_n: Dicionários com chaves e um ou mais valores numéricos dos campos nos registros a serem removidos.
+
+        Raises:
+            TypeError: Se o parâmetros `registros` for usado, mas outro parâmetro estiver presente.
+
+        Returns:
+            O próprio registro.
+        """
         if registros:
             if nome or filtro or campos or campos_c or campos_n:
                 raise TypeError("Não são permitidos outros parâmetros se 'registros' estiver presente")
@@ -350,6 +510,11 @@ class Registro(Componente):
         return self
 
     def limpar(self) -> Self:
+        """Limpa os filhos do registro.
+
+        Returns:
+            Próprio registro.
+        """
         self.filhos.clear()
 
         return self
@@ -364,20 +529,24 @@ class Registro(Componente):
 
 
 class RegistroEcd(Registro):
+    """Contém informações sobre um registro do módulo ECD e seus campos"""
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(ECD, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEcf(Registro):
+    """Contém informações sobre um registro do módulo ECF e seus campos"""
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(ECF, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEfdIcmsIpi(Registro):
+    """Contém informações sobre um registro do módulo EFD_ICMS_IPI e seus campos"""
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(EFD_ICMS_IPI, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEfdContribuicoes(Registro):
+    """Contém informações sobre um registro do módulo EFD_CONTRIBUICOES e seus campos"""
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(EFD_CONTRIBUICOES, campos, pai=pai, filhos=filhos)

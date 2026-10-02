@@ -1,3 +1,4 @@
+"""Contém a classe `Escrituracao` e suas subclasses."""
 from abc import ABC
 from collections import Counter
 from pathlib import Path
@@ -13,23 +14,58 @@ from .registro import Registro
 
 
 class Escrituracao(Componente, ABC):
+    """Classe abstrata para contém informações de uma escrituração, seus blocos e registros.
+
+    Attributes:
+        blocos (dict[str, Bloco]): Dicionário de blocos da escrituração.
+        abertura (Registro): Registro de abertura da escrituração.
+        fechamento (Registro): Registro de fechamento da escrituração.
+        modulo: Módulo ao qual a escrituração pertence.
+
+    Args:
+        escrituracao_texto: Texto da escrituração a ser criada.
+        nome: Nome da escrituração.
+    """
+
     MODULO = None
+    """Nome do módulo a que essa escrituração pertence."""
 
     ECD = ECD
+    "Nome para uma escrituração do tipo Escrituração Contábil Digital."
     ECF = ECF
+    "Nome para uma escrituração do tipo Escrituração Contábil Fiscal."
     EFD_ICMS_IPI = EFD_ICMS_IPI
+    "Nome para uma escrituração do tipo Escrituração Fiscal Digital Contribuições."
     EFD_CONTRIBUICOES = EFD_CONTRIBUICOES
+    "Nome para uma escrituração do tipo Escrituração Fiscal Digital ICMS IPI."
 
     MODULOS_NOMES = MODULOS_NOMES
+    """Lista dos nomes dos módulos disponíveis na biblioteca."""
 
 
 
     @classmethod
     def abrir(cls, arquivo: str | Path) -> Self:
+        """Fábrica para criar uma escrituração diretamente de um arquivo.
+
+        Args:
+            arquivo: Caminho do arquivo a ser aberto.
+
+        Returns:
+            Instância da escrituração criada.
+        """
         # Isso é estranho, mas funciona pois as subclasses usam apenas um parâmetro
         return cls(abrir_escrituracao(arquivo))  # pyright: ignore[reportCallIssue] # pylint: disable=no-value-for-parameter
 
     def salvar(self, arquivo: str | Path) -> Self:
+        """Salva a escrituração para um arquivo.
+
+        Args:
+            arquivo: Caminho do arquivo a ser salvo.
+
+        Returns:
+            A própria escrituração.
+        """
         salvar_escrituracao(arquivo, self.texto())
 
         return self
@@ -53,12 +89,31 @@ class Escrituracao(Componente, ABC):
 
 
     def __getitem__(self, chave: str) -> Bloco:
+        """Encontra o bloco desejado da escrituração.
+
+        Args:
+            chave: Nome do bloco.
+
+        Raises:
+            KeyError: Se o bloco não existe.
+
+        Returns:
+            Bloco desejado.
+        """
         try:
             return self.blocos[chave]
         except KeyError as e:
             raise KeyError(f"Bloco não encontrado ({chave})") from e
 
     def __contains__(self, chave: str):
+        """Testa se um bloco existe na escrituração.
+
+        Args:
+            chave: Nome ou número do bloco a ser testado.
+
+        Returns:
+            Se o bloco existe na escrituração.
+        """
         return chave in self.blocos
 
 
@@ -125,6 +180,14 @@ class Escrituracao(Componente, ABC):
 
 
     def adicionar(self, nome_bloco: str) -> Self:
+        """Adiciona um bloco a escrituração.
+
+        Args:
+            nome_bloco: Nome do bloco a ser adicionado.
+
+        Returns:
+            Própria escrituração.
+        """
         nome_bloco = nome_bloco.upper()
 
         if nome_bloco not in self.blocos and nome_bloco in ORDEM_BLOCOS[self.modulo]:
@@ -140,6 +203,14 @@ class Escrituracao(Componente, ABC):
 
 
     def remover(self, nome_bloco: str) -> Self:
+        """Remove um bloco a escrituração.
+
+        Args:
+            nome_bloco: Nome do bloco a ser removido.
+
+        Returns:
+            Própria escrituração.
+        """
         nome_bloco = nome_bloco.upper()
 
         if nome_bloco in self.blocos:
@@ -151,6 +222,11 @@ class Escrituracao(Componente, ABC):
 
 
     def totalizar(self, ordenar_9900=False) -> Self:
+        """Totaliza os valores de contagem do bloco 9 e os fechamentos da escrituração.
+
+        Args:
+            ordenar_9900: Se os registros 9900 devem ser ordenados de acordo com os registros que eles totalizam.
+        """
         # A totalização dos registros e dos blocos dependem um do outro
         # por isso, é necessário realizar a totalização dessa forma
         self.totalizar_blocos()
@@ -161,11 +237,13 @@ class Escrituracao(Componente, ABC):
         return self
 
     def totalizar_escrituracao(self) -> Self:
+        """Totaliza o fechamento da escrituração."""
         self.fechamento.campos[2].valor_c = self.tamanho
 
         return self
 
     def totalizar_blocos(self) -> Self:
+        """Totaliza os fechamentos dos blocos da escrituração."""
         for nome in ORDEM_BLOCOS[self.modulo]:
             bloco = self.blocos.get(nome, None)
 
@@ -183,6 +261,11 @@ class Escrituracao(Componente, ABC):
         return self
 
     def totalizar_registros(self, ordenar_9900=False) -> Self:
+        """Totaliza os valores de contagem do bloco 9.
+
+        Args:
+            ordenar_9900: Se os registros 9900 devem ser ordenados de acordo com os registros que eles totalizam.
+        """
         # Encontrando todos os nomes de registros presentes na escrituração
         registro_9001 = self.blocos["9"].abertura
 
@@ -247,7 +330,16 @@ class Escrituracao(Componente, ABC):
 
 
 class EscrituracaoEcd(Escrituracao):
+    """Contém informações sobre uma escrituração do módulo ECD e seus blocos e registros.
+
+    Args:
+        escrituracao_texto: Texto da escrituração a ser criada. Se não informado a escrituração é criada minimamente preenchida.
+
+    Raises:
+        TypeError: Se o texto não é de um tipo válido.
+    """
     MODULO = Escrituracao.ECD
+    """Nome do módulo ECD."""
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
@@ -260,7 +352,16 @@ class EscrituracaoEcd(Escrituracao):
 
 
 class EscrituracaoEcf(Escrituracao):
+    """Contém informações sobre uma escrituração do módulo ECF e seus blocos e registros.
+
+    Args:
+        escrituracao_texto: Texto da escrituração a ser criada. Se não informado a escrituração é criada minimamente preenchida.
+
+    Raises:
+        TypeError: Se o texto não é de um tipo válido.
+    """
     MODULO = Escrituracao.ECF
+    """Nome do módulo ECF."""
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
@@ -273,7 +374,16 @@ class EscrituracaoEcf(Escrituracao):
 
 
 class EscrituracaoEfdContribuicoes(Escrituracao):
+    """Contém informações sobre uma escrituração do módulo EFD_CONTRIBUICOES e seus blocos e registros.
+
+    Args:
+        escrituracao_texto: Texto da escrituração a ser criada. Se não informado a escrituração é criada minimamente preenchida.
+
+    Raises:
+        TypeError: Se o texto não é de um tipo válido.
+    """
     MODULO = Escrituracao.EFD_CONTRIBUICOES
+    """Nome do módulo EFD_CONTRIBUICOES."""
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):
@@ -286,7 +396,16 @@ class EscrituracaoEfdContribuicoes(Escrituracao):
 
 
 class EscrituracaoEfdIcmsIpi(Escrituracao):
+    """Contém informações sobre uma escrituração do módulo EFD_ICMS_IPI e seus blocos e registros.
+
+    Args:
+        escrituracao_texto: Texto da escrituração a ser criada. Se não informado a escrituração é criada minimamente preenchida.
+
+    Raises:
+        TypeError: Se o texto não é de um tipo válido.
+    """
     MODULO = Escrituracao.EFD_ICMS_IPI
+    """Nome do módulo EFD_ICMS_IPI."""
 
     def __init__(self, escrituracao_texto: str | None = None) -> None:
         if isinstance(escrituracao_texto, str):

@@ -1,3 +1,4 @@
+"""Contém a classe `Campo`."""
 from typing import Literal, assert_never
 
 from ..constantes import ALFANUMERICO, NUMERICO
@@ -16,7 +17,9 @@ from ..tipos import CampoT, CampoTipoT, Chave, Valor, ValorC, ValorN, ValorN0
 # Tipagem para tipos de campos específicos
 # pylint: disable=invalid-name
 type CampoC = Campo[Literal["C"], ValorC]
+"""Tipo que representa um campo alfanumérico."""
 type CampoN = Campo[Literal["N"], ValorN]
+"""Tipo que representa um campo numérico."""
 # pylint: enable=invalid-name
 
 
@@ -29,16 +32,52 @@ type CampoN = Campo[Literal["N"], ValorN]
 
 
 class Campo[TipoT: CampoTipoT, ValorT: Valor]:
+    """Contém informações sobre um campo.
+
+    Attributes:
+        nome (str): Nome do campo.
+        descricao (str): Descrição do campo.
+        tipo (TipoT): Tipo do campo.
+        modulo (ModuloT): Módulo ao qual o campo pertence.
+        decimal (int | None): Quantidade de casas decimais.
+        obrigatorio (bool): Se o campo é obrigatório.
+        tamanho (int): Tamanho máximo da forma alfanumérica.
+        tamanho_exato (bool): Se o tamanho precisa ser exato.
+
+    Args:
+        modulo: Módulo ao qual o campo pertence.
+        nome_registro: Nome do registro a que o campo pertence.
+        chave: Número ou nome do campo no registro a que o campo pertence (campos têm indexação iniciada em 1).
+        valor: Valor inicial do campo.
+
+    Raises:
+        IndexError: Se a chave for um valor menor que 1 (campos têm indexação iniciada em 1).
+        ValueError: Se a chave não for um nome de campo válido.
+        TypeError: Se a chave não é de um tipo válido.
+    """
     tipo: TipoT
 
     # Tipos de campo
     ALFANUMERICO = ALFANUMERICO
+    """Código para campo do tipo alfanumérico."""
     NUMERICO = NUMERICO
+    """Código para campo do tipo numérico."""
 
 
 
     @staticmethod
     def alfanumerico(valor: Valor, decimal: int | None = None, tamanho: int = 255, tamanho_exato: bool = False) -> ValorC:
+        """Converte um valor para a forma alfanumérica.
+
+        Args:
+            valor: Valor a ser convertido.
+            decimal: Quantidade de casas decimais.
+            tamanho: Tamanho máximo da forma alfanumérica.
+            tamanho_exato: Se o tamanho precisa ser exato.
+
+        Returns:
+            A forma alfanumérica do valor.
+        """
         if isinstance(valor, str):
             if len(valor) > tamanho:
                 return valor[:tamanho]
@@ -63,6 +102,15 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
     @staticmethod
     def numerico(valor: Valor, decimal: int | None) -> ValorN:
+        """Converte um valor para a forma numérica.
+
+        Args:
+            valor: Valor a ser convertido.
+            decimal: Quantidade de casas decimais.
+
+        Returns:
+            A forma numérica do valor.
+        """
         if valor in ("", None):
             return None
 
@@ -141,12 +189,25 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
 
     def texto(self) -> str:
+        """Converte o campo para texto.
+
+        Returns:
+            O valor do campo em forma de texto.
+        """
         return self._valor_alfanumerico
 
 
 
     @property
     def valor(self) -> ValorT:
+        """Permite obter e modificar o valor do campo.
+
+        Args:
+            valor (Valor): Novo valor do campo.
+
+        Raises:
+            TypeError: Se o novo valor não for do tipo `Valor`.
+        """
         if self.tipo == Campo.ALFANUMERICO:
             return self.valor_c  # type: ignore
 
@@ -204,6 +265,14 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
     @property
     def valor_c(self) -> ValorC:
+        """Permite obter e modificar o valor alfanumérico do campo.
+
+        Args:
+            valor (Valor): Novo valor do campo.
+
+        Raises:
+            TypeError: Se o novo valor não for do tipo `Valor`.
+        """
         return self._valor_alfanumerico
 
     @valor_c.setter
@@ -214,6 +283,14 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
     @property
     def valor_n(self) -> ValorN:
+        """Permite obter e modificar o valor numérico do campo.
+
+        Args:
+            valor (Valor): Novo valor do campo.
+
+        Raises:
+            TypeError: Se o novo valor não for do tipo `Valor`.
+        """
         if self._valor_numerico is None:
             return None
 
@@ -230,6 +307,16 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
     @property
     def valor_n0(self) -> ValorN0:
+        """Permite obter e modificar o valor numérico, não nulo, do campo.
+
+        Em contraste a `valor_n`, usando essa propriedade um campo vazio irá retornar `0` ao invés de `None`.
+
+        Args:
+            valor (Valor): Novo valor do campo.
+
+        Raises:
+            TypeError: Se o novo valor não for do tipo `Valor`.
+        """
         if self._valor_numerico is None:
             return 0
 

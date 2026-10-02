@@ -1,12 +1,12 @@
 """Constantes usadas pela biblioteca.
 
 Attributes:
-    ECD (ModuloT): Escrituração do tipo Escrituração Contábil Digital.
-    ECF (ModuloT): Escrituração do tipo Escrituração Contábil Fiscal.
-    EFD_CONTRIBUICOES (ModuloT): Escrituração do tipo Escrituração Fiscal Digital Contribuições.
-    EFD_ICMS_IPI (ModuloT): Escrituração do tipo Escrituração Fiscal Digital ICMS IPI.
-    ALFANUMERICO (str): Código para tipo de campo alfanumérico.
-    NUMERICO (str): Código para tipo de campo numérico.
+    ECD (ModuloT): Nome para uma Escrituração Contábil Digital.
+    ECF (ModuloT): Nome para uma Escrituração Contábil Fiscal.
+    EFD_CONTRIBUICOES (ModuloT): Nome para uma Escrituração Fiscal Digital Contribuições.
+    EFD_ICMS_IPI (ModuloT): Nome para uma Escrituração Fiscal Digital ICMS IPI.
+    ALFANUMERICO (str): Código para campo do tipo alfanumérico.
+    NUMERICO (str): Código para campo do tipo numérico.
     ENCODING (str): Codificação para um arquivo de escrituração.
     NEWLINE (str): Quebra de linha para um arquivo de escrituração.
     MAIOR_NIVEL (int): Maior nível de recursão de registros possível em uma escrituração.
