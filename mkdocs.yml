@@ -55,7 +55,6 @@ extra_css:
 
 plugins:
   - search
-  - awesome-pages
   - tags
   - privacy:
       enabled: !ENV [PRIVACY, true]

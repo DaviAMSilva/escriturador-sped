@@ -69,7 +69,6 @@ DEV = [
 DOCS = [
     "click==8.2.1", # Corrige 'mkdocs serve' não atualizar automaticamente
     "mkdocs",
-    "mkdocs-awesome-pages-plugin",
     "mkdocs-git-revision-date-localized-plugin",
     "mkdocs-material",
     "mkdocs-material[imaging]",
