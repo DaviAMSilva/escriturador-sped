@@ -23,7 +23,7 @@
     Registros contêm um referência ao registro pai, exceto os registros `0000` e `9999` de abertura e fechamento de um escrituração.  
     Registros contêm uma quantidade variável de campos, dependente do tipo do registro informado durante a sua criação.
 
-- **[Campo](./campos.md): A classe que armazena as informações de um registro.**
+- **[Campo](./classes/campo.md): A classe que armazena as informações de um registro.**
 
     Campos contém informações sobre as propriedade que o campo representado tem e os valores atuais dele.  
     Campos têm as suas propriedades definidas durante a criação de um registro.
