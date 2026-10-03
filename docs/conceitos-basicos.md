@@ -30,7 +30,7 @@
 
 - **[ListaRegistro](./estruturas-de-dados/lista-registro.md): Uma estrutura de dados especial para armazenar uma lista de registros.**
 
-    Contém funcionalidades próprias para a manipulação de vários registros, especialmente ao realizar [buscas](./buscas.md).
+    Contém funcionalidades próprias para a manipulação de vários registros, especialmente ao realizar [buscas](./realizando-buscas.md).
 
 - **[TuplaCampo](./estruturas-de-dados/tupla-campo.md): Uma estrutura de dados especial para armazenar uma tupla de campos.**
 

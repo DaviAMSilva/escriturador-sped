@@ -150,6 +150,7 @@ markdown_extensions:
 nav:
   - instalacao.md
   - conceitos-basicos.md
+  - realizando-buscas.md
   - Visualizador de Módulos SPED: modulos/index.html
   - Classes:
       - classes/componente.md
@@ -160,10 +161,9 @@ nav:
   - Estruturas de Dados:
       - estruturas-de-dados/lista-registro.md
       - estruturas-de-dados/tupla-campo.md
-  - Outros Conceitos:
-      - buscas.md
-      - constantes.md
-      - tipagem.md
+  - Outros:
+      - outros/constantes.md
+      - outros/tipos.md
 
 
 extra:
