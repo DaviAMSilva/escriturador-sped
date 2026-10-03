@@ -93,8 +93,8 @@ class Componente(ABC):
         campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
-        recursivo=True,
-        primeiro=False
+        recursivo: bool = True,
+        primeiro: bool = False
     ) -> "ListaRegistro[Registro]":
         """Realiza uma busca de registros válidos por todos os registros filhos do componente, de acordo com os parâmetros informados.
 
@@ -127,7 +127,7 @@ class Componente(ABC):
         campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
-        recursivo=True
+        recursivo: bool = True
     ) -> "Registro":
         """Realiza uma busca pelo primeiro registro válido por todos os registros filhos do componente, de acordo com os parâmetros informados.
 

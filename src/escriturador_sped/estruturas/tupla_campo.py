@@ -55,7 +55,7 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
     @overload
     def __getitem__(self, chave: slice) -> "TuplaCampo": ...
 
-    def __getitem__(self, chave: Chave | SupportsIndex | slice):
+    def __getitem__(self, chave: Chave | SupportsIndex | slice) -> "Campo[CampoTipoT, Valor] | TuplaCampo":
         """Retorna um ou mais campos na tupla de campos.
 
         Args:

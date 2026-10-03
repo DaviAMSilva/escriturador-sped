@@ -105,7 +105,7 @@ class Escrituracao(Componente, ABC):
         except KeyError as e:
             raise KeyError(f"Bloco não encontrado ({chave})") from e
 
-    def __contains__(self, chave: str):
+    def __contains__(self, chave: str) -> bool:
         """Testa se um bloco existe na escrituração.
 
         Args:
@@ -221,7 +221,7 @@ class Escrituracao(Componente, ABC):
 
 
 
-    def totalizar(self, ordenar_9900=False) -> Self:
+    def totalizar(self, ordenar_9900: bool = False) -> Self:
         """Totaliza os valores de contagem do bloco 9 e os fechamentos da escrituração.
 
         Args:
@@ -260,7 +260,7 @@ class Escrituracao(Componente, ABC):
 
         return self
 
-    def totalizar_registros(self, ordenar_9900=False) -> Self:
+    def totalizar_registros(self, ordenar_9900: bool = False) -> Self:
         """Totaliza os valores de contagem do bloco 9.
 
         Args:

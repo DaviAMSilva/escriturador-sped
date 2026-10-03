@@ -72,8 +72,8 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
-        recursivo=True,
-        primeiro=False
+        recursivo: bool = True,
+        primeiro: bool = False
     ) -> "ListaRegistro[Registro]":
         """Realiza uma busca de registros válidos entre os registros na lista de registros, de acordo com os parâmetros informados.
 
@@ -126,7 +126,7 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         campos_c: dict[Chave, ValorC | Iterable[ValorC]] | None = None,
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None,
         filtro: Callable[["Registro"], bool] | None = None,
-        recursivo=True
+        recursivo: bool = True
     ) -> "Registro":
         """Realiza uma busca pelo primeiro registro válido entre os registros na lista de registros, de acordo com os parâmetros informados.
 
