@@ -247,6 +247,8 @@ class Registro(Componente, ABC):
     def __getattr__(self, nome: str) -> Campo[CampoTipoT, Valor]:
         """Retorna o campo com o nome especificado pelo atributo.
 
+        Equivalente a `registros.campos["NOME_CAMPO"]`.
+
         Args:
             nome: Nome de campo a ser retornado.
 
@@ -255,6 +257,10 @@ class Registro(Componente, ABC):
 
         Returns:
             Campo: O campo a ser retornado.
+
+        Examples:
+            >>> registro.NOME_CAMPO
+            Campo['C']('NOME_CAMPO': 'VALOR')
         """
         nome_hifen = nome.replace("__", "-")
         nome_barra = nome.replace("__", "/")

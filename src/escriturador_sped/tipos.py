@@ -1,4 +1,4 @@
-"""Contém vários tipos usados pela biblioteca."""
+"""Tipos usados pela biblioteca."""
 from typing import Literal, TypedDict
 
 
