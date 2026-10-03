@@ -64,8 +64,17 @@ DEV = [
     "pytest",
     "pytest-cov",
     "pytest-profiling",
-    "snakeviz",
-    "mkdocs-material"
+    "snakeviz"
+]
+DOCS = [
+    "click==8.2.1", # Corrige 'mkdocs serve' não atualizar automaticamente
+    "mkdocs",
+    "mkdocs-awesome-pages-plugin",
+    "mkdocs-git-revision-date-localized-plugin",
+    "mkdocs-material",
+    "mkdocs-material[imaging]",
+    "mkdocstrings[python]",
+    "griffe-inherited-docstrings",
 ]
 
 

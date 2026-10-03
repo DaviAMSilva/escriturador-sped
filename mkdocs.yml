@@ -6,16 +6,26 @@ docs_dir: docs
 edit_uri: ""
 
 theme:
+  name: material
   logo: imagens/logo-branco.webp
+  favicon: imagens/logo-transparente.webp
+  icon:
+    repo: fontawesome/brands/github
   features:
     - navigation.instant
     - navigation.instant.prefetch
+    - navigation.instant.preview
     - navigation.indexes
     - navigation.sections
     - navigation.expand
     - navigation.path
     - navigation.top
-  name: material
+    - toc.follow
+    - content.tooltips
+    - content.footnote.tooltips
+  font:
+    text: Fira Sans
+    code: Fira Code
   language: pt-BR
   palette:
     # Palette toggle for automatic mode
@@ -45,11 +55,98 @@ extra_css:
 
 plugins:
   - search
+  - awesome-pages
+  - tags
+  - privacy:
+      enabled: !ENV [PRIVACY, true]
+      assets_exclude:
+        - giscus.app/*
+        - img.shields.io/*
+      links_attr_map:
+        target: _blank
+      links_noopener: true
+  - git-revision-date-localized:
+      type: timeago
+      timezone: America/Sao_Paulo
+      locale: pt
+      fallback_to_build_date: false
+      enable_creation_date: true
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          inventories:
+            - https://docs.python.org/3/objects.inv
+          options:
+            allow_inspection: true
+            backlinks: tree
+            docstring_section_style: list
+            docstring_style: google
+            group_by_category: true
+            inherited_members: true
+            line_length: 160
+            members_order: source
+            members: null
+            merge_init_into_class: true
+            modernize_annotations: true
+            relative_crossrefs: true
+            separate_signature: true
+            show_attribute_values: true
+            show_docstring_attributes: true
+            show_if_no_docstring: false
+            show_signature_annotations: true
+            show_source: false
+            show_submodules: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            summary: false
+            docstring_options:
+              ignore_init_summary: true
+            extensions:
+              - griffe_inherited_docstrings
+  - optimize:
+      enabled: !ENV [IMAGING, false]
+  - social:
+      enabled: !ENV [IMAGING, false]
+      cards_layout_options:
+        font_family: Fira Code
+
 
 markdown_extensions:
+  - abbr
+  - tables
+  - def_list
+  - attr_list
+  - md_in_html
   - admonition
+  - toc:
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+      permalink: "#"
   - pymdownx.details
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.inlinehilite
+  # - pymdownx.snippets:
+  #     auto_append:
+  #       - includes/abbreviations.md
   - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
 
 nav:
   - instalacao.md
@@ -68,3 +165,19 @@ nav:
       - buscas.md
       - constantes.md
       - tipagem.md
+
+
+extra:
+  social:
+    - icon: simple/github
+      link: https://github.com/DaviAMSilva/
+      name: "GitHub"
+    - icon: fontawesome/solid/user
+      link: https://daviamsilva.dev
+      name: "Site Pessoal"
+    - icon: fontawesome/solid/envelope
+      link: mailto:daviamsilva@hotmail.com
+      name: "E-mail"
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/daviamsilva/
+      name: "LinkedIn"

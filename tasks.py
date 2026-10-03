@@ -47,6 +47,7 @@ def tipagem(c: Context, lint: bool = True):  # pylint: disable=redefined-outer-n
 
 @task
 def mkdocs_serve(c: Context):
+    os.environ["IMAGING"] = "false" if os.name == "nt" else "true"
     c.run(f"{PYTHON} -m mkdocs serve")
 
 
@@ -64,6 +65,11 @@ def build(c: Context, sdist: bool = False, wheel: bool = False):
 @task
 def lint(c: Context):
     c.run(f"{PYTHON} -m pylint --fail-under=9.8 src tests scripts tasks.py")
+
+
+@task
+def markdownlint(c: Context):
+    c.run("markdownlint-cli2 **.md #venv $@")
 
 
 @task
