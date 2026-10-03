@@ -1,4 +1,5 @@
-"""Contém a classe abstratas `Registro` e suas subclasses."""
+"""Contém a classe abstrata `Registro` e suas subclasses."""
+from abc import ABC
 from typing import Any, Callable, Iterable, Never, Self, cast, overload
 
 from ..constantes import ECD, ECF, EFD_CONTRIBUICOES, EFD_ICMS_IPI, ORDEM_BLOCOS
@@ -18,7 +19,7 @@ from .componente import Componente
 
 
 
-class Registro(Componente):
+class Registro(Componente, ABC):
     """Contém informações sobre um registro e seus campos.
 
     Na criação de um registro os campos podem ser informados nos seguintes modos:
@@ -529,28 +530,40 @@ class Registro(Componente):
 
 
 class RegistroEcd(Registro):
-    """Contém informações sobre um registro do módulo ECD e seus campos"""
+    """Contém informações sobre um registro do módulo ECD e seus campos."""
+
+    MODULO = ECD
+    """Nome do módulo ECD."""
 
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(ECD, campos, pai=pai, filhos=filhos)
 
 
 class RegistroEcf(Registro):
-    """Contém informações sobre um registro do módulo ECF e seus campos"""
+    """Contém informações sobre um registro do módulo ECF e seus campos."""
+
+    MODULO = ECF
+    """Nome do módulo ECF."""
 
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(ECF, campos, pai=pai, filhos=filhos)
 
 
-class RegistroEfdIcmsIpi(Registro):
-    """Contém informações sobre um registro do módulo EFD_ICMS_IPI e seus campos"""
-
-    def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
-        super().__init__(EFD_ICMS_IPI, campos, pai=pai, filhos=filhos)
-
-
 class RegistroEfdContribuicoes(Registro):
-    """Contém informações sobre um registro do módulo EFD_CONTRIBUICOES e seus campos"""
+    """Contém informações sobre um registro do módulo EFD_CONTRIBUICOES e seus campos."""
+
+    MODULO = EFD_CONTRIBUICOES
+    """Nome do módulo EFD_CONTRIBUICOES."""
 
     def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
         super().__init__(EFD_CONTRIBUICOES, campos, pai=pai, filhos=filhos)
+
+
+class RegistroEfdIcmsIpi(Registro):
+    """Contém informações sobre um registro do módulo EFD_ICMS_IPI e seus campos."""
+
+    MODULO = EFD_ICMS_IPI
+    """Nome do módulo EFD_ICMS_IPI."""
+
+    def __init__(self, campos: str | dict[Chave, Valor] | None = None, *, pai: Registro | None = None, filhos: list[Registro] | ListaRegistro | Iterable[Registro] | None = None) -> None:
+        super().__init__(EFD_ICMS_IPI, campos, pai=pai, filhos=filhos)

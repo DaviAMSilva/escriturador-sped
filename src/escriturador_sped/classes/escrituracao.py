@@ -27,7 +27,7 @@ class Escrituracao(Componente, ABC):
         nome: Nome da escrituração.
     """
 
-    MODULO = None
+    MODULO: ModuloT
     """Nome do módulo a que essa escrituração pertence."""
 
     ECD = ECD
@@ -338,6 +338,7 @@ class EscrituracaoEcd(Escrituracao):
     Raises:
         TypeError: Se o texto não é de um tipo válido.
     """
+
     MODULO = Escrituracao.ECD
     """Nome do módulo ECD."""
 
@@ -360,6 +361,7 @@ class EscrituracaoEcf(Escrituracao):
     Raises:
         TypeError: Se o texto não é de um tipo válido.
     """
+
     MODULO = Escrituracao.ECF
     """Nome do módulo ECF."""
 
@@ -382,6 +384,7 @@ class EscrituracaoEfdContribuicoes(Escrituracao):
     Raises:
         TypeError: Se o texto não é de um tipo válido.
     """
+
     MODULO = Escrituracao.EFD_CONTRIBUICOES
     """Nome do módulo EFD_CONTRIBUICOES."""
 
@@ -404,6 +407,7 @@ class EscrituracaoEfdIcmsIpi(Escrituracao):
     Raises:
         TypeError: Se o texto não é de um tipo válido.
     """
+
     MODULO = Escrituracao.EFD_ICMS_IPI
     """Nome do módulo EFD_ICMS_IPI."""
 
