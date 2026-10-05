@@ -111,7 +111,6 @@ plugins:
       cards_layout_options:
         font_family: Fira Code
 
-
 markdown_extensions:
   - abbr
   - tables
@@ -165,7 +164,6 @@ nav:
       - outros/constantes.md
       - outros/tipos.md
 
-
 extra:
   social:
     - icon: simple/github
@@ -180,3 +178,6 @@ extra:
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/daviamsilva/
       name: "LinkedIn"
+
+watch:
+  - docs
