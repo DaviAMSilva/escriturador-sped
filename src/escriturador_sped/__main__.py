@@ -4,7 +4,7 @@ Examples:
     >>> python -m escriturador_sped
 
         Módulos disponíveis no Escriturador SPED (v1.4.1):
-        * = Manual carregada por padrão
+        * = Manual carregado por padrão
 
         [ecd]
         * Leiaute: 009 - Manual: 2026.01
@@ -28,7 +28,7 @@ from .modulos import MODULOS_PADROES, ModuloT
 
 
 print(f"Módulos disponíveis no Escriturador SPED (v{version("escriturador_sped")}):")
-print("* = Manual carregada por padrão")
+print("* = Manual carregado por padrão")
 
 
 modulos: dict[ModuloT, list[tuple[str, str]]] = defaultdict(list)

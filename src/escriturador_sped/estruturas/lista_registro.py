@@ -22,17 +22,17 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
         nomes (tuple[str, ...]): Tupla com os nomes dos registros presentes na lista de registros.
 
     Args:
-        iteravel: Iterável de registros a serem adicionados durante a criação da lista de registros.
+        iterable: Iterável de registros a serem adicionados durante a criação da lista de registros.
     """
 
     @overload
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, iteravel: Iterable[RegistroT]) -> None: ...
+    def __init__(self, iterable: Iterable[RegistroT]) -> None: ...
 
-    def __init__(self, iteravel: Iterable[RegistroT] = ()) -> None:
-        super().__init__(iteravel)
+    def __init__(self, iterable: Iterable[RegistroT] = ()) -> None:
+        super().__init__(iterable)
 
 
 

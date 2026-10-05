@@ -136,7 +136,6 @@ escrituracao.salvar("escrituracao_corrigida.txt")
 ```
 
 ### Criando, Adicionando e Removendo Registros
-<!-- TODO: Removendo Registros -->
 
 Novos registros são criados usando o texto da linha final, de maneira idêntica ao arquivo de escrituração, ou usando um dicionário contendo apenas os campos considerados relevantes.
 

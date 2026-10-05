@@ -20,7 +20,7 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
         nomes (tuple[str, ...]): Tupla com os nomes dos campos presentes na tupla de campos.
 
     Args:
-        iteravel: Iterável de campos a serem adicionados durante a criação da tupla de campos.
+        iterable: Iterável de campos a serem adicionados durante a criação da tupla de campos.
 
     Raises:
         TypeError: Se um dos argumentos não é um campo.
