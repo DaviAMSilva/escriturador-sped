@@ -19,10 +19,10 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, iteravel: Iterable[RegistroT]) -> None: ...
+    def __init__(self, iterable: Iterable[RegistroT]) -> None: ...
 
-    def __init__(self, iteravel: Iterable[RegistroT] = ()) -> None:
-        super().__init__(iteravel)
+    def __init__(self, iterable: Iterable[RegistroT] = ()) -> None:
+        super().__init__(iterable)
 
 
 
