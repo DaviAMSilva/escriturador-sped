@@ -26,7 +26,7 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
         TypeError: Se um dos argumentos não é um campo.
     """
 
-    def __init__(self, *_) -> None:
+    def __init__(self, iterable: Iterable["Campo[CampoTipoT, Valor]"]) -> None:  # pylint: disable=unused-argument
         self.dicionario: dict[str, "Campo[CampoTipoT, Valor]"] = {}
 
         for campo in self:
@@ -42,10 +42,10 @@ class TuplaCampo(tuple["Campo[CampoTipoT, Valor]", ...]):
     def __new__(cls) -> Self: ...
 
     @overload
-    def __new__(cls, iteravel: Iterable["Campo[CampoTipoT, Valor]"]) -> Self: ...
+    def __new__(cls, iterable: Iterable["Campo[CampoTipoT, Valor]"]) -> Self: ...
 
-    def __new__(cls, iteravel: Iterable["Campo[CampoTipoT, Valor]"] = ()):
-        return super(TuplaCampo, cls).__new__(cls, tuple(iteravel))
+    def __new__(cls, iterable: Iterable["Campo[CampoTipoT, Valor]"] = ()):
+        return super(TuplaCampo, cls).__new__(cls, tuple(iterable))
 
 
 

@@ -24,6 +24,7 @@ class ListaRegistro[RegistroT: Registro](list[RegistroT]):
     Args:
         iteravel: Iterável de registros a serem adicionados durante a criação da lista de registros.
     """
+
     @overload
     def __init__(self) -> None: ...
 
