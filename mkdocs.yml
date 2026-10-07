@@ -18,6 +18,7 @@ theme:
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.footer
     - toc.follow
     - content.tooltips
     - content.footnote.tooltips
@@ -178,12 +179,12 @@ extra:
     - icon: fontawesome/solid/user
       link: https://daviamsilva.dev
       name: "Site Pessoal"
-    - icon: fontawesome/solid/envelope
-      link: mailto:daviamsilva@hotmail.com
-      name: "E-mail"
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/daviamsilva/
       name: "LinkedIn"
+    - icon: fontawesome/solid/envelope
+      link: mailto:daviamsilva@hotmail.com
+      name: "E-mail"
 
 watch:
   - src
