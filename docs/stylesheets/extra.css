@@ -10,3 +10,8 @@
 .md-content p {
   text-align: justify;
 }
+
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  vertical-align: middle;
+}
