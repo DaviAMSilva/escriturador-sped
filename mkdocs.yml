@@ -8,7 +8,7 @@ edit_uri: ""
 theme:
   name: material
   logo: imagens/logo-branco.webp
-  favicon: imagens/logo-transparente.webp
+  favicon: favicon.ico
   icon:
     repo: fontawesome/brands/github
   features:
