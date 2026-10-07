@@ -1,3 +1,7 @@
+---
+hide: toc
+---
+
 # Conceitos Básicos
 
 !!! warning "Aviso"
@@ -28,10 +32,10 @@
     Campos contém informações sobre as propriedade que o campo representado tem e os valores atuais dele.  
     Campos têm as suas propriedades definidas durante a criação de um registro.
 
-- **[ListaRegistro](./estruturas-de-dados/lista-registro.md): Uma estrutura de dados especial para armazenar uma lista de registros.**
+- **[ListaRegistro](./estruturas/lista-registro.md): Uma estrutura de dados especial para armazenar uma lista de registros.**
 
     Contém funcionalidades próprias para a manipulação de vários registros, especialmente ao realizar [buscas](./realizando-buscas.md).
 
-- **[TuplaCampo](./estruturas-de-dados/tupla-campo.md): Uma estrutura de dados especial para armazenar uma tupla de campos.**
+- **[TuplaCampo](./estruturas/tupla-campo.md): Uma estrutura de dados especial para armazenar uma tupla de campos.**
 
     Contém funcionalidades próprias para o acesso dos campos de um registro.

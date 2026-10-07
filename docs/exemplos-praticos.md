@@ -1,107 +1,14 @@
-<!-- markdownlint-disable first-line-h1 no-inline-html -->
+---
+hide: toc
+---
 
-[![pytest](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml)
-[![pylint](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml)
-[![markdownlint](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/markdownlint.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/markdownlint.yml)
+# Exemplos Práticos
 
-# Escriturador SPED
-
-<div align="center">
-<img src="docs/imagens/logo-transparente.webp" alt="Logo and title of the project" width="30%" />
-</div>
-
-A biblioteca **Escriturador SPED** tem como objetivo providenciar uma API de acesso, criação e manipulação de arquivos de escrituração pertencentes ao projeto [SPED](https://www.gov.br/sped/pt-br) do governo brasileiro. A biblioteca escrita em [Python](http://python.org/) é destinada a programadores, ou usuários avançados, que trabalham com módulos do projeto SPED que envolvam a criação ou edição de escriturações.
-
-## Módulos Suportados
-
-<table>
-    <tr>
-        <td>Nome</td>
-        <td>Identificador Interno</td>
-        <td>Versão do Leiaute</td>
-        <td>Versão do Manual</td>
-        <td>Caminho Importação</td>
-    </tr>
-    <tr>
-        <td><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/ecd">ECD</a></td>
-        <td>ecd</td>
-        <td>009</td>
-        <td><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/ecd/manuais-e-documentos-tecnicos/manual_de_orientacao_da_ecd_leiaute_9_janeiro_2026.pdf/@@display-file/file">2026.01</a><br />(Cofis nº 01/2026)</td>
-        <td><code>ecd.l009.v2026_01</code></td>
-    </tr>
-    <tr>
-        <td><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/ecf">ECF</a></td>
-        <td>ecf</td>
-        <td>012</td>
-        <td><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/ecf/manuais-e-documentos-tecnicos/manual_ecf_leiaute_12_20_05_2026_ac_2025_sit_esp_2026.pdf/@@display-file/file">2026.02</a><br />(Cofis nº 02/2026)</td>
-        <td><code>ecf.l012.v2026_02</code></td>
-    </tr>
-    <tr>
-        <td><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/efd-contribuicoes">EFD&nbsp;Contribuições</a></td>
-        <td>efd_contribuicoes</td>
-        <td>006</td>
-        <td><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/efd-contribuicoes/manuais/guia_pratico_efd_contribuicoes_versao_1_35-18_06_2021.pdf/@@display-file/file">1.35</a></td>
-        <td><code>efd_contribuicoes.l006.v1_35</code></td>
-    </tr>
-    <tr>
-        <td rowspan="3"><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/efd-icms-ipi">EFD ICMS IPI</a></td>
-        <td rowspan="3">efd_icms_ipi</td>
-        <td rowspan="2">020</td>
-        <td><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/efd-icms-ipi/manuais-e-documentos-tecnicos/guia-pratico-efd-versao-3-2-3.pdf/@@display-file/file">3.2.3</a></td>
-        <td><code>efd_icms_ipi.l020.v3_2_3</code></td>
-    </tr>
-    <tr>
-        <td rowspan="2"><a href="https://www.gov.br/sped/pt-br/assuntos/escrituracoes-digitais/efd-icms-ipi/manuais-e-documentos-tecnicos/guia-pratico-efd-versao-3-2-4.pdf/@@display-file/file">3.2.4</a></td>
-        <td><code>efd_icms_ipi.l020.v3_2_4</code></td>
-    </tr>
-    <tr>
-        <td>021</td>
-        <td><code>efd_icms_ipi.l021.v3_2_4</code></td>
-    </tr>
-</table>
-
-## Instalação
-
-Futuramente estará disponível em [PyPI](https://pypi.org/), mas por enquanto pode ser instalado diretamente do GitHub:
-
-```bash
-pip install git+https://github.com/DaviAMSilva/escriturador-sped
-```
-
-Ou instalação para desenvolvimento:
-
-```bash
-# Clonagem
-git clone https://github.com/DaviAMSilva/escriturador-sped
-cd escriturador-sped
-
-# Crie o ambiente virtual (opcional)
-python -m venv venv
-
-# Ative o ambiente virtual:
-# - Linux/MacOS: source venv/bin/activate
-# - CMD: .\venv\Scripts\activate.bat
-# - Powershell: .\venv\Scripts\Activate.ps1
-
-# Instalação editável com ferramentas de desenvolvimento
-pip install -e .[DEV]
-
-# Scripts intermediários
-invoke conversor
-invoke tipagem
-
-# Scripts de teste e lintagem
-invoke test
-invoke lint
-```
-
-## Exemplos Práticos
-
-### Alterando Valores de Registros
+## Alterando Valores de Registros
 
 O exemplo abaixo abre uma escrituração que já existe, encontra todas as notas avulsas de entrada e defini a situação do documento como 08.
 
-```python
+```python title="Alterando Valores de Registros"
 from escriturador_sped import EscrituracaoEfdIcmsIpi as Registro
 
 # Abrindo uma escrituração de um arquivo já existente
@@ -135,15 +42,15 @@ escrituracao.totalizar()
 escrituracao.salvar("escrituracao_corrigida.txt")
 ```
 
-### Criando, Adicionando e Removendo Registros
+## Criando, Adicionando e Removendo Registros
 
 Novos registros são criados usando o texto da linha final, de maneira idêntica ao arquivo de escrituração, ou usando um dicionário contendo apenas os campos considerados relevantes.
 
-As funções `registro.adicionar()` e `registro.remover()` são usadas para modificar a lista de filhos diretos de um registro específico. Também é possível usar uma lista de registros em ambas para modificar múltiplos filhos de uma vez. Ao remover também há a alternativa de usar filtros para encontrar quais registros a serem removidos.
+As funções `registro.adicionar()` e `registro.remover()` são usadas para modificar a lista de filhos diretos de um registro específico. Também é possível usar uma lista de registros em ambas para modificar múltiplos filhos de uma vez. Ao remover também há a alternativa de usar [filtros](./realizando-buscas.md) para encontrar quais registros a serem removidos.
 
-No exemplo abaixo será recriado o arquivo de exemplo [`efd_contribuicoes_3.txt`](exemplos/efd_contribuicoes_2.txt) iniciando-se de uma escrituração vazia:
+No exemplo abaixo será recriado o arquivo de exemplo `efd_contribuicoes_3.txt` iniciando-se de uma escrituração vazia:
 
-```python
+```python title="Criando, Adicionando e Removendo Registros"
 # Uma convenção opcional é renomear as classes do módulo a ser usado simplesmente como Escrituracao e Registro
 # Assim independente de qual módulo estiver em uso o nomes das classes usadas são sempre os mesmos
 from escriturador_sped import EscrituracaoEfdContribuicoes as Escrituracao, RegistroEfdContribuicoes as Registro

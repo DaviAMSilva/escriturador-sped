@@ -50,7 +50,7 @@ class Registro(Componente, ABC):
         filhos: Registros filhos para o registro a ser criado.
 
     Raises:
-        ValueError: Se o valor do parâmetro modulo for inválido.
+        ValueError: Se o valor do parâmetro `modulo` for inválido.
         TypeError: Se o parâmetro `campos` for do tipo inválido.
         TypeError: Se o parâmetro `pai` for do tipo inválido.
         TypeError: Se o parâmetro `filhos` for do tipo inválido.
@@ -480,6 +480,11 @@ class Registro(Componente, ABC):
         campos_n: dict[Chave, ValorN | Iterable[ValorN]] | None = None
     ) -> Self:
         """Remove registros filhos de um registro, de acordo com os parâmetros informados.
+
+        Existe dois métodos de remover registros, do qual apenas um pode ser usado por vez:
+
+        1. Passando o parâmetro `registros` como um registro, ou uma lista de registros;
+        2. Informado qualquer combinação dos parâmetros restantes que serão os filtros para encontrar os registros a serem removidos.
 
         Args:
             registros: Lista de registros a serem removidos. Se esse parâmetro for informado não é permitido informar nenhum outro parâmetro.

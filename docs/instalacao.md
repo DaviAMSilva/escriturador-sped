@@ -101,9 +101,9 @@ A ferramenta [invoke](https://www.pyinvoke.org/) para python é essencialmente e
 
     Rodas os testes unitários da biblioteca. Opcionalmente:
 
-    - `--coverage`: Permite encontrar seções de código que não estão sendo testadas;
-    - `--profile`: Identificar as seções de código que mais e menos gastam tempo de processamento.
-    - `--profile-svg`: O mesmo que a opção acima, mas gera uma imagem SVG útil para o mesmo propósito.
+      - `--coverage`: Permite encontrar seções de código que não estão sendo testadas;
+      - `--profile`: Identificar as seções de código que mais e menos gastam tempo de processamento.
+      - `--profile-svg`: O mesmo que a opção acima, mas gera uma imagem SVG útil para o mesmo propósito.
 
 - **``snakeviz [--arquivo ('.prof/combined.prof')]``:** <small>(Requer `invoke test --profile`)</small>
 

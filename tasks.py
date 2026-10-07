@@ -69,7 +69,7 @@ def lint(c: Context):
 
 @task
 def markdownlint(c: Context):
-    c.run("markdownlint-cli2 **.md #venv $@")
+    c.run("markdownlint-cli2 **/*.md #venv $@")
 
 
 @task

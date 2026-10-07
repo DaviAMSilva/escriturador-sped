@@ -14,11 +14,9 @@ theme:
   features:
     - navigation.instant
     - navigation.instant.prefetch
-    - navigation.instant.preview
     - navigation.indexes
     - navigation.sections
     - navigation.expand
-    - navigation.path
     - navigation.top
     - toc.follow
     - content.tooltips
@@ -77,13 +75,13 @@ plugins:
           inventories:
             - https://docs.python.org/3/objects.inv
           options:
+            # inherited_members: true
             allow_inspection: true
-            backlinks: tree
+            backlinks: flat
             docstring_section_style: list
             docstring_style: google
             group_by_category: true
-            inherited_members: true
-            line_length: 160
+            line_length: 80
             members_order: source
             members: null
             merge_init_into_class: true
@@ -98,6 +96,8 @@ plugins:
             show_submodules: false
             show_symbol_type_heading: true
             show_symbol_type_toc: true
+            show_root_full_path: false
+            show_root_heading: true
             signature_crossrefs: true
             summary: false
             docstring_options:
@@ -130,9 +130,6 @@ markdown_extensions:
   - pymdownx.mark
   - pymdownx.tilde
   - pymdownx.inlinehilite
-  # - pymdownx.snippets:
-  #     auto_append:
-  #       - includes/abbreviations.md
   - pymdownx.superfences
   - pymdownx.tasklist:
       custom_checkbox: true
@@ -145,11 +142,19 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+  - material.extensions.preview:
+      configurations:
+        - sources:
+            exclude:
+              - index.md
 
 nav:
+  - Início: index.md
   - instalacao.md
   - conceitos-basicos.md
+  - exemplos-praticos.md
   - realizando-buscas.md
+  - modulos-suportados.md
   - Visualizador de Módulos SPED: modulos/index.html
   - Classes:
       - classes/componente.md
@@ -158,8 +163,8 @@ nav:
       - classes/registro.md
       - classes/campo.md
   - Estruturas de Dados:
-      - estruturas-de-dados/lista-registro.md
-      - estruturas-de-dados/tupla-campo.md
+      - estruturas/lista-registro.md
+      - estruturas/tupla-campo.md
   - Outros:
       - outros/constantes.md
       - outros/tipos.md
@@ -180,4 +185,4 @@ extra:
       name: "LinkedIn"
 
 watch:
-  - docs
+  - src
