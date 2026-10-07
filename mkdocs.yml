@@ -110,6 +110,7 @@ plugins:
       enabled: !ENV [IMAGING, false]
       cards_layout_options:
         font_family: Fira Code
+        background_color: "#306998"
 
 markdown_extensions:
   - abbr
