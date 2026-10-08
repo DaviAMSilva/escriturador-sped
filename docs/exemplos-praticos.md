@@ -25,7 +25,7 @@ for registro_C100 in bloco_c.buscar("C100"):
     # valor_n: Valor Numérico (int | float | None)
     operacao = registro_C100.IND_OPER.valor_c
     emissor = registro_C100.IND_EMIT.valor_c
-    situacao = registro_C100.COD_SIT.valor_c
+    situacao = registro_C100.COD_SIT.valor_n
     cnpj_chave = registro_C100.CHV_NFE.valor_c[6:20]
     cnpj_empresa = registro_C100.COD_PART.valor_c # Assumindo código igual a CNPJ
 

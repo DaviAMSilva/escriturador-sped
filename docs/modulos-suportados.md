@@ -11,7 +11,7 @@ hide: toc
             <th>Identificador Interno</th>
             <th>Versão do Leiaute</th>
             <th>Versão do Manual</th>
-            <th>Caminho Importação</th>
+            <th>Caminho de Importação</th>
         </tr>
     </thead>
     <tbody>
@@ -53,3 +53,8 @@ hide: toc
         </tr>
     </tbody>
 </table>
+
+!!!warning "Atenção:"
+
+    Todos os módulos acima são funcionais, entretanto apenas os módulos `efd_contribuicoes` e `efd_icms_ipi` foram testados extensivamente.  
+    Problemas encontrados em algum dos módulos podem ser reportados na página de [issues](https://github.com/DaviAMSilva/escriturador-sped/issues).

@@ -74,6 +74,7 @@ DOCS = [
     "mkdocs-material[imaging]",
     "mkdocstrings[python]",
     "griffe-inherited-docstrings",
+    "black"
 ]
 
 
