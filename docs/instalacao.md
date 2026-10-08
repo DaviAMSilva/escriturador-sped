@@ -2,10 +2,10 @@
 
 ## Instalação Básica
 
-Futuramente estará disponível em [PyPI](https://pypi.org/), mas por enquanto pode ser instalado diretamente do GitHub:
+Instale a biblioteca com:
 
-```bash
-pip install git+https://github.com/DaviAMSilva/escriturador-sped
+``` { .bash .copy }
+pip install escriturador-sped
 ```
 
 Use o comando abaixo para visualizar a lista de módulos presentes na instalação:
