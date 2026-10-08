@@ -1,24 +1,25 @@
 <!-- markdownlint-disable first-line-h1 no-inline-html -->
 
-[![PyPI](https://img.shields.io/pypi/v/escriturador-sped)](https://pypi.org/project/escriturador-sped/)
-[![Python](https://img.shields.io/pypi/pyversions/escriturador-sped)](https://pypi.org/project/escriturador-sped/)
+[![PyPI](https://img.shields.io/pypi/v/escriturador-sped?logo=pypi&logoColor=white)](https://pypi.org/project/escriturador-sped/)
+[![Python](https://img.shields.io/pypi/pyversions/escriturador-sped?logo=python&logoColor=white)](https://pypi.org/project/escriturador-sped/)
 [![Licença](https://img.shields.io/github/license/DaviAMSilva/escriturador-sped)](https://github.com/DaviAMSilva/escriturador-sped/blob/main/LICENSE)
 
-[![pytest](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml)
-[![pylint](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml)
-[![markdownlint](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/markdownlint.yml/badge.svg?branch=main)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/markdownlint.yml)
+[![pytest](https://img.shields.io/github/actions/workflow/status/DaviAMSilva/escriturador-sped/pytest.yml?branch=main&logo=pytest&logoColor=white&label=pytest)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml)
+[![pylint](https://img.shields.io/github/actions/workflow/status/DaviAMSilva/escriturador-sped/pylint.yml?branch=main&logo=python&logoColor=white&label=pylint)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml)
+[![markdownlint](https://img.shields.io/github/actions/workflow/status/DaviAMSilva/escriturador-sped/markdownlint.yml?branch=main&logo=markdown&logoColor=white&label=markdownlint)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/markdownlint.yml)
+[![github-pages](https://img.shields.io/github/deployments/DaviAMSilva/escriturador-sped/github-pages?logo=github&logoColor=white&label=deploy)](https://escriturador-sped.daviamsilva.dev/)
 
 # Escriturador SPED
 
-<div align="center">
-<img src="https://raw.githubusercontent.com/DaviAMSilva/escriturador-sped/main/docs/imagens/logo-transparente.webp" alt="Logo" width="40%" />
-</div>
+<img align="left" hspace="20" src="docs/imagens/logo-transparente.webp" alt="Logo do Escriturador SPED" width="300" />
 
 A biblioteca **Escriturador SPED** tem como objetivo fornecer uma API de acesso, criação e manipulação de arquivos de escrituração pertencentes ao projeto [SPED](https://www.gov.br/sped/pt-br) do governo brasileiro. A biblioteca escrita em [Python](https://www.python.org/) é destinada a programadores, ou usuários avançados, que trabalham com módulos do projeto SPED que envolvam a criação ou edição de escriturações.
 
 Especificamente esse projeto permite que o desenvolvedor abra, busque, altere e salve a estrutura de uma escrituração. Essa biblioteca não realiza a validação individual ou total dos valores dos campos, apenas a formatação desses campos é garantida. A única maneira oficial de validar uma escrituração é usando os [programas disponibilizados](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/download/sped) pelo governo.
 
 **Para mais informações consulte a [documentação](https://escriturador-sped.daviamsilva.dev).**
+
+<br clear="left" />
 
 ## Início Rápido
 
