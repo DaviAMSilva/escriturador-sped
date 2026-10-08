@@ -75,7 +75,7 @@ function App() {
                     return blocosOrdem[a[0][0]] - blocosOrdem[b[0][0]];
                 });
 
-                return { modulo, leiaute, manual: manual, blocos: dados.blocos, registros: registros };
+                return { modulo, leiaute, manual, blocos: dados.blocos, registros };
             });
         });
     });

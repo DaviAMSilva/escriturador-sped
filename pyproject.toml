@@ -64,7 +64,16 @@ DEV = [
     "pytest",
     "pytest-cov",
     "pytest-profiling",
-    "snakeviz",
+    "snakeviz"
+]
+DOCS = [
+    "click==8.2.1", # Corrige 'mkdocs serve' não atualizar automaticamente
+    "mkdocs",
+    "mkdocs-git-revision-date-localized-plugin",
+    "mkdocs-material",
+    "mkdocs-material[imaging]",
+    "mkdocstrings[python]",
+    "griffe-inherited-docstrings",
 ]
 
 
@@ -89,7 +98,6 @@ ignore = ["E303"]
 [tool.pylint]
 max-line-length = 160
 min-similarity-lines = 10
-disable = ["C0114", "C0115", "C0116"]
 
 
 [tool.pytest.ini_options]

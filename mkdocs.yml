@@ -1,0 +1,190 @@
+site_name: Escriturador SPED
+site_author: Davi Augusto Moreira da Silva
+copyright: Copyright © 2026 <a href="https://daviamsilva.dev">Davi Augusto Moreira da Silva</a>
+repo_url: https://github.com/DaviAMSilva/escriturador-sped
+docs_dir: docs
+edit_uri: ""
+
+theme:
+  name: material
+  logo: imagens/logo-branco.webp
+  favicon: favicon.ico
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.indexes
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - content.tooltips
+    - content.footnote.tooltips
+  font:
+    text: Fira Sans
+    code: Fira Code
+  language: pt-BR
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Modo Automático
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Modo Claro
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Modo Escuro
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+  - tags
+  - privacy:
+      enabled: !ENV [PRIVACY, true]
+      assets_exclude:
+        - giscus.app/*
+        - img.shields.io/*
+      links_attr_map:
+        target: _blank
+      links_noopener: true
+  - git-revision-date-localized:
+      type: timeago
+      timezone: America/Sao_Paulo
+      locale: pt
+      fallback_to_build_date: false
+      enable_creation_date: true
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          inventories:
+            - https://docs.python.org/3/objects.inv
+          options:
+            # inherited_members: true
+            allow_inspection: true
+            backlinks: flat
+            docstring_section_style: list
+            docstring_style: google
+            group_by_category: true
+            line_length: 80
+            members_order: source
+            members: null
+            merge_init_into_class: true
+            modernize_annotations: true
+            relative_crossrefs: true
+            separate_signature: true
+            show_attribute_values: true
+            show_docstring_attributes: true
+            show_if_no_docstring: false
+            show_signature_annotations: true
+            show_source: false
+            show_submodules: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_root_full_path: false
+            show_root_heading: true
+            signature_crossrefs: true
+            summary: false
+            docstring_options:
+              ignore_init_summary: true
+            extensions:
+              - griffe_inherited_docstrings
+  - optimize:
+      enabled: !ENV [IMAGING, false]
+  - social:
+      enabled: !ENV [IMAGING, false]
+      cards_layout_options:
+        font_family: Fira Code
+        background_color: "#306998"
+
+markdown_extensions:
+  - abbr
+  - tables
+  - def_list
+  - attr_list
+  - md_in_html
+  - admonition
+  - toc:
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+      permalink: "#"
+  - pymdownx.details
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - material.extensions.preview:
+      configurations:
+        - sources:
+            exclude:
+              - index.md
+
+nav:
+  - Início: index.md
+  - instalacao.md
+  - conceitos-basicos.md
+  - exemplos-praticos.md
+  - realizando-buscas.md
+  - modulos-suportados.md
+  - Visualizador de Módulos SPED: modulos/index.html
+  - Classes:
+      - classes/componente.md
+      - classes/escrituracao.md
+      - classes/bloco.md
+      - classes/registro.md
+      - classes/campo.md
+  - Estruturas de Dados:
+      - estruturas/lista-registro.md
+      - estruturas/tupla-campo.md
+  - Outros:
+      - outros/constantes.md
+      - outros/tipos.md
+
+extra:
+  social:
+    - icon: simple/github
+      link: https://github.com/DaviAMSilva/
+      name: "GitHub"
+    - icon: fontawesome/solid/user
+      link: https://daviamsilva.dev
+      name: "Site Pessoal"
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/daviamsilva/
+      name: "LinkedIn"
+    - icon: fontawesome/solid/envelope
+      link: mailto:daviamsilva@hotmail.com
+      name: "E-mail"
+
+watch:
+  - src

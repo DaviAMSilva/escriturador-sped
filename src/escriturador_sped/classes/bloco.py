@@ -1,3 +1,4 @@
+"""Contém a classe `Bloco`."""
 from ..estruturas.lista_registro import ListaRegistro
 from ..modulos import ModuloT
 from .componente import Componente
@@ -13,6 +14,20 @@ from .registro import Registro
 
 
 class Bloco(Componente):
+    """Contém informações sobre um bloco.
+
+    Attributes:
+        abertura (Registro): Registro de abertura do bloco.
+        fechamento (Registro): Registro de fechamento do bloco.
+        modulo (ModuloT): Módulo ao qual o bloco pertence.
+
+    Args:
+        nome: Nome do registro.
+        registro_abertura: Registro de abertura do bloco.
+        registro_fechamento: Registro de abertura do bloco.
+        modulo: Módulo ao qual o bloco pertence.
+    """
+
     def __init__(self, nome: str, registro_abertura: Registro, registro_fechamento: Registro, modulo: ModuloT) -> None:
         self.abertura = registro_abertura
         self.fechamento = registro_fechamento

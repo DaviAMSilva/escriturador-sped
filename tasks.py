@@ -1,7 +1,6 @@
-# pylint: disable=import-outside-toplevel,unused-argument,import-error
+# pylint: disable=missing-module-docstring,missing-function-docstring,import-outside-toplevel,unused-argument,import-error
 
 import os
-import webbrowser
 
 from invoke.context import Context
 from invoke.tasks import task
@@ -47,17 +46,15 @@ def tipagem(c: Context, lint: bool = True):  # pylint: disable=redefined-outer-n
 
 
 @task
-def docs_build(c: Context, formatado: bool = False):
-    from scripts.docs import main
-    main(formatado)
+def mkdocs_serve(c: Context):
+    os.environ["IMAGING"] = "false" if os.name == "nt" else "true"
+    c.run(f"{PYTHON} -m mkdocs serve")
 
 
 @task
-def docs_http(c: Context, endereco: str = "127.0.0.1", porta: int = 8000, abrir: bool = True):
-    if abrir:
-        webbrowser.open(f"http://{endereco}:{porta}")
-
-    c.run(f"{PYTHON} -m http.server -d docs -b {endereco} {porta}")
+def build_docs(c: Context, formatado: bool = False):
+    from scripts.docs import main
+    main(formatado)
 
 
 @task
@@ -68,6 +65,11 @@ def build(c: Context, sdist: bool = False, wheel: bool = False):
 @task
 def lint(c: Context):
     c.run(f"{PYTHON} -m pylint --fail-under=9.8 src tests scripts tasks.py")
+
+
+@task
+def markdownlint(c: Context):
+    c.run("markdownlint-cli2 **/*.md #venv $@")
 
 
 @task

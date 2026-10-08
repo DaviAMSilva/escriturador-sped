@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long
+# pylint: disable=missing-module-docstring,line-too-long
 
 MODULOS_REGISTROS: dict[str, dict[str, int | list[int] | tuple[int, int]]] = {
     "ecd": {
