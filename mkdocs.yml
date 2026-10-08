@@ -26,6 +26,7 @@ theme:
     text: Fira Sans
     code: Fira Code
   language: pt-BR
+  custom_dir: docs/overrides
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
