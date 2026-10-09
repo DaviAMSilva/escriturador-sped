@@ -1,5 +1,6 @@
 site_name: Escriturador SPED
 site_author: Davi Augusto Moreira da Silva
+site_url: https://escriturador-sped.daviamsilva.dev
 copyright: Copyright © 2026 <a href="https://daviamsilva.dev">Davi Augusto Moreira da Silva</a>
 repo_url: https://github.com/DaviAMSilva/escriturador-sped
 repo_name: escriturador-sped
@@ -58,7 +59,7 @@ plugins:
   - search
   - tags
   - privacy:
-      enabled: !ENV [PRIVACY, true]
+      enabled: !ENV [CI, PRIVACY, true]
       assets_exclude:
         - giscus.app/*
         - img.shields.io/*
@@ -108,9 +109,9 @@ plugins:
             extensions:
               - griffe_inherited_docstrings
   - optimize:
-      enabled: !ENV [IMAGING, false]
+      enabled: !ENV [CI, IMAGING, false]
   - social:
-      enabled: !ENV [IMAGING, false]
+      enabled: !ENV [CI, IMAGING, false]
       cards_layout_options:
         font_family: Fira Code
         background_color: "#306998"
