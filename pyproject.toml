@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "escriturador-sped"
 version = "1.4.2"
-description = "Biblioteca para auxiliar a criação e edição de arquivos de escrituração do SPED brasileiro"
+description = "Biblioteca Python para auxiliar a criação e edição de arquivos de escrituração do SPED brasileiro"
 
 authors = [
     { name = "Davi Augusto Moreira da Silva", email = "daviamsilva@hotmail.com" },

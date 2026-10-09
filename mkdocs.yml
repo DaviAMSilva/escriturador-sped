@@ -1,6 +1,7 @@
 site_name: Escriturador SPED
 site_author: Davi Augusto Moreira da Silva
 site_url: https://escriturador-sped.daviamsilva.dev
+site_description: Biblioteca Python para auxiliar a criação e edição de arquivos de escrituração do SPED brasileiro.
 copyright: Copyright © 2026 <a href="https://daviamsilva.dev">Davi Augusto Moreira da Silva</a>
 repo_url: https://github.com/DaviAMSilva/escriturador-sped
 repo_name: escriturador-sped
