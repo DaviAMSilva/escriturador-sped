@@ -3,3 +3,72 @@
 <meta name="darkreader-lock">
 {{ super() }}
 {% endblock %}
+
+{% block extrahead %}
+{{ super() }}
+{% if page.is_homepage %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebSite",
+            "@id": "https://escriturador-sped.daviamsilva.dev/#website",
+            "url": "https://escriturador-sped.daviamsilva.dev/",
+            "name": "Escriturador SPED",
+            "description": "Biblioteca para auxiliar a criação e edição de arquivos de escrituração do SPED brasileiro.",
+            "inLanguage": "pt-BR",
+            "publisher": {
+                "@id": "https://daviamsilva.dev/#person"
+            }
+        },
+        {
+            "@type": [
+                "SoftwareApplication",
+                "SoftwareSourceCode"
+            ],
+            "@id": "https://escriturador-sped.daviamsilva.dev/#software",
+            "name": "Escriturador SPED",
+            "url": "https://escriturador-sped.daviamsilva.dev/",
+            "description": "Biblioteca para auxiliar a criação e edição de arquivos de escrituração do SPED brasileiro.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any (Python)",
+            "programmingLanguage": "Python",
+            "codeRepository": "https://github.com/DaviAMSilva/escriturador-sped",
+            "inLanguage": "pt-BR",
+            "image": "https://escriturador-sped.daviamsilva.dev/assets/images/social/index.png",
+            "author": {
+                "@id": "https://daviamsilva.dev/#person"
+            },
+            "isPartOf": {
+                "@id": "https://escriturador-sped.daviamsilva.dev/#website"
+            },
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "isAccessibleForFree": true,
+            "license": "https://github.com/DaviAMSilva/escriturador-sped/blob/main/LICENSE",
+            "sameAs": [
+                "https://github.com/DaviAMSilva/escriturador-sped"
+            ]
+        },
+        {
+            "@type": "Person",
+            "@id": "https://daviamsilva.dev/#person",
+            "name": "Davi Augusto Moreira da Silva",
+            "alternateName": "DaviAMSilva",
+            "url": "https://daviamsilva.dev",
+            "sameAs": [
+                "https://github.com/DaviAMSilva",
+                "https://x.com/DaviAMSilva",
+                "https://www.reddit.com/user/DaviAMSilva",
+                "https://www.linkedin.com/in/daviamsilva"
+            ]
+        }
+    ]
+}
+</script>
+{% endif %}
+{% endblock %}
