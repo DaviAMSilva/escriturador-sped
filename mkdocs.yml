@@ -2,6 +2,7 @@ site_name: Escriturador SPED
 site_author: Davi Augusto Moreira da Silva
 copyright: Copyright © 2026 <a href="https://daviamsilva.dev">Davi Augusto Moreira da Silva</a>
 repo_url: https://github.com/DaviAMSilva/escriturador-sped
+repo_name: escriturador-sped
 docs_dir: docs
 edit_uri: ""
 
@@ -10,7 +11,7 @@ theme:
   logo: imagens/logo-branco.webp
   favicon: favicon.ico
   icon:
-    repo: fontawesome/brands/github
+    repo: simple/github
   features:
     - navigation.instant
     - navigation.instant.prefetch
