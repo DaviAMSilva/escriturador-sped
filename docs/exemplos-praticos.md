@@ -1,4 +1,5 @@
 ---
+description: Alguns exemplos práticos que demonstram o básico do como interagir com a biblioteca.
 hide: toc
 ---
 

@@ -1,3 +1,7 @@
+---
+description: Instrução de instalação da biblioteca, incluindo comandos de desenvolvimento.
+---
+
 # Instalação
 
 ## Instalação Básica

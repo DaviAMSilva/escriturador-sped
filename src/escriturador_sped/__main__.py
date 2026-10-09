@@ -3,7 +3,7 @@
 Examples:
     >>> python -m escriturador_sped
 
-        Módulos disponíveis no Escriturador SPED (v1.4.1):
+        Módulos disponíveis no Escriturador SPED (v1.4.2):
         * = Manual carregado por padrão
 
         [ecd]

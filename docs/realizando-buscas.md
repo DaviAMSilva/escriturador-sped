@@ -1,3 +1,7 @@
+---
+description: Explicação de como o sistema de busca e filtragem de registros funciona.
+---
+
 # Realizando Buscas
 
 As classes [Registro], [Bloco] e [ListaRegistro] suportam a busca de registros dentro de si mesmos. Ambas usam a função `#!python buscar()` para isso, com a mesma sintaxe de comandos e o retorno de outra [ListaRegistro] com os registros encontrados.

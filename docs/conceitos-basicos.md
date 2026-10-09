@@ -1,4 +1,5 @@
 ---
+description: Alguns conceitos básicos para aprender a usar a biblioteca.
 hide: toc
 ---
 

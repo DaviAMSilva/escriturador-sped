@@ -1,4 +1,5 @@
 ---
+description: Lista dos módulos disponíveis na biblioteca e as versões de leiaute e dos manuais.
 hide: toc
 ---
 

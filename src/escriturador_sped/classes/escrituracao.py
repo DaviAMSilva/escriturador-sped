@@ -1,4 +1,4 @@
-"""Contém a classe `Escrituracao` e suas subclasses."""
+"""Contém a classe abstrata `Escrituracao` e suas subclasses."""
 from abc import ABC
 from collections import Counter
 from pathlib import Path

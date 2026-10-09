@@ -1,3 +1,7 @@
+---
+description: Contém a classe abstrata Escrituracao e suas subclasses.
+---
+
 # Escrituração
 
 ::: escriturador_sped.classes.escrituracao.Escrituracao

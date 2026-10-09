@@ -1,3 +1,7 @@
+---
+description: Contém a classe abstrata Registro e suas subclasses.
+---
+
 # Registro
 
 ::: escriturador_sped.classes.registro.Registro

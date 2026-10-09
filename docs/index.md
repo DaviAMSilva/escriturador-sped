@@ -1,6 +1,6 @@
 ---
-hide: toc
 description: Biblioteca Python para auxiliar a criação e edição de arquivos de escrituração do SPED brasileiro.
+hide: toc
 ---
 
 <!-- markdownlint-disable no-inline-html -->

@@ -1,3 +1,7 @@
+---
+description: Constantes usadas pela biblioteca.
+---
+
 # Constantes
 
 ::: escriturador_sped.constantes
