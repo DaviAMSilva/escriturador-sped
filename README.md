@@ -111,6 +111,13 @@ escrituracao.salvar("alterada.txt")
     </tbody>
 </table>
 
-> ⚠️ **Atenção:**  
+> [!WARNING]
 > Todos os módulos acima são funcionais, entretanto apenas os módulos `efd_contribuicoes` e `efd_icms_ipi` foram testados extensivamente.  
-> Problemas encontrados em algum dos módulos podem ser reportados na página de [issues](https://github.com/DaviAMSilva/escriturador-sped/issues).
+
+## Suporte e Manutenção
+
+Com a implementação da [reforma tributária](https://www.gov.br/receitafederal/pt-br/assuntos/reforma-tributaria) a expectativa é que a EFD Contribuições se torne extinta a partir de [2027](https://www.contabeis.com.br/noticias/75062/extincao-da-efd-contribuicoes-em-2027-entenda-as-regras/), enquanto o EFD ICMS IPI tem previsão de ser substituído em [2029](https://www.contabeis.com.br/artigos/70885/reforma-tributaria-fim-do-sped-e-inicio-de-nova-era-na-contabilidade/).
+
+Por causa disso, em conjunto com o fato de que essa biblioteca está atualmente em uso no [Kepi Supermercado](https://br.linkedin.com/company/kepisupermercado) aonde trabalho, eu me comprometo a manter essa biblioteca estável e atualizada com os manuais mais recentes do SPED até a extinção do EFD ICMS IPI em 31/12/2028.
+
+Problemas encontrados em algum dos módulos ou na biblioteca em geral podem ser reportados na página de [issues](https://github.com/DaviAMSilva/escriturador-sped/issues).

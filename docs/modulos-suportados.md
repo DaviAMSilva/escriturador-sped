@@ -58,4 +58,3 @@ hide: toc
 !!!warning "Atenção:"
 
     Todos os módulos acima são funcionais, entretanto apenas os módulos `efd_contribuicoes` e `efd_icms_ipi` foram testados extensivamente.  
-    Problemas encontrados em algum dos módulos podem ser reportados na página de [issues](https://github.com/DaviAMSilva/escriturador-sped/issues).

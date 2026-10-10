@@ -26,8 +26,8 @@ theme:
     - content.tooltips
     - content.footnote.tooltips
   font:
-    text: Fira Sans
-    code: Fira Code
+    text: Fira Sans, Roboto, sans-serif
+    code: Fira Code, monospace
   language: pt-BR
   custom_dir: docs/overrides
   palette:
