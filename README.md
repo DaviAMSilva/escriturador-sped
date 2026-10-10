@@ -17,7 +17,9 @@ A biblioteca **Escriturador SPED** tem como objetivo fornecer uma API de acesso,
 
 Especificamente esse projeto permite que o desenvolvedor abra, busque, altere e salve a estrutura de uma escrituração. Essa biblioteca não realiza a validação individual ou total dos valores dos campos, apenas a formatação desses campos é garantida. A única maneira oficial de validar uma escrituração é usando os [programas disponibilizados](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/download/sped) pelo governo.
 
-**Para mais informações consulte a [documentação](https://escriturador-sped.daviamsilva.dev).**
+<div align="center">
+<strong >Para mais informações consulte a <a href="https://escriturador-sped.daviamsilva.dev" target="_blank" rel="noopener noreferrer">documentação</a>.</strong>
+</div>
 
 <br clear="left" />
 
