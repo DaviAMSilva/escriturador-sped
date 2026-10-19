@@ -7,7 +7,6 @@
 [![pytest](https://img.shields.io/github/actions/workflow/status/DaviAMSilva/escriturador-sped/pytest.yml?branch=main&logo=pytest&logoColor=white&label=pytest)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pytest.yml)
 [![pylint](https://img.shields.io/github/actions/workflow/status/DaviAMSilva/escriturador-sped/pylint.yml?branch=main&logo=python&logoColor=white&label=pylint)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/pylint.yml)
 [![markdownlint](https://img.shields.io/github/actions/workflow/status/DaviAMSilva/escriturador-sped/markdownlint.yml?branch=main&logo=markdown&logoColor=white&label=markdownlint)](https://github.com/DaviAMSilva/escriturador-sped/actions/workflows/markdownlint.yml)
-[![github-pages](https://img.shields.io/github/deployments/DaviAMSilva/escriturador-sped/github-pages?logo=github&logoColor=white&label=deploy)](https://escriturador-sped.daviamsilva.dev/)
 
 # Escriturador SPED
 
