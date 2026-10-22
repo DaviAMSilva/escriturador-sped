@@ -10,10 +10,10 @@ hide: toc
 O exemplo abaixo abre uma escrituração que já existe, encontra todas as notas avulsas de entrada e defini a situação do documento como 08.
 
 ```python title="Alterando Valores de Registros"
-from escriturador_sped import EscrituracaoEfdIcmsIpi as Registro
+from escriturador_sped import EscrituracaoEfdIcmsIpi as Escrituracao
 
 # Abrindo uma escrituração de um arquivo já existente
-escrituracao = Registro.abrir("escrituracao.txt")
+escrituracao = Escrituracao.abrir("escrituracao.txt")
 
 # Conseguindo o bloco C
 bloco_c = escrituracao["C"]
@@ -35,9 +35,6 @@ for registro_C100 in bloco_c.buscar("C100"):
     if operacao == "0" and emissor == "1" and situacao != 8 and cnpj_chave and cnpj_chave != cnpj_empresa:
         # Alterando o valor do campo (valor = "08" também seria válido)
         registro_C100.COD_SIT.valor = 8
-
-# Atualizando os registros de totalização do bloco 9 se registros forem adicionados ou removidos
-escrituracao.totalizar()
 
 # Salvando a escrituração em um arquivo separado
 escrituracao.salvar("escrituracao_corrigida.txt")
@@ -100,7 +97,7 @@ registro_m001.adicionar([
 
 # Método 2: Criando um registro a partir de um dicionário onde cada chave é um nome de um campo
 # Nesse caso casos não especificados são tratados como vazios e o campo 'REG' é obrigatório
-# Caso fosse usada a subclasse 'Registro0140' o campo 'REG' poderia ser omitido
+# Caso fosse usada a subclasse 'Registro0140' o campo 'REG' poderia ser omitido pois é implícito
 registro_0001.adicionar(Registro({
     "REG": "0140",
     "COD_EST": 1,
@@ -131,6 +128,7 @@ Registro(
 )
 
 # Totalizando a escrituração com ordenação opcional dos registros bloco 9
+# Necessário apenas se registros forem adicionados ou removidos
 escrituracao.totalizar(ordenar_9900=True)
 
 # A função 'texto' está disponível para todos os componentes da escrituração
