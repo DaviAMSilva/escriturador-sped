@@ -227,19 +227,19 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
         # A maioria dos campos é numérico, então testamos esse tipo primeiro
         if self.tipo == Campo.NUMERICO:
-            # Convertermos o valor para numérico para normalizar o valor de comparação
-            valor_numerico = Campo.numerico(valor, self.decimal)
-
-            # 0 e "" são os dois valores mais abundantes, então é mais eficiente filtra-los
-            if valor_numerico == 0 and not self.tamanho_exato:
+            # Casos óbvios são ignorados antes da chamada da função Campo.numerico
+            if valor == "0" and not self.tamanho_exato:
                 self._valor_numerico = 0
                 self._valor_alfanumerico = "0"
                 return
 
-            if valor_numerico is None:
+            if valor == "" or valor is None:
                 self._valor_numerico = None
                 self._valor_alfanumerico = ""
                 return
+
+            # Convertermos o valor para numérico para normaliza-lo
+            valor_numerico = Campo.numerico(valor, self.decimal)
 
             self._valor_numerico = valor_numerico
             self._valor_alfanumerico = Campo.alfanumerico(valor_numerico, self.decimal, self.tamanho, self.tamanho_exato)
