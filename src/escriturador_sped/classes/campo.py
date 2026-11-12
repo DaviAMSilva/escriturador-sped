@@ -127,40 +127,45 @@ class Campo[TipoT: CampoTipoT, ValorT: Valor]:
 
 
 
-    def __init__(self, modulo: ModuloT, nome_registro: str, chave: Chave, valor: Valor) -> None:
-        info_campos = MODULOS[modulo]["registros"][nome_registro.upper()]["campos"]
+    def __init__(self, modulo: ModuloT, nome_registro: str, chave: Chave, valor: Valor, *, _info_campo: CampoT | None = None) -> None:
+        # Passar a variável info_campos diretamente do registro evita consultas adicionais em MODULOS
+        # Para um caminho tão importante isso gera uma diferença de performance significativa
+        if _info_campo is None:
+            info_campos = MODULOS[modulo]["registros"][nome_registro.upper()]["campos"]
 
-        # Descobrindo o info_campo correto
-        if isinstance(chave, int):
-            # Caso for o número, verificar que é maior que 0
-            if chave <= 0:
-                raise ValueError("Os campos de um registro têm a numeração iniciada pelo número 1")
+            # Descobrindo o info_campo correto
+            if isinstance(chave, int):
+                # Caso for o número, verificar que é maior que 0
+                if chave <= 0:
+                    raise ValueError("Os campos de um registro têm a numeração iniciada pelo número 1")
 
-            try:
-                info_campo = info_campos[chave - 1]
-            except IndexError:
-                # A execução só é suposta a chegar aqui se uma quantidade válida de campos for
-                # maior que a quantidade de campos fixos existentes (módulo ECD, I550 e I555)
-                # Nesse caso todos os campos restantes são tratados como campos alfanuméricos
-                info_campo: CampoT = {
-                    "numero": chave - 1,
-                    "nome": f"CAMPO{chave:02d}",
-                    "descricao": "",
-                    "obrigatorio": False,
-                    "tamanho": 255,
-                    "tamanho_exato": False,
-                    "decimal": None,
-                    "tipo": "C"
-                }
-        elif isinstance(chave, str):
-            # Caso for o nome, encontrar o info_campo com esse nome
-            for info_campo in info_campos:
-                if info_campo["nome"] == chave:
-                    break
+                try:
+                    info_campo = info_campos[chave - 1]
+                except IndexError:
+                    # A execução só é suposta a chegar aqui se uma quantidade válida de campos for
+                    # maior que a quantidade de campos fixos existentes (módulo ECD, I550 e I555)
+                    # Nesse caso todos os campos restantes são tratados como campos alfanuméricos
+                    info_campo: CampoT = {
+                        "numero": chave - 1,
+                        "nome": f"CAMPO{chave:02d}",
+                        "descricao": "",
+                        "obrigatorio": False,
+                        "tamanho": 255,
+                        "tamanho_exato": False,
+                        "decimal": None,
+                        "tipo": "C"
+                    }
+            elif isinstance(chave, str):
+                # Caso for o nome, encontrar o info_campo com esse nome
+                for info_campo in info_campos:
+                    if info_campo["nome"] == chave:
+                        break
+                else:
+                    raise ValueError(f"Campo não encontrado pelo nome ({chave})")
             else:
-                raise ValueError(f"Campo não encontrado pelo nome ({chave})")
+                raise TypeError(f"Tipo inválido para parâmetro 'chave' ({chave})")
         else:
-            raise TypeError(f"Tipo inválido para parâmetro 'chave' ({chave})")
+            info_campo = _info_campo
 
         # fmt: off
         self.nome          = info_campo["nome"]
