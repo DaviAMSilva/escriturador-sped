@@ -154,6 +154,7 @@ class Registro(Componente, ABC):
             info_campos = info_registro["campos"]
 
             campos_encontrados = len(textos_campos)
+            campos_esperados = len(info_campos)
 
             campos_exatos = MODULOS[modulo]["registros"][nome_registro]["campos_exatos"]
             campos_faixa = MODULOS[modulo]["registros"][nome_registro]["campos_faixa"]
@@ -175,7 +176,6 @@ class Registro(Componente, ABC):
                     )
             else:
                 # Registro precisa ter uma quantidade exata de campos
-                campos_esperados = len(info_campos)
                 if campos_encontrados != campos_esperados:
                     raise SyntaxError(
                         "A quantidade de campos é diferente da esperada "
@@ -184,7 +184,7 @@ class Registro(Componente, ABC):
                     )
 
             self.campos = TuplaCampo(
-                Campo(modulo, nome_registro, i, valor)
+                Campo(modulo, nome_registro, i, valor, _info_campo=info_campos[i - 1] if i <= campos_esperados else None)
                 for i, valor in enumerate(textos_campos, 1)
             )
 
@@ -215,7 +215,8 @@ class Registro(Componente, ABC):
                     modulo,
                     nome_registro,
                     info_campo["numero"],
-                    campos.get(info_campo["nome"], campos.get(info_campo["numero"]))
+                    campos.get(info_campo["nome"], campos.get(info_campo["numero"])),
+                    _info_campo=info_campo
                 )
                 for info_campo in info_registro["campos"]
             )
